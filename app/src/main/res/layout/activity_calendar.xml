@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CalendarActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/headerLayout"
+        >
+
+        <TextView
+            android:id="@+id/monthName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="20dp"
+            android:textSize="25dp"
+            android:text="Current month!"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"
+            android:id="@+id/separatorMonthWeek"
+            android:layout_marginTop="23dp"
+            android:layout_below="@id/monthName"/>
+
+        <ImageButton
+            android:id="@+id/extendSettingBtn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_above="@+id/separatorMonthWeek"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="-7dp"
+            android:src="@mipmap/ic_extend_settings_lines"
+            android:background="#00bea3"
+            />
+
+        <TextView
+            android:id="@+id/textMonday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mon"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="22dp"
+            android:layout_below="@+id/monthName"/>
+
+        <TextView
+            android:id="@+id/textTuesday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tue"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="25dp"
+            android:layout_below="@id/monthName"
+            android:layout_toRightOf="@+id/textMonday"/>
+
+        <TextView
+            android:id="@+id/textWednesday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Wed"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="28dp"
+            android:layout_below="@id/monthName"
+            android:layout_toRightOf="@+id/textTuesday"/>
+
+        <TextView
+            android:id="@+id/textThursday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Thu"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_below="@id/monthName"
+            android:layout_toRightOf="@+id/textWednesday"/>
+
+        <TextView
+            android:id="@+id/textFriday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fri"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="32dp"
+            android:layout_below="@id/monthName"
+            android:layout_toRightOf="@+id/textThursday"/>
+
+        <TextView
+            android:id="@+id/textSaturday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sat"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_below="@id/monthName"
+            android:layout_toRightOf="@+id/textFriday"/>
+
+        <TextView
+            android:id="@+id/textSunday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sun"
+            android:layout_marginTop="30dp"
+            android:layout_below="@id/monthName"
+            android:layout_toRightOf="@+id/textSaturday"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="4dp"
+            android:background="@android:color/darker_gray"
+            android:paddingTop="5dp"
+            android:layout_below="@id/textMonday"/>
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/calendarLayout"
+        android:layout_below="@+id/headerLayout"
+        >
+
+        <GridView
+            android:id="@+id/calendarGridView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:numColumns="7">
+
+        </GridView>
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>
