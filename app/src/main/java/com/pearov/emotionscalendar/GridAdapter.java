@@ -14,12 +14,18 @@ import java.util.List;
 public final class GridAdapter extends BaseAdapter {
 
     private final int ROW_ITEMS = 7;
-    final List<Date> elems;
-    final int countElems;
+    List<Date> elems;
+    int countElems;
 
     public GridAdapter(final List<Date> elems) {
         this.elems = elems;
         this.countElems = elems.size();
+    }
+
+    public void setElements(List<Date> elems) {
+        this.elems = elems;
+        this.countElems = elems.size();
+
     }
 
     @Override

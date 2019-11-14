@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageButton;
@@ -31,9 +30,13 @@ public class CalendarActivity extends AppCompatActivity {
     private List<Date> daysToDisplay;
     public static Context context;
 
+    private int currentYear;
+    private String currentMonth;
+    private int currentMonthNum;
     private static Date todaysDate;
 
     private static final String TAG = "CalendarActivity";
+    private GridAdapter adapter;
 
     private GestureDetectorCompat detector;
 
@@ -47,21 +50,23 @@ public class CalendarActivity extends AppCompatActivity {
         String currentDate = calendar.getTime().toString();
         String params[] = currentDate.split(" " );
         String currentWeekDay = params[0];
-        String currentMonth = params[1];
+        currentMonth = params[1];
         String currentDayOfMonth = params[2];
-        String currentYear = params[5];
-        todaysDate = new Date(Integer.parseInt(currentYear), getMonthNum(currentMonth)-1, Integer.parseInt(currentDayOfMonth));
+        currentYear = Integer.parseInt(params[5]);
+        todaysDate = new Date(currentYear, getMonthNum(currentMonth)-1, Integer.parseInt(currentDayOfMonth));
 
         // Also initializes the daysInNextMonth LastMonth and CurrentMonth lists
-        daysToDisplay = getDaysToDisplay(getMonthNum(currentMonth), Integer.parseInt(currentYear));
+        currentMonthNum = getMonthNum(currentMonth);
+        daysToDisplay = getDaysToDisplay(currentMonthNum, currentYear);
         Log.d(TAG, "onCreate: Current date is: ".concat(currentDate));
 
         String monthFullName = getFullMonthName(currentMonth);
         TextView textViewMonth = findViewById(R.id.monthName);
-        textViewMonth.setText(monthFullName);
+        textViewMonth.setText(currentYear + " " +  monthFullName);
 
         GridView gridView = findViewById(R.id.calendarGridView);
-        gridView.setAdapter(new GridAdapter(daysToDisplay));
+        adapter = new GridAdapter(daysToDisplay);
+        gridView.setAdapter(adapter);
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -77,12 +82,19 @@ public class CalendarActivity extends AppCompatActivity {
         gridView.setOnTouchListener(new OnSwipeListener(this) {
             public void onSwipeTop() {
                 Toast.makeText(CalendarActivity.this, "top", Toast.LENGTH_SHORT).show();
-                daysToDisplay = getDaysToDisplay(getMonthNum(currentMonth)-1, Integer.parseInt(currentYear));
-                GridAdapter adapter = new GridAdapter(daysToDisplay);
-                adapter.notifyDataSetChanged();
+                currentMonthNum -= 1;
+                if (currentMonthNum == 0) {
+                    currentYear -= 1;
+                    currentMonthNum = 12;
+                }
+
+                currentMonth = getMonthName(currentMonthNum);
+                textViewMonth.setText(currentYear + " " +  getFullMonthName(currentMonth));
+
+                daysToDisplay = getDaysToDisplay(currentMonthNum, currentYear);
+                adapter.setElements(daysToDisplay);
                 gridView.setAdapter(adapter);
-
-
+                adapter.notifyDataSetChanged();
             }
             public void onSwipeRight() {
 //                Toast.makeText(CalendarActivity.this, "right", Toast.LENGTH_SHORT).show();
@@ -92,10 +104,18 @@ public class CalendarActivity extends AppCompatActivity {
             }
             public void onSwipeBottom() {
                 Toast.makeText(CalendarActivity.this, "bottom", Toast.LENGTH_SHORT).show();
-                daysToDisplay = getDaysToDisplay(getMonthNum(currentMonth)+1, Integer.parseInt(currentYear));
-                GridAdapter adapter = new GridAdapter(daysToDisplay);
-                adapter.notifyDataSetChanged();
+                currentMonthNum += 1;
+                if (currentMonthNum == 13) {
+                    currentMonthNum = 1;
+                    currentYear += 1;
+                }
+                currentMonth = getMonthName(currentMonthNum);
+                textViewMonth.setText(currentYear + " " +  getFullMonthName(currentMonth));
+
+                daysToDisplay = getDaysToDisplay(currentMonthNum, currentYear);
+                adapter.setElements(daysToDisplay);
                 gridView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
             }
 
             public boolean onTouch(View v, MotionEvent event) {
@@ -103,9 +123,6 @@ public class CalendarActivity extends AppCompatActivity {
                 return gestureDetector.onTouchEvent(event);
             }
         });
-
-
-
 
 
         ImageButton extendSettingsBtn = (ImageButton) findViewById(R.id.extendSettingBtn);
@@ -119,6 +136,11 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     private ArrayList<Date> getDaysInMonth(int month, int year) {
+        if (month > 12) {
+            month -= 12;
+        } else if (month <= 0) {
+            month += 12;
+        }
 
         ArrayList<Date> listDates = new ArrayList<Date>();
 
@@ -134,6 +156,7 @@ public class CalendarActivity extends AppCompatActivity {
 
     // Gets days from the last monday of the last month to the first sunday of the next month
     private List<Date> getDaysToDisplay(int month, int year) {
+
         daysInLastMonth = getDaysInMonth(month-1, year);
         daysInCurrentMonth = getDaysInMonth(month, year);
         daysInNextMonth = getDaysInMonth(month+1, year);
@@ -243,6 +266,37 @@ public class CalendarActivity extends AppCompatActivity {
                 return 12;
             default:
                 return -1;
+        }
+    }
+
+    private String getMonthName(int month) {
+        switch (month) {
+            case 1:
+                return "Jan";
+            case 2:
+                return "Feb";
+            case 3:
+                return "Mar";
+            case 4:
+                return "Apr";
+            case 5:
+                return "May";
+            case 6:
+                return "Jun";
+            case 7:
+                return "Jul";
+            case 8:
+                return "Aug";
+            case 9:
+                return "Sep";
+            case 10:
+                return "Oct";
+            case 11:
+                return "Nov";
+            case 12:
+                return "Dec";
+            default:
+                return "Error";
         }
     }
 
