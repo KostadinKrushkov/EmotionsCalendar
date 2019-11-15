@@ -29,6 +29,7 @@ public class CalendarActivity extends AppCompatActivity {
     private List<Date> daysInNextMonth;
     private List<Date> daysToDisplay;
     public static Context context;
+    private int currentChosenPosition = 0;
 
     private int currentYear;
     private String currentMonth;
@@ -49,7 +50,6 @@ public class CalendarActivity extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         String currentDate = calendar.getTime().toString();
         String params[] = currentDate.split(" " );
-        String currentWeekDay = params[0];
         currentMonth = params[1];
         String currentDayOfMonth = params[2];
         currentYear = Integer.parseInt(params[5]);
@@ -74,7 +74,11 @@ public class CalendarActivity extends AppCompatActivity {
                                     int position, long id) {
 
                 Toast.makeText(CalendarActivity.this, "Clicked: " + position, Toast.LENGTH_SHORT).show();
-
+                Intent intent = new Intent(CalendarActivity.this, EmotionDayActivity.class);
+                intent.putExtra("year", currentYear + "");
+                intent.putExtra("month", currentMonthNum + "");
+                intent.putExtra("day", daysToDisplay.get(position).toString().split("\\s+")[2] + "");
+                startActivity(intent);
 
             }
         });
@@ -135,6 +139,7 @@ public class CalendarActivity extends AppCompatActivity {
         });
     }
 
+    // Get the days in a given and month and year
     private ArrayList<Date> getDaysInMonth(int month, int year) {
         if (month > 12) {
             month -= 12;
@@ -203,10 +208,10 @@ public class CalendarActivity extends AppCompatActivity {
             daysToDisplay.add(daysInNextMonth.get(i));
 
         }
-
         return daysToDisplay;
     }
 
+    //Give the partial name of the month and get the full name
     private String getFullMonthName(String month) {
         switch (month) {
             case "Jan":
@@ -238,6 +243,7 @@ public class CalendarActivity extends AppCompatActivity {
         }
     }
 
+    //Give the partial name of the month and get the number of the month
     private int getMonthNum(String month) {
         switch (month) {
             case "Jan":
@@ -269,6 +275,7 @@ public class CalendarActivity extends AppCompatActivity {
         }
     }
 
+    //Give the number of the month and get the partial name of the month
     private String getMonthName(int month) {
         switch (month) {
             case 1:

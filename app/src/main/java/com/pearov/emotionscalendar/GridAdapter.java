@@ -25,7 +25,6 @@ public final class GridAdapter extends BaseAdapter {
     public void setElements(List<Date> elems) {
         this.elems = elems;
         this.countElems = elems.size();
-
     }
 
     @Override
@@ -62,7 +61,7 @@ public final class GridAdapter extends BaseAdapter {
             }
         }
         else{
-            if (Integer.parseInt(elems.get(position).toString().split(" ")[2]) < 10) {
+            if (Integer.parseInt(elems.get(position).toString().split(" ")[2]) < 15) {
                 view.setBackgroundColor(Color.parseColor("#B8B8AB"));
             }
         }
