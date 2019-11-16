@@ -11,6 +11,7 @@ import android.widget.TextView;
 import java.util.Date;
 import java.util.List;
 
+// Adapter for the entire calendar grid view
 public final class GridAdapter extends BaseAdapter {
 
     private final int ROW_ITEMS = 7;
