@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="100dp">
 
     <TextView
         android:id="@+id/emotionBackGround"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_marginLeft="50dp"
-        android:text="BackGroundColor"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="30dp"
+
+        android:background="@android:color/holo_blue_light"
     />
 
     <TextView
@@ -17,8 +20,24 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/emotionBackGround"
         android:layout_marginTop="30dp"
-        android:layout_marginLeft="100dp"
+        android:layout_marginLeft="60dp"
         android:text="NameOfEmotion"
     />
+
+    <TextView
+        android:id="@+id/editTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="33dp"
+        android:layout_marginRight="33dp"
+        android:layout_marginBottom="26dp"
+        android:text="Edit value"
+        android:textSize="8dp"
+
+        />
 
 </RelativeLayout>

@@ -3,6 +3,14 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+
+    <color name="colorMainLight">#795888</color>
+
+
+    <color name="colorHappy">#6DD886</color>
+    <color name="colorSad">#FF6DBFD8</color>
+
+
 </resources>
 
 

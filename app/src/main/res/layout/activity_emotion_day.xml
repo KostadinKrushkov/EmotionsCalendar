@@ -8,8 +8,7 @@
     <RelativeLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
-        android:layout_height="150dp">
-
+        android:layout_height="100dp">
 
         <TextView
             android:id="@+id/chosenDay"
@@ -18,6 +17,27 @@
             android:layout_marginLeft="30dp"
             android:layout_marginTop="30dp"
             android:text="Current day:" />
+
+        <TextView
+            android:id="@+id/dailyEmotionText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="60dp"
+            android:text="Daily emotion"
+            android:textSize="23dp"
+            android:layout_toEndOf="@+id/chosenDay"
+            android:layout_toRightOf="@+id/chosenDay"
+
+            />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@android:color/darker_gray"
+            android:id="@+id/separatorDateEmotions"
+            android:layout_marginTop="99dp"
+            />
 
         <TextView
             android:id="@+id/instruction"
