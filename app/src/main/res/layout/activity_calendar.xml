@@ -7,10 +7,26 @@
     tools:context=".CalendarActivity">
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/headerLayout"
-        >
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:id="@+id/homeBtn"
+            android:layout_width="44dp"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/separatorMonthWeek"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="center"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="23dp"
+            android:adjustViewBounds="true"
+            android:background="#00bea3"
+            android:maxWidth="30dp"
+            android:maxHeight="30dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_home_icon" />
 
         <TextView
             android:id="@+id/monthName"
@@ -19,114 +35,125 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginLeft="0dp"
-            android:layout_marginTop="20dp"
-            android:textSize="25dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginStart="97dp"
+            android:layout_marginLeft="122dp"
+            android:layout_marginTop="19dp"
+            android:layout_marginEnd="122dp"
+            android:layout_marginRight="122dp"
             android:text="Current month!"
+            android:textAlignment="center"
+            android:textSize="25dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:singleLine="false"
+            />
 
         <View
+            android:id="@+id/separatorMonthWeek"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@android:color/darker_gray"
-            android:id="@+id/separatorMonthWeek"
+            android:layout_below="@id/monthName"
             android:layout_marginTop="23dp"
-            android:layout_below="@id/monthName"/>
+            android:background="@android:color/darker_gray" />
 
         <ImageButton
             android:id="@+id/extendSettingBtn"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="43dp"
+            android:layout_height="wrap_content"
             android:layout_above="@+id/separatorMonthWeek"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="-7dp"
-            android:src="@mipmap/ic_extend_settings_lines"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="16dp"
+            android:adjustViewBounds="true"
             android:background="#00bea3"
-            />
+            android:maxWidth="30dp"
+            android:maxHeight="30dp"
+            android:scaleType="fitXY"
+            android:src="@mipmap/ic_extend_settings_lines" />
 
         <TextView
             android:id="@+id/textMonday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Mon"
+            android:layout_below="@+id/monthName"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="30dp"
             android:layout_marginRight="22dp"
-            android:layout_below="@+id/monthName"/>
+            android:text="Mon" />
 
         <TextView
             android:id="@+id/textTuesday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tue"
+            android:layout_below="@id/monthName"
             android:layout_marginTop="30dp"
             android:layout_marginRight="25dp"
-            android:layout_below="@id/monthName"
-            android:layout_toRightOf="@+id/textMonday"/>
+            android:layout_toRightOf="@+id/textMonday"
+            android:text="Tue" />
 
         <TextView
             android:id="@+id/textWednesday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Wed"
+            android:layout_below="@id/monthName"
             android:layout_marginTop="30dp"
             android:layout_marginRight="28dp"
-            android:layout_below="@id/monthName"
-            android:layout_toRightOf="@+id/textTuesday"/>
+            android:layout_toRightOf="@+id/textTuesday"
+            android:text="Wed" />
 
         <TextView
             android:id="@+id/textThursday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Thu"
+            android:layout_below="@id/monthName"
             android:layout_marginTop="30dp"
             android:layout_marginRight="30dp"
-            android:layout_below="@id/monthName"
-            android:layout_toRightOf="@+id/textWednesday"/>
+            android:layout_toRightOf="@+id/textWednesday"
+            android:text="Thu" />
 
         <TextView
             android:id="@+id/textFriday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Fri"
+            android:layout_below="@id/monthName"
             android:layout_marginTop="30dp"
             android:layout_marginRight="32dp"
-            android:layout_below="@id/monthName"
-            android:layout_toRightOf="@+id/textThursday"/>
+            android:layout_toRightOf="@+id/textThursday"
+            android:text="Fri" />
 
         <TextView
             android:id="@+id/textSaturday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sat"
+            android:layout_below="@id/monthName"
             android:layout_marginTop="30dp"
             android:layout_marginRight="30dp"
-            android:layout_below="@id/monthName"
-            android:layout_toRightOf="@+id/textFriday"/>
+            android:layout_toRightOf="@+id/textFriday"
+            android:text="Sat" />
 
         <TextView
             android:id="@+id/textSunday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sun"
-            android:layout_marginTop="30dp"
             android:layout_below="@id/monthName"
-            android:layout_toRightOf="@+id/textSaturday"/>
+            android:layout_marginTop="30dp"
+            android:layout_toRightOf="@+id/textSaturday"
+            android:text="Sun" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
+            android:layout_below="@id/textMonday"
             android:layout_marginTop="4dp"
             android:background="@android:color/darker_gray"
-            android:paddingTop="5dp"
-            android:layout_below="@id/textMonday"/>
+            android:paddingTop="5dp" />
 
 
     </RelativeLayout>

@@ -2,6 +2,7 @@ package com.pearov.emotionscalendar;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -34,12 +35,21 @@ public class CalendarActivity extends AppCompatActivity {
     private int currentYear;
     private String currentMonth;
     private int currentMonthNum;
+    private int todaysYear;
+    private int todaysMonth;
+    private int todaysDay;
     private static Date todaysDate;
+
 
     private static final String TAG = "CalendarActivity";
     private GridAdapter adapter;
 
     private GestureDetectorCompat detector;
+
+    @Override
+    public void onBackPressed () {
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,28 +62,42 @@ public class CalendarActivity extends AppCompatActivity {
         String params[] = currentDate.split(" " );
         currentMonth = params[1];
         String currentDayOfMonth = params[2];
+        todaysDay = Integer.parseInt(currentDayOfMonth);
         currentYear = Integer.parseInt(params[5]);
+        todaysYear= currentYear;
         todaysDate = new Date(currentYear, getMonthNum(currentMonth)-1, Integer.parseInt(currentDayOfMonth));
 
         // Also initializes the daysInNextMonth LastMonth and CurrentMonth lists
         currentMonthNum = getMonthNum(currentMonth);
+        todaysMonth = currentMonthNum;
         daysToDisplay = getDaysToDisplay(currentMonthNum, currentYear);
         Log.d(TAG, "onCreate: Current date is: ".concat(currentDate));
 
         String monthFullName = getFullMonthName(currentMonth);
         TextView textViewMonth = findViewById(R.id.monthName);
-        textViewMonth.setText(currentYear + " " +  monthFullName);
+        textViewMonth.setSingleLine(false);
+        textViewMonth.setText("" + currentYear);
+        textViewMonth.append("\n");
+        textViewMonth.append(monthFullName);
+        textViewMonth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(CalendarActivity.context, "Choose date", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(CalendarActivity.this, PopupChooseDateActivity.class));
+            }
+        });
 
         GridView gridView = findViewById(R.id.calendarGridView);
         adapter = new GridAdapter(daysToDisplay);
         gridView.setAdapter(adapter);
 
+        // Moves to EmotionDayActivity after clicking some day and passes that info
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
 
-                Toast.makeText(CalendarActivity.this, "Clicked: " + position, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(CalendarActivity.this, "Clicked: " + position, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(CalendarActivity.this, EmotionDayActivity.class);
                 intent.putExtra("year", currentYear + "");
                 intent.putExtra("month", currentMonthNum + "");
@@ -83,7 +107,24 @@ public class CalendarActivity extends AppCompatActivity {
             }
         });
 
+        ImageButton homeBtn = (ImageButton) findViewById(R.id.homeBtn);
+        if (currentMonthNum == todaysMonth && currentYear == todaysYear) {
+            homeBtn.setEnabled(false);
+        } else if (!homeBtn.isEnabled()) {
+            homeBtn.setEnabled(true);
+        }
+        homeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                daysToDisplay = getDaysToDisplay(currentMonthNum, currentYear);
+                finish();
+                startActivity(getIntent());
+            }
+        });
+
+        // After swipe up or down changes info about buttons and gridview and notifies about the change
         gridView.setOnTouchListener(new OnSwipeListener(this) {
+
             public void onSwipeTop() {
                 Toast.makeText(CalendarActivity.this, "top", Toast.LENGTH_SHORT).show();
                 currentMonthNum -= 1;
@@ -93,11 +134,19 @@ public class CalendarActivity extends AppCompatActivity {
                 }
 
                 currentMonth = getMonthName(currentMonthNum);
-                textViewMonth.setText(currentYear + " " +  getFullMonthName(currentMonth));
+                textViewMonth.setText(currentYear + " ");
+                textViewMonth.append("\n");
+                textViewMonth.append(getFullMonthName(currentMonth));
 
                 daysToDisplay = getDaysToDisplay(currentMonthNum, currentYear);
                 adapter.setElements(daysToDisplay);
                 gridView.setAdapter(adapter);
+
+                if (currentMonthNum == todaysMonth && currentYear == todaysYear) {
+                    homeBtn.setEnabled(false);
+                } else if (!homeBtn.isEnabled()) {
+                    homeBtn.setEnabled(true);
+                }
                 adapter.notifyDataSetChanged();
             }
             public void onSwipeRight() {
@@ -114,7 +163,18 @@ public class CalendarActivity extends AppCompatActivity {
                     currentYear += 1;
                 }
                 currentMonth = getMonthName(currentMonthNum);
-                textViewMonth.setText(currentYear + " " +  getFullMonthName(currentMonth));
+                textViewMonth.setText(currentYear + " ");
+                textViewMonth.append("\n");
+                textViewMonth.append(getFullMonthName(currentMonth));
+                daysToDisplay = getDaysToDisplay(currentMonthNum, currentYear);
+                adapter.setElements(daysToDisplay);
+                gridView.setAdapter(adapter);
+
+                if (currentMonthNum == todaysMonth && currentYear == todaysYear) {
+                    homeBtn.setEnabled(false);
+                } else if (!homeBtn.isEnabled()) {
+                    homeBtn.setEnabled(true);
+                }
 
                 daysToDisplay = getDaysToDisplay(currentMonthNum, currentYear);
                 adapter.setElements(daysToDisplay);
@@ -126,8 +186,8 @@ public class CalendarActivity extends AppCompatActivity {
                 v.performClick();  // If we create a custom gridview using public boolean performClick it is going to work. For now it doesnt.
                 return gestureDetector.onTouchEvent(event);
             }
-        });
 
+        });
 
         ImageButton extendSettingsBtn = (ImageButton) findViewById(R.id.extendSettingBtn);
         extendSettingsBtn.setOnClickListener(new View.OnClickListener() {
@@ -198,14 +258,17 @@ public class CalendarActivity extends AppCompatActivity {
 //            int tempDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
             int tempDayOfWeek = daysInNextMonth.get(i).getDay();
 
-
-            if (countSundays > 1)
-                break;
-
             if (tempDayOfWeek == 1) {
                 countSundays++;
             }
             daysToDisplay.add(daysInNextMonth.get(i));
+
+
+            // Find out why sometimes it gets the monday after the sunday.
+            //Log.d(TAG, "Display: " + daysInNextMonth.get(i).getDay() + "-" + month);
+
+            if (countSundays >= 1 || i > 10)
+                break;
 
         }
         return daysToDisplay;

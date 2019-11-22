@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">EmotionsCalendar</string>
+    <string name="line_separator">\n</string>
 </resources>

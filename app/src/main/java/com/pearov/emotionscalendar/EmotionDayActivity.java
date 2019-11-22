@@ -16,15 +16,9 @@ public class EmotionDayActivity extends AppCompatActivity {
     public static Context context;
     private String chosenDate = "default";
 
-
     public String getChosenDate() {
         return chosenDate;
     }
-
-
-    //public static String[] getEmotions() {return emotions;}
-
-    //private static String emotions[] = {"Happy", "Angry", "Sad", "Tired", "Positive", "Negative", "Mixed", "Custom "};
 
     private static Emotion[] emotions;
 
@@ -65,7 +59,18 @@ public class EmotionDayActivity extends AppCompatActivity {
         int year = Integer.parseInt(myIntent.getStringExtra("year"));
         int month = Integer.parseInt(myIntent.getStringExtra("month"));
         int day = Integer.parseInt(myIntent.getStringExtra("day"));
-        chosenDate = day + "." + month + "." + year;
+
+        //Gives them 0 if it < 10
+        String fullDay = String.valueOf(day);
+        if (fullDay.toCharArray().length == 1) {
+            fullDay = "0" + fullDay;
+        }
+
+        String fullMonth = String.valueOf(month);
+        if (fullMonth.toCharArray().length == 1) {
+            fullMonth = "0" + fullMonth;
+        }
+        chosenDate = fullDay + "." + fullMonth + "." + year;
 
         TextView chosenDateTextView = (TextView) findViewById(R.id.chosenDay);
         chosenDateTextView.setText(chosenDate);
