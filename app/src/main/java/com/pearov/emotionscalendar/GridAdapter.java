@@ -68,7 +68,7 @@ public final class GridAdapter extends BaseAdapter {
         if (view == null) {
             view = LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
         }
-        view.setLayoutParams(new GridView.LayoutParams(GridView.AUTO_FIT, 202)); // h: height of box
+        view.setLayoutParams(new GridView.LayoutParams(GridView.AUTO_FIT, 216)); // h: height of box
         final TextView text = (TextView) view.findViewById(android.R.id.text1);
 
         //

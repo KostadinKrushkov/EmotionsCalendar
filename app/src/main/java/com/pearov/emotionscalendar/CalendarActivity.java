@@ -2,6 +2,7 @@ package com.pearov.emotionscalendar;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.Image;
 import android.os.Bundle;
 import android.support.v4.view.GestureDetectorCompat;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,11 +53,41 @@ public class CalendarActivity extends AppCompatActivity {
 
     }
 
+    private RelativeLayout relativeLayoutHeader;
+    private TextView textViewYear;
+    private TextView textViewMonth;
+    private ImageButton homeBtn;
+    private ImageButton statsBtn;
+    private ImageButton extendSettingsBtn;
+
+    //.setTextColor(context.getResources().getColor(R.color.colorWhite));
+    private void fillBackGroundColours() {
+        if (MainActivity.themeName.equals("Light")) {
+            relativeLayoutHeader.setBackground(context.getDrawable(R.color.colorMainLight));
+            homeBtn.setBackgroundColor(getResources().getColor(R.color.colorMainLight));
+            statsBtn.setBackgroundColor(getResources().getColor(R.color.colorMainLight));
+            extendSettingsBtn.setBackgroundColor(getResources().getColor(R.color.colorMainLight));
+            extendSettingsBtn.setImageResource(R.drawable.ic_settings);
+        } else if (MainActivity.themeName.equals("Dark")) {
+            relativeLayoutHeader.setBackground(context.getDrawable(R.color.colorMainDark));
+            homeBtn.setBackgroundColor(getResources().getColor(R.color.colorMainDark));
+            statsBtn.setBackgroundColor(getResources().getColor(R.color.colorMainDark));
+            extendSettingsBtn.setBackgroundColor(getResources().getColor(R.color.colorMainDark));
+            extendSettingsBtn.setImageResource(R.drawable.ic_settings_darks);
+
+        }
+        textViewYear.setTextColor(context.getResources().getColor(R.color.colorWhite));
+        textViewMonth.setTextColor(context.getResources().getColor(R.color.colorWhite));
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
         context = getApplicationContext();
+
+        relativeLayoutHeader = (RelativeLayout) findViewById(R.id.calendarActivityLayout);
 
         Calendar calendar = Calendar.getInstance();
         String currentDate = calendar.getTime().toString();
@@ -67,18 +99,39 @@ public class CalendarActivity extends AppCompatActivity {
         todaysYear= currentYear;
         todaysDate = new Date(currentYear, getMonthNum(currentMonth)-1, Integer.parseInt(currentDayOfMonth));
 
+        // If this activity gets reloaded from EmotionDayActivity (after an emotion has been chosen it refreshes
+//        boolean choseEmotion = false;
+//        try {
+//            Intent myIntent = getIntent();
+//            currentYear = Integer.parseInt(myIntent.getStringExtra("year"));
+//            currentMonthNum = Integer.parseInt(myIntent.getStringExtra("month"));
+//            currentDayOfMonth = myIntent.getStringExtra("day");
+//            choseEmotion = true;
+//        } catch (Exception e) {
+//            Log.d(TAG, "onCreate: Error while coming back from choosing emotion");
+//            e.printStackTrace();
+//        }
+//
+//        if (choseEmotion) {
+//            finish();
+//            startActivity(getIntent());
+//        }
+
         // Also initializes the daysInNextMonth LastMonth and CurrentMonth lists
         currentMonthNum = getMonthNum(currentMonth);
         todaysMonth = currentMonthNum;
         daysToDisplay = getDaysToDisplay(currentMonthNum, currentYear);
         Log.d(TAG, "onCreate: Current date is: ".concat(currentDate));
 
+        textViewYear = findViewById(R.id.yearTextView);
+        textViewYear.setText(currentYear + ",");
+
         String monthFullName = getFullMonthName(currentMonth);
-        TextView textViewMonth = findViewById(R.id.monthName);
-        textViewMonth.setSingleLine(false);
-        textViewMonth.setText("" + currentYear);
-        textViewMonth.append("\n");
-        textViewMonth.append(monthFullName);
+        textViewMonth = findViewById(R.id.monthName);
+//        textViewMonth.setSingleLine(false);
+//        textViewMonth.setText("" + currentYear);
+//        textViewMonth.append("\n");
+        textViewMonth.setText(monthFullName);
         textViewMonth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,10 +160,20 @@ public class CalendarActivity extends AppCompatActivity {
             }
         });
 
-        ImageButton homeBtn = (ImageButton) findViewById(R.id.homeBtn);
+        homeBtn = (ImageButton) findViewById(R.id.homeBtn);
         if (currentMonthNum == todaysMonth && currentYear == todaysYear) {
+            if (MainActivity.themeName.equals("Light")) {
+                homeBtn.setImageResource(R.drawable.ic_home_light);
+            } else if (MainActivity.themeName.equals("Dark")) {
+                homeBtn.setImageResource(R.drawable.ic_home_dark);
+            }
             homeBtn.setEnabled(false);
         } else if (!homeBtn.isEnabled()) {
+            if (MainActivity.themeName.equals("Light")) {
+                homeBtn.setImageResource(R.drawable.ic_home_light_arrow);
+            } else if (MainActivity.themeName.equals("Dark")) {
+                homeBtn.setImageResource(R.drawable.ic_home_dark_arrow);
+            }
             homeBtn.setEnabled(true);
         }
         homeBtn.setOnClickListener(new View.OnClickListener() {
@@ -119,6 +182,16 @@ public class CalendarActivity extends AppCompatActivity {
                 daysToDisplay = getDaysToDisplay(currentMonthNum, currentYear);
                 finish();
                 startActivity(getIntent());
+            }
+        });
+
+        statsBtn = (ImageButton) findViewById(R.id.statisticsBtn);
+        statsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                daysToDisplay = getDaysToDisplay(currentMonthNum, currentYear);
+//                finish();
+//                startActivity(getIntent());
             }
         });
 
@@ -134,17 +207,26 @@ public class CalendarActivity extends AppCompatActivity {
                 }
 
                 currentMonth = getMonthName(currentMonthNum);
-                textViewMonth.setText(currentYear + " ");
-                textViewMonth.append("\n");
-                textViewMonth.append(getFullMonthName(currentMonth));
+                textViewYear.setText(currentYear + ",");
+                textViewMonth.setText(getFullMonthName(currentMonth));
 
                 daysToDisplay = getDaysToDisplay(currentMonthNum, currentYear);
                 adapter.setElements(daysToDisplay);
                 gridView.setAdapter(adapter);
 
                 if (currentMonthNum == todaysMonth && currentYear == todaysYear) {
+                    if (MainActivity.themeName.equals("Light")) {
+                        homeBtn.setImageResource(R.drawable.ic_home_light);
+                    } else if (MainActivity.themeName.equals("Dark")) {
+                        homeBtn.setImageResource(R.drawable.ic_home_dark);
+                    }
                     homeBtn.setEnabled(false);
                 } else if (!homeBtn.isEnabled()) {
+                    if (MainActivity.themeName.equals("Light")) {
+                        homeBtn.setImageResource(R.drawable.ic_home_light_arrow);
+                    } else if (MainActivity.themeName.equals("Dark")) {
+                        homeBtn.setImageResource(R.drawable.ic_home_dark_arrow);
+                    }
                     homeBtn.setEnabled(true);
                 }
                 adapter.notifyDataSetChanged();
@@ -162,17 +244,27 @@ public class CalendarActivity extends AppCompatActivity {
                     currentMonthNum = 1;
                     currentYear += 1;
                 }
+
                 currentMonth = getMonthName(currentMonthNum);
-                textViewMonth.setText(currentYear + " ");
-                textViewMonth.append("\n");
-                textViewMonth.append(getFullMonthName(currentMonth));
+                textViewYear.setText(currentYear + ",");
+                textViewMonth.setText(getFullMonthName(currentMonth));
                 daysToDisplay = getDaysToDisplay(currentMonthNum, currentYear);
                 adapter.setElements(daysToDisplay);
                 gridView.setAdapter(adapter);
 
                 if (currentMonthNum == todaysMonth && currentYear == todaysYear) {
+                    if (MainActivity.themeName.equals("Light")) {
+                        homeBtn.setImageResource(R.drawable.ic_home_light);
+                    } else if (MainActivity.themeName.equals("Dark")) {
+                        homeBtn.setImageResource(R.drawable.ic_home_dark);
+                    }
                     homeBtn.setEnabled(false);
                 } else if (!homeBtn.isEnabled()) {
+                    if (MainActivity.themeName.equals("Light")) {
+                        homeBtn.setImageResource(R.drawable.ic_home_light_arrow);
+                    } else if (MainActivity.themeName.equals("Dark")) {
+                        homeBtn.setImageResource(R.drawable.ic_home_dark_arrow);
+                    }
                     homeBtn.setEnabled(true);
                 }
 
@@ -189,7 +281,7 @@ public class CalendarActivity extends AppCompatActivity {
 
         });
 
-        ImageButton extendSettingsBtn = (ImageButton) findViewById(R.id.extendSettingBtn);
+        extendSettingsBtn = (ImageButton) findViewById(R.id.extendSettingBtn);
         extendSettingsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -197,6 +289,8 @@ public class CalendarActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        fillBackGroundColours();
     }
 
     // Get the days in a given and month and year
@@ -262,12 +356,14 @@ public class CalendarActivity extends AppCompatActivity {
                 countSundays++;
             }
             daysToDisplay.add(daysInNextMonth.get(i));
-
+            if(daysToDisplay.size() == 42) {
+                break;
+            }
 
             // Find out why sometimes it gets the monday after the sunday.
             //Log.d(TAG, "Display: " + daysInNextMonth.get(i).getDay() + "-" + month);
 
-            if (countSundays >= 1 || i > 10)
+            if (countSundays >= 2)
                 break;
 
         }

@@ -6,7 +6,7 @@
     tools:context=".EmotionDayActivity">
 
     <RelativeLayout
-        android:id="@+id/header"
+        android:id="@+id/headerEmotionDayActivity"
         android:layout_width="match_parent"
         android:layout_height="100dp">
 
@@ -18,18 +18,28 @@
             android:layout_marginTop="30dp"
             android:text="Current day:" />
 
-        <TextView
-            android:id="@+id/dailyEmotionText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:layout_marginLeft="60dp"
-            android:text="Daily emotion"
-            android:textSize="23dp"
-            android:layout_toEndOf="@+id/chosenDay"
-            android:layout_toRightOf="@+id/chosenDay"
+        <RelativeLayout
+            android:id="@+id/textAndTagEmotionActivity"
+            android:layout_width="230dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
 
-            />
+            >
+
+            <TextView
+                android:id="@+id/dailyEmotionText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginLeft="60dp"
+                android:text="Daily emotion"
+                android:textSize="23dp"
+
+                />
+
+        </RelativeLayout>
 
         <View
             android:layout_width="match_parent"
@@ -58,10 +68,11 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/body"
+        android:id="@+id/bodyEmotionDayActivity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/header">
+        android:layout_below="@+id/headerEmotionDayActivity"
+        android:layout_above="@+id/footerEmotionDayActivity">
 
         <ListView
             android:id="@+id/emotionsListViewColour"
@@ -73,4 +84,41 @@
         </ListView>
     </RelativeLayout>
 
+    <RelativeLayout
+        android:id="@+id/footerEmotionDayActivity"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        >
+
+        <ImageButton
+            android:id="@+id/exitBtn"
+            android:layout_width="50dp"
+            android:layout_height="60dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="15dp"
+            android:layout_toStartOf="@+id/acceptBtn"
+            android:src="@drawable/ic_exit_light"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
+        />
+
+        <ImageButton
+            android:id="@+id/acceptBtn"
+            android:layout_width="50dp"
+            android:layout_height="60dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="15dp"
+            android:src="@drawable/ic_tick_light"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
+
+
+            />
+
+    </RelativeLayout>
 </RelativeLayout>
