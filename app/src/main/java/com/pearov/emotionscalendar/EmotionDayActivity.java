@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -13,6 +14,7 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class EmotionDayActivity extends AppCompatActivity {
 
+    private static final String TAG = "EmotionDayActivity";
     public static Context context;
     private String chosenDate = "default";
 
@@ -78,11 +80,52 @@ public class EmotionDayActivity extends AppCompatActivity {
         ListView listView = (ListView) findViewById(R.id.emotionsListViewColour);
         EmotionAdapter adapter = new EmotionAdapter();
         listView.setAdapter(adapter);
-        listView.setDivider(context.getResources().getDrawable(R.color.colorSad));
+//        listView.setDivider(context.getResources().getDrawable(R.color.colorSad));
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getBaseContext(), emotions[position].getName() ,Toast.LENGTH_SHORT).show();
+                switch (emotions[position].getName())
+                {
+                    case "Excited":
+                        parent.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorExciting));
+                        break;
+                    case "Happy":
+                        parent.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorHappy));
+                        break;
+                    case "Positive":
+                        parent.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorPositive));
+                        break;
+                    case "Average":
+                        parent.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNeutral));
+                        break;
+                    case "Mixed":
+                        parent.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorMixed));
+                        break;
+                    case "Negative":
+                        parent.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNegative));
+                        break;
+                    case "Sad":
+                        parent.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorSad));
+                        break;
+                    case "Boring":
+                        parent.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorBoring));
+                        break;
+                    default:
+                        Log.d(TAG, "getView: Error couldn't find emotion name! E.G None");
+                        break;
+                }
+                String existingDay = GridAdapter.getDayFromFile(day, month, year);
+                if (existingDay.equals("")) {
+                    GridAdapter.writeDayInFile(day + "-" + month + "-" + year + "-" + emotions[position].getName());
+//                    onBackPressed();
+                } else {
+                    GridAdapter.overWriteDayInFile(day + "-" + month + "-" + year + "-" + emotions[position].getName());
+//                    onBackPressed();
+                    Toast.makeText(getBaseContext(), "Emotion changed to: " + emotions[position].getName() ,Toast.LENGTH_SHORT).show();
+
+                }
+
             }
         });
 

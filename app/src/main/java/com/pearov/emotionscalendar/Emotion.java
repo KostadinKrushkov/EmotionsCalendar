@@ -5,6 +5,7 @@ public class Emotion {
     int id;
     String name;
     double value;
+    String colorCode;
 
     public Emotion(int id, String name, double value) {
         this.id = id;
@@ -34,5 +35,9 @@ public class Emotion {
 
     public void setValue(float value) {
         this.value = value;
+    }
+
+    public String toString() {
+        return id + "-" + name + "-" + value+"\n";
     }
 }

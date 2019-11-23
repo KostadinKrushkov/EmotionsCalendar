@@ -212,9 +212,9 @@ public class CalendarActivity extends AppCompatActivity {
         // Get number of days in particular month
         YearMonth yearMonthObject = YearMonth.of(year, month);
 
-//        for (int i = 1; i <)
+        // FIX THIS PART
         for (int i = 1; i <= yearMonthObject.lengthOfMonth(); i++) {
-            listDates.add(new Date(year, month-1, i)); // Date object's month start at 0
+            listDates.add(new Date(year-1900, month-1, i)); // Date object's month start at 0
         }
         return listDates;
     }
@@ -307,7 +307,7 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     //Give the partial name of the month and get the number of the month
-    private int getMonthNum(String month) {
+    public static int getMonthNum(String month) {
         switch (month) {
             case "Jan":
                 return 1;

@@ -4,11 +4,22 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
 
-    <color name="colorMainLight">#795888</color>
+    <color name="colorMainLight">#826091</color>
+    <color name="colorDeadMainLight">#9E7AAD</color>
+    <color name="colorLightBackground">#DBD7DD</color>
 
+    <color name="colorMainDark">#826091</color>
+    <color name="colorDeadMainDark">#D7D592</color>
+    <color name="colorDarkBackground">#616161</color>
 
-    <color name="colorHappy">#6DD886</color>
-    <color name="colorSad">#FF6DBFD8</color>
+    <color name="colorExciting">#FEDC4B</color>
+    <color name="colorHappy">#EC8A46</color>
+    <color name="colorPositive">#78BC4A</color>
+    <color name="colorNeutral">#DDB990</color>
+    <color name="colorMixed">#242626</color>
+    <color name="colorNegative">#C04352</color>
+    <color name="colorSad">#41AFDC</color>
+    <color name="colorBoring">#B3B3B2</color>
 
 
 </resources>
