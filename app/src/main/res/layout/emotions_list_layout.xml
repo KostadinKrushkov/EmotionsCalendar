@@ -3,41 +3,52 @@
     android:layout_width="match_parent"
     android:layout_height="100dp">
 
-    <TextView
-        android:id="@+id/emotionBackGround"
-        android:layout_width="100dp"
-        android:layout_height="50dp"
+
+    <RelativeLayout
+        android:id="@+id/emotionBackGroundRelativeLayout"
+        android:layout_width="104dp"
+        android:layout_height="54dp"
         android:layout_marginTop="15dp"
         android:layout_marginBottom="15dp"
         android:layout_marginStart="15dp"
+        >
 
-        android:background="@android:color/holo_blue_light"
-    />
+        <TextView
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:id="@+id/emotionBackGround"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+        />
+
+    </RelativeLayout>
+
 
     <TextView
         android:id="@+id/emotionName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/emotionBackGround"
+        android:layout_toEndOf="@+id/emotionBackGroundRelativeLayout"
         android:layout_marginTop="30dp"
-        android:layout_marginLeft="60dp"
-        android:text="NameOfEmotion"
+        android:layout_marginStart="60dp"
+        android:textSize="24sp"
     />
 
     <TextView
-        android:id="@+id/editTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
+        android:id="@+id/valueBtnView"
+        android:layout_width="40dp"
+        android:layout_height="15dp"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="33dp"
-        android:layout_marginRight="33dp"
-        android:layout_marginBottom="26dp"
-        android:text="Edit value"
-        android:textSize="8dp"
-
-        />
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="26.5dp"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+        android:background="@android:color/darker_gray" />
 
 </RelativeLayout>

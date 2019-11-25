@@ -10,6 +10,7 @@ import android.widget.Button;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Date;
 
 
@@ -28,6 +29,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         context = getApplicationContext();
+        // Empty the file if we want to test.
+//        String filePath = MainActivity.context.getFilesDir().getPath().toString() + MainActivity.getCalendarFile();
+//        try {
+//            PrintWriter empty_writer = new PrintWriter(filePath);
+//            empty_writer.print("");
+//            empty_writer.close();
+//        } catch(Exception e) {
+//            e.printStackTrace();
+//        }
 
         // Create emotion calendar text file
         createFile(getCalendarFile());

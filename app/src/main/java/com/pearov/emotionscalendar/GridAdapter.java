@@ -1,12 +1,19 @@
 package com.pearov.emotionscalendar;
 
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -17,6 +24,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -69,9 +77,24 @@ public final class GridAdapter extends BaseAdapter {
             view = LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
         }
         view.setLayoutParams(new GridView.LayoutParams(GridView.AUTO_FIT, 216)); // h: height of box
-        final TextView text = (TextView) view.findViewById(android.R.id.text1);
 
-        //
+//        TextView textViewCell = (TextView) view.findViewById(android.R.id.text1);
+        TextView text = (TextView) view.findViewById(android.R.id.text1);
+//        text.setTextColor(EmotionDayActivity.context.getResources().getColor(R.color.colorPositive));
+        text.setTextSize(10);
+
+
+        // Change the color of the number of day in the calendar
+        if (MainActivity.themeName.equals("Light")) {
+            int testColor = CalendarActivity.context.getResources().getColor(R.color.colorBlack);
+            text.setTextColor(testColor);
+        } else if (MainActivity.themeName.equals("Dark")) {
+            int testColor = CalendarActivity.context.getResources().getColor(R.color.colorWhite);
+            text.setTextColor(testColor);
+        }
+        // Change the position of the of number in the cell
+        text.setGravity(Gravity.FILL_HORIZONTAL);
+        text.setPadding(40, 20, 0, 0);
 
 
         String emotionalDay = getDayFromFile(currentDay, currentMonthNum, currentYear);
@@ -121,8 +144,12 @@ public final class GridAdapter extends BaseAdapter {
         }
 
 
+//        if (MainActivity.themeName.equals("Light")) {
+//            view.setTextColor(EmotionDayActivity.context.getResources().getColor(R.color.colorHappy));
+//        } else if (MainActivity.themeName.equals("Dark")) {
+//            text.setTextColor(EmotionDayActivity.context.getResources().getColor(R.color.colorPositive));
+//        }
 
-        //
 
         if (position < 21) {
             if (Integer.parseInt(elems.get(position).toString().split(" ")[2]) > 20) {
@@ -154,11 +181,14 @@ public final class GridAdapter extends BaseAdapter {
 //            text.setBackgroundColor(R.drawable.current_day_border);
 
 //            But this is used for border
+
+//            view.setBackgroundColor(CalendarActivity.context.getResources().getColor(R.color.colorPositive));
             view.setBackgroundResource(R.drawable.current_day_border);
+//            view.setBackgroundResource(Integer.parseInt((getThumb(0, 0).toString())));
+
         }
 
 //        text.setBackgroundColor(backGroundUnavailable);
-        text.setTextSize(10);
 
         String tempDay = elems.get(position).toString();
         int day = Integer.parseInt(tempDay.split("\\s+")[2]);
@@ -198,6 +228,19 @@ public final class GridAdapter extends BaseAdapter {
             e.printStackTrace();
         }
         return returnEmotinalDay;
+    }
+
+    Drawable getThumb(int width, int height){
+        GradientDrawable thumb= new GradientDrawable(
+                GradientDrawable.Orientation.TOP_BOTTOM,
+                new int[] {Color.parseColor("#FFFFFF"),
+                        Color.parseColor("#FFFFFF")});
+        thumb.setShape(GradientDrawable.RECTANGLE);
+        thumb.setColor(CalendarActivity.context.getResources().getColor(R.color.colorPositive));
+        thumb.setStroke(2,Color.parseColor("#000000"));
+        thumb.setBounds(100, 100, 100, 100);
+
+        return thumb;
     }
 
     public static ArrayList<String> getDaysInMonthFromFile(int month, int year) {

@@ -14,13 +14,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
+import org.w3c.dom.Text;
+
+import java.util.Calendar;
+
 public class EmotionDayActivity extends AppCompatActivity {
 
     private static final String TAG = "EmotionDayActivity";
     public static Context context;
     private String chosenDate = "default";
 
-    private TextView chosenDateTextView;
+    private TextView chosenDayTextView;
+    private TextView chosenMonthTextView;
+    private TextView textViewValue;
+    private TextView dailyEmotionText;
     private ListView listView;
     private RelativeLayout textAndTagEmotionActivity;
     private RelativeLayout headerRelativeLayout;
@@ -28,6 +35,11 @@ public class EmotionDayActivity extends AppCompatActivity {
     private RelativeLayout footerRelativeLayout;
     private ImageButton exitBtn;
     private ImageButton acceptBtn;
+
+    // variable to be used to rember which emotion is picked
+    private String lastEmotionThatWasHighlighted = "-1";
+    private View tempView;
+
 
     // variable used to add emotion to date in the file
     private boolean flagChosenEmotion = false;
@@ -73,6 +85,14 @@ public class EmotionDayActivity extends AppCompatActivity {
             acceptBtn.setBackgroundColor(context.getResources().getColor(R.color.colorLightBackground));
             exitBtn.setImageResource(R.drawable.ic_exit_light);
             exitBtn.setBackgroundColor(context.getResources().getColor(R.color.colorLightBackground));
+            chosenDayTextView.setBackgroundColor(context.getResources().getColor(R.color.colorLightBackground));
+            chosenDayTextView.setTextColor(context.getResources().getColor(R.color.colorBlack));
+            chosenMonthTextView.setBackgroundColor(context.getResources().getColor(R.color.colorLightBackground));
+            chosenMonthTextView.setTextColor(context.getResources().getColor(R.color.colorBlack));
+            textViewValue.setTextColor(context.getResources().getColor(R.color.colorBlack));
+            textViewValue.setBackgroundColor(context.getResources().getColor(R.color.colorLightBackground));
+            dailyEmotionText.setTextColor(context.getResources().getColor(R.color.colorWhite));
+            dailyEmotionText.setBackgroundColor(context.getResources().getColor(R.color.colorMainLight));
 
             headerRelativeLayout.setBackgroundColor(context.getResources().getColor(R.color.colorLightBackground));
             bodyRelativeLayout.setBackgroundColor(context.getResources().getColor(R.color.colorLightBackground));
@@ -84,6 +104,14 @@ public class EmotionDayActivity extends AppCompatActivity {
             acceptBtn.setBackgroundColor(context.getResources().getColor(R.color.colorDarkBackground));
             exitBtn.setImageResource(R.drawable.ic_exit_dark);
             exitBtn.setBackgroundColor(context.getResources().getColor(R.color.colorDarkBackground));
+            chosenDayTextView.setBackgroundColor(context.getResources().getColor(R.color.colorDarkBackground));
+            chosenDayTextView.setTextColor(context.getResources().getColor(R.color.colorWhite));
+            chosenMonthTextView.setBackgroundColor(context.getResources().getColor(R.color.colorDarkBackground));
+            chosenMonthTextView.setTextColor(context.getResources().getColor(R.color.colorWhite));
+            textViewValue.setTextColor(context.getResources().getColor(R.color.colorWhite));
+            textViewValue.setBackgroundColor(context.getResources().getColor(R.color.colorDarkBackground));
+            dailyEmotionText.setTextColor(context.getResources().getColor(R.color.colorBlack));
+            dailyEmotionText.setBackgroundColor(context.getResources().getColor(R.color.colorMainDark));
 
             headerRelativeLayout.setBackgroundColor(context.getResources().getColor(R.color.colorDarkBackground));
             bodyRelativeLayout.setBackgroundColor(context.getResources().getColor(R.color.colorDarkBackground));
@@ -91,7 +119,7 @@ public class EmotionDayActivity extends AppCompatActivity {
         }
     }
 
-        @Override
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_emotion_day);
@@ -114,14 +142,24 @@ public class EmotionDayActivity extends AppCompatActivity {
             fullDay = "0" + fullDay;
         }
 
-        String fullMonth = String.valueOf(month);
-        if (fullMonth.toCharArray().length == 1) {
-            fullMonth = "0" + fullMonth;
-        }
+        String fullMonth = CalendarActivity.getMonthName(month);
+//        String fullMonth = String.valueOf(month);
+//        if (fullMonth.toCharArray().length == 1) {
+//            fullMonth = "0" + fullMonth;
+//        }
         chosenDate = fullDay + "." + fullMonth + "." + year;
 
-        chosenDateTextView = (TextView) findViewById(R.id.chosenDay);
-        chosenDateTextView.setText(chosenDate);
+        chosenDayTextView = (TextView) findViewById(R.id.chosenDay);
+        chosenDayTextView.setText(fullDay);
+
+        chosenMonthTextView = (TextView) findViewById(R.id.chosenMonth);
+        chosenMonthTextView.setText(fullMonth);
+
+        textViewValue = (TextView) findViewById(R.id.textViewValue);
+        textViewValue.setText("value");
+
+        dailyEmotionText = (TextView) findViewById(R.id.dailyEmotionText);
+        dailyEmotionText.setText("Your emotion for the day");
 
         listView = (ListView) findViewById(R.id.emotionsListViewColour);
         EmotionAdapter adapter = new EmotionAdapter();
@@ -130,83 +168,94 @@ public class EmotionDayActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 flagChosenEmotion = true;
+
+                if (tempView != null) {
+                    if (MainActivity.themeName.equals("Light")) {
+                        tempView.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorLightBackground));
+                    } else if (MainActivity.themeName.equals("Dark")) {
+                        tempView.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorDarkBackground));
+                    }
+                }
+
                 switch (emotions[position].getName())
                 {
                     case "None":
                         if (MainActivity.themeName.equals("Light")) {
-                            parent.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorLightBackground));
-                            footerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorLightBackground));
-                            acceptBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorLightBackground));
-                            exitBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorLightBackground));
-
+                            view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorLightBackground));
                         } else if (MainActivity.themeName.equals("Dark")) {
-                            parent.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorDarkBackground));
-                            footerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorDarkBackground));
-                            acceptBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorDarkBackground));
-                            exitBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorDarkBackground));
+                            view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorDarkBackground));
                         }
                         break;
                     case "Excited":
-                        parent.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorExciting));
-                        footerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorExciting));
-                        acceptBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorExciting));
-                        exitBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorExciting));
+                        view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorExciting));
+//                        footerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorExciting));
+//                        acceptBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorExciting));
+//                        exitBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorExciting));
+//                        headerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorExciting));
                         break;
                     case "Happy":
-                        parent.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorHappy));
-                        footerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorHappy));
-                        acceptBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorHappy));
-                        exitBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorHappy));
+                        view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorHappy));
+//                        footerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorHappy));
+//                        acceptBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorHappy));
+//                        exitBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorHappy));
+//                        headerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorHappy));
+
                         break;
                     case "Positive":
-                        parent.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorPositive));
-                        footerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorPositive));
-                        acceptBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorPositive));
-                        exitBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorPositive));
+                        view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorPositive));
+//                        footerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorPositive));
+//                        acceptBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorPositive));
+//                        exitBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorPositive));
+//                        headerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorPositive));
+
                         break;
                     case "Average":
-                        parent.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNeutral));
-                        footerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNeutral));
-                        acceptBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNeutral));
-                        exitBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNeutral));
+                        view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNeutral));
+//                        footerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNeutral));
+//                        acceptBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNeutral));
+//                        exitBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNeutral));
+//                        headerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNeutral));
+
                         break;
                     case "Mixed":
-                        parent.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorMixed));
-                        footerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorMixed));
-                        acceptBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorMixed));
-                        exitBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorMixed));
+                        view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorMixed));
+//                        footerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorMixed));
+//                        acceptBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorMixed));
+//                        exitBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorMixed));
+//                        headerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorMixed));
+
                         break;
                     case "Negative":
-                        parent.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNegative));
-                        footerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNegative));
-                        acceptBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNegative));
-                        exitBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNegative));
+                        view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNegative));
+//                        footerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNegative));
+//                        acceptBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNegative));
+//                        exitBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNegative));
+//                        headerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNegative));
+
                         break;
                     case "Sad":
-                        parent.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorSad));
-                        footerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorSad));
-                        acceptBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorSad));
-                        exitBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorSad));
+                        view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorSad));
+//                        footerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorSad));
+//                        acceptBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorSad));
+//                        exitBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorSad));
+//                        headerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorSad));
+
                         break;
                     case "Boring":
-                        parent.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorBoring));
-                        footerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorBoring));
-                        acceptBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorBoring));
-                        exitBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorBoring));
+                        view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorBoring));
+//                        footerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorBoring));
+//                        acceptBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorBoring));
+//                        exitBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorBoring));
+//                        headerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorBoring));
+
                         break;
                     default:
                         Log.d(TAG, "getView: Error couldn't find emotion name! E.G None");
                         break;
                 }
                 emotionToSave = emotions[position].getName();
+                tempView = view;
                 existingDay = GridAdapter.getDayFromFile(day, month, year);
-                if (existingDay.equals("")) {
-                    GridAdapter.writeDayInFile(day + "-" + month + "-" + year + "-" + emotions[position].getName());
-//                    onBackPressed();
-                } else  {
-                    GridAdapter.overWriteDayInFile(day + "-" + month + "-" + year + "-" + emotions[position].getName());
-                    Toast.makeText(getBaseContext(), "Emotion changed to: " + emotions[position].getName() ,Toast.LENGTH_SHORT).show();
-                }
             }
 
         });

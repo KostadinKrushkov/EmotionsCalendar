@@ -13,42 +13,68 @@
         <TextView
             android:id="@+id/chosenDay"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="30dp"
-            android:layout_marginTop="30dp"
-            android:text="Current day:" />
+            android:layout_height="35dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginEnd="30dp"
+            android:layout_toStartOf="@id/textAndTagEmotionActivity"
+            android:gravity="center"
+            android:textSize="30sp"
+            />
+
+        <TextView
+            android:id="@+id/chosenMonth"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_below="@id/chosenDay"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="30dp"
+            android:layout_toStartOf="@id/textAndTagEmotionActivity"
+            android:textSize="24sp"
+            android:gravity="center"
+             />
 
         <RelativeLayout
             android:id="@+id/textAndTagEmotionActivity"
             android:layout_width="230dp"
             android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
             android:layout_alignParentBottom="true"
-
             >
 
             <TextView
                 android:id="@+id/dailyEmotionText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:layout_marginLeft="60dp"
-                android:text="Daily emotion"
-                android:textSize="23dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:gravity="center"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginBottom="20dp"
+                android:textSize="26sp" />
 
+            <TextView
+                android:id="@+id/textViewValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="20dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:layout_marginBottom="0dp"
+                android:textSize="14sp"
                 />
 
         </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@android:color/darker_gray"
-            android:id="@+id/separatorDateEmotions"
-            android:layout_marginTop="99dp"
-            />
-
         <TextView
             android:id="@+id/instruction"
             android:layout_width="wrap_content"
@@ -95,10 +121,10 @@
         <ImageButton
             android:id="@+id/exitBtn"
             android:layout_width="50dp"
-            android:layout_height="60dp"
+            android:layout_height="70dp"
             android:layout_alignParentBottom="true"
             android:layout_marginEnd="15dp"
-            android:layout_marginBottom="15dp"
+            android:layout_marginBottom="5dp"
             android:layout_toStartOf="@+id/acceptBtn"
             android:src="@drawable/ic_exit_light"
             android:scaleType="fitXY"
@@ -108,11 +134,11 @@
         <ImageButton
             android:id="@+id/acceptBtn"
             android:layout_width="50dp"
-            android:layout_height="60dp"
+            android:layout_height="70dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             android:layout_marginEnd="15dp"
-            android:layout_marginBottom="15dp"
+            android:layout_marginBottom="5dp"
             android:src="@drawable/ic_tick_light"
             android:scaleType="fitXY"
             android:adjustViewBounds="true"

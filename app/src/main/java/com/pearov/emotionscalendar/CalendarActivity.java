@@ -42,6 +42,9 @@ public class CalendarActivity extends AppCompatActivity {
     private int todaysDay;
     private static Date todaysDate;
 
+    // Variable used to restrict onClickListener for gridView
+    private static int fromIndexGetDays;
+    private static int toIndexGetDays;
 
     private static final String TAG = "CalendarActivity";
     private GridAdapter adapter;
@@ -54,30 +57,62 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     private RelativeLayout relativeLayoutHeader;
+    private RelativeLayout relativeLayoutTotal;
     private TextView textViewYear;
     private TextView textViewMonth;
     private ImageButton homeBtn;
     private ImageButton statsBtn;
     private ImageButton extendSettingsBtn;
 
+    private TextView monTextView;
+    private TextView tueTextView;
+    private TextView wedTextView;
+    private TextView thuTextView;
+    private TextView friTextView;
+    private TextView satTextView;
+    private TextView sunTextView;
+
     //.setTextColor(context.getResources().getColor(R.color.colorWhite));
     private void fillBackGroundColours() {
         if (MainActivity.themeName.equals("Light")) {
             relativeLayoutHeader.setBackground(context.getDrawable(R.color.colorMainLight));
+            relativeLayoutTotal.setBackgroundColor(context.getResources().getColor(R.color.colorMainLight));
             homeBtn.setBackgroundColor(getResources().getColor(R.color.colorMainLight));
             statsBtn.setBackgroundColor(getResources().getColor(R.color.colorMainLight));
             extendSettingsBtn.setBackgroundColor(getResources().getColor(R.color.colorMainLight));
             extendSettingsBtn.setImageResource(R.drawable.ic_settings);
+
+            textViewYear.setTextColor(context.getResources().getColor(R.color.colorWhite));
+            textViewMonth.setTextColor(context.getResources().getColor(R.color.colorWhite));
+
+            monTextView.setTextColor(context.getResources().getColor(R.color.colorWhite));
+            tueTextView.setTextColor(context.getResources().getColor(R.color.colorWhite));
+            wedTextView.setTextColor(context.getResources().getColor(R.color.colorWhite));
+            thuTextView.setTextColor(context.getResources().getColor(R.color.colorWhite));
+            friTextView.setTextColor(context.getResources().getColor(R.color.colorWhite));
+            satTextView.setTextColor(context.getResources().getColor(R.color.colorWhite));
+            sunTextView.setTextColor(context.getResources().getColor(R.color.colorWhite));
         } else if (MainActivity.themeName.equals("Dark")) {
+            relativeLayoutHeader.setBackground(context.getDrawable(R.color.colorMainDark));
+            relativeLayoutTotal.setBackgroundColor(context.getResources().getColor(R.color.colorMainDark));
             relativeLayoutHeader.setBackground(context.getDrawable(R.color.colorMainDark));
             homeBtn.setBackgroundColor(getResources().getColor(R.color.colorMainDark));
             statsBtn.setBackgroundColor(getResources().getColor(R.color.colorMainDark));
             extendSettingsBtn.setBackgroundColor(getResources().getColor(R.color.colorMainDark));
             extendSettingsBtn.setImageResource(R.drawable.ic_settings_darks);
 
+            textViewYear.setTextColor(context.getResources().getColor(R.color.colorBlack));
+            textViewMonth.setTextColor(context.getResources().getColor(R.color.colorBlack));
+
+            monTextView.setTextColor(context.getResources().getColor(R.color.colorBlack));
+            tueTextView.setTextColor(context.getResources().getColor(R.color.colorBlack));
+            wedTextView.setTextColor(context.getResources().getColor(R.color.colorBlack));
+            thuTextView.setTextColor(context.getResources().getColor(R.color.colorBlack));
+            friTextView.setTextColor(context.getResources().getColor(R.color.colorBlack));
+            satTextView.setTextColor(context.getResources().getColor(R.color.colorBlack));
+            sunTextView.setTextColor(context.getResources().getColor(R.color.colorBlack));
         }
-        textViewYear.setTextColor(context.getResources().getColor(R.color.colorWhite));
-        textViewMonth.setTextColor(context.getResources().getColor(R.color.colorWhite));
+
 
     }
 
@@ -87,7 +122,8 @@ public class CalendarActivity extends AppCompatActivity {
         setContentView(R.layout.activity_calendar);
         context = getApplicationContext();
 
-        relativeLayoutHeader = (RelativeLayout) findViewById(R.id.calendarActivityLayout);
+        relativeLayoutHeader = (RelativeLayout)findViewById(R.id.headerLayout);
+        relativeLayoutTotal = (RelativeLayout) findViewById(R.id.calendarActivityLayout);
 
         Calendar calendar = Calendar.getInstance();
         String currentDate = calendar.getTime().toString();
@@ -99,23 +135,15 @@ public class CalendarActivity extends AppCompatActivity {
         todaysYear= currentYear;
         todaysDate = new Date(currentYear, getMonthNum(currentMonth)-1, Integer.parseInt(currentDayOfMonth));
 
-        // If this activity gets reloaded from EmotionDayActivity (after an emotion has been chosen it refreshes
-//        boolean choseEmotion = false;
-//        try {
-//            Intent myIntent = getIntent();
-//            currentYear = Integer.parseInt(myIntent.getStringExtra("year"));
-//            currentMonthNum = Integer.parseInt(myIntent.getStringExtra("month"));
-//            currentDayOfMonth = myIntent.getStringExtra("day");
-//            choseEmotion = true;
-//        } catch (Exception e) {
-//            Log.d(TAG, "onCreate: Error while coming back from choosing emotion");
-//            e.printStackTrace();
-//        }
-//
-//        if (choseEmotion) {
-//            finish();
-//            startActivity(getIntent());
-//        }
+        // Mon to Sun textViews
+        monTextView = (TextView) findViewById(R.id.textMonday);
+        tueTextView = (TextView) findViewById(R.id.textTuesday);
+        wedTextView = (TextView) findViewById(R.id.textWednesday);
+        thuTextView = (TextView) findViewById(R.id.textThursday);
+        friTextView = (TextView) findViewById(R.id.textFriday);
+        satTextView = (TextView) findViewById(R.id.textSaturday);
+        sunTextView = (TextView) findViewById(R.id.textSunday);
+
 
         // Also initializes the daysInNextMonth LastMonth and CurrentMonth lists
         currentMonthNum = getMonthNum(currentMonth);
@@ -149,13 +177,16 @@ public class CalendarActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-
-                //Toast.makeText(CalendarActivity.this, "Clicked: " + position, Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(CalendarActivity.this, EmotionDayActivity.class);
-                intent.putExtra("year", currentYear + "");
-                intent.putExtra("month", currentMonthNum + "");
-                intent.putExtra("day", daysToDisplay.get(position).toString().split("\\s+")[2] + "");
-                startActivity(intent);
+                if (position >= fromIndexGetDays && position < toIndexGetDays) {
+                    //Toast.makeText(CalendarActivity.this, "Clicked: " + position, Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(CalendarActivity.this, EmotionDayActivity.class);
+                    intent.putExtra("year", currentYear + "");
+                    intent.putExtra("month", currentMonthNum + "");
+                    intent.putExtra("day", daysToDisplay.get(position).toString().split("\\s+")[2] + "");
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(CalendarActivity.this, "Cannot edit other month while in current one.", Toast.LENGTH_LONG).show();
+                }
 
             }
         });
@@ -199,37 +230,9 @@ public class CalendarActivity extends AppCompatActivity {
         gridView.setOnTouchListener(new OnSwipeListener(this) {
 
             public void onSwipeTop() {
-                Toast.makeText(CalendarActivity.this, "top", Toast.LENGTH_SHORT).show();
-                currentMonthNum -= 1;
-                if (currentMonthNum == 0) {
-                    currentYear -= 1;
-                    currentMonthNum = 12;
-                }
+//                Toast.makeText(CalendarActivity.this, "top", Toast.LENGTH_SHORT).show();
+                gridViewSwipeUp(gridView);
 
-                currentMonth = getMonthName(currentMonthNum);
-                textViewYear.setText(currentYear + ",");
-                textViewMonth.setText(getFullMonthName(currentMonth));
-
-                daysToDisplay = getDaysToDisplay(currentMonthNum, currentYear);
-                adapter.setElements(daysToDisplay);
-                gridView.setAdapter(adapter);
-
-                if (currentMonthNum == todaysMonth && currentYear == todaysYear) {
-                    if (MainActivity.themeName.equals("Light")) {
-                        homeBtn.setImageResource(R.drawable.ic_home_light);
-                    } else if (MainActivity.themeName.equals("Dark")) {
-                        homeBtn.setImageResource(R.drawable.ic_home_dark);
-                    }
-                    homeBtn.setEnabled(false);
-                } else if (!homeBtn.isEnabled()) {
-                    if (MainActivity.themeName.equals("Light")) {
-                        homeBtn.setImageResource(R.drawable.ic_home_light_arrow);
-                    } else if (MainActivity.themeName.equals("Dark")) {
-                        homeBtn.setImageResource(R.drawable.ic_home_dark_arrow);
-                    }
-                    homeBtn.setEnabled(true);
-                }
-                adapter.notifyDataSetChanged();
             }
             public void onSwipeRight() {
 //                Toast.makeText(CalendarActivity.this, "right", Toast.LENGTH_SHORT).show();
@@ -238,40 +241,9 @@ public class CalendarActivity extends AppCompatActivity {
 //                Toast.makeText(CalendarActivity.this, "left", Toast.LENGTH_SHORT).show();
             }
             public void onSwipeBottom() {
-                Toast.makeText(CalendarActivity.this, "bottom", Toast.LENGTH_SHORT).show();
-                currentMonthNum += 1;
-                if (currentMonthNum == 13) {
-                    currentMonthNum = 1;
-                    currentYear += 1;
-                }
+//                Toast.makeText(CalendarActivity.this, "bottom", Toast.LENGTH_SHORT).show();
+                gridViewSwipeDown(gridView);
 
-                currentMonth = getMonthName(currentMonthNum);
-                textViewYear.setText(currentYear + ",");
-                textViewMonth.setText(getFullMonthName(currentMonth));
-                daysToDisplay = getDaysToDisplay(currentMonthNum, currentYear);
-                adapter.setElements(daysToDisplay);
-                gridView.setAdapter(adapter);
-
-                if (currentMonthNum == todaysMonth && currentYear == todaysYear) {
-                    if (MainActivity.themeName.equals("Light")) {
-                        homeBtn.setImageResource(R.drawable.ic_home_light);
-                    } else if (MainActivity.themeName.equals("Dark")) {
-                        homeBtn.setImageResource(R.drawable.ic_home_dark);
-                    }
-                    homeBtn.setEnabled(false);
-                } else if (!homeBtn.isEnabled()) {
-                    if (MainActivity.themeName.equals("Light")) {
-                        homeBtn.setImageResource(R.drawable.ic_home_light_arrow);
-                    } else if (MainActivity.themeName.equals("Dark")) {
-                        homeBtn.setImageResource(R.drawable.ic_home_dark_arrow);
-                    }
-                    homeBtn.setEnabled(true);
-                }
-
-                daysToDisplay = getDaysToDisplay(currentMonthNum, currentYear);
-                adapter.setElements(daysToDisplay);
-                gridView.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
             }
 
             public boolean onTouch(View v, MotionEvent event) {
@@ -313,10 +285,16 @@ public class CalendarActivity extends AppCompatActivity {
         return listDates;
     }
 
+
+
     // Gets days from the last monday of the last month to the first sunday of the next month
     private List<Date> getDaysToDisplay(int month, int year) {
 
-        daysInLastMonth = getDaysInMonth(month-1, year);
+        if (month == 1) {
+            daysInLastMonth = getDaysInMonth(month - 1, year-1);
+        } else {
+            daysInLastMonth = getDaysInMonth(month - 1, year);
+        }
         daysInCurrentMonth = getDaysInMonth(month, year);
         daysInNextMonth = getDaysInMonth(month+1, year);
         daysToDisplay = new ArrayList<Date>();
@@ -328,18 +306,21 @@ public class CalendarActivity extends AppCompatActivity {
             cal.setTime(daysInLastMonth.get(i));
 //            int tempDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
             int tempDayOfWeek = daysInLastMonth.get(i).getDay();
-
-            if (tempDayOfWeek == 2) { // Its monday
+            if (tempDayOfWeek == 1) { // Its monday
                 startingDayToDisplay = i;
                 break;
             }
         }
+
         if (startingDayToDisplay != -1) {
             for (int i = startingDayToDisplay; i < daysInLastMonth.size(); i++) {
                 daysToDisplay.add(daysInLastMonth.get(i));
             }
         } else
             Log.d(TAG, "getDaysToDisplay: Error could not find last monday of last month.");
+
+        fromIndexGetDays = daysToDisplay.size();
+        toIndexGetDays = fromIndexGetDays + daysInCurrentMonth.size();
 
         // Concatenate the last week of the previous month and the current month dates
         daysToDisplay = ListUtils.union(daysToDisplay, daysInCurrentMonth);
@@ -368,6 +349,76 @@ public class CalendarActivity extends AppCompatActivity {
 
         }
         return daysToDisplay;
+    }
+    // On gridView swipe up
+    private void gridViewSwipeUp(GridView gridView) {
+        currentMonthNum += 1;
+        if (currentMonthNum == 13) {
+            currentMonthNum = 1;
+            currentYear += 1;
+        }
+
+        currentMonth = getMonthName(currentMonthNum);
+        textViewYear.setText(currentYear + ",");
+        textViewMonth.setText(getFullMonthName(currentMonth));
+        daysToDisplay = getDaysToDisplay(currentMonthNum, currentYear);
+        adapter.setElements(daysToDisplay);
+        gridView.setAdapter(adapter);
+
+        if (currentMonthNum == todaysMonth && currentYear == todaysYear) {
+            if (MainActivity.themeName.equals("Light")) {
+                homeBtn.setImageResource(R.drawable.ic_home_light);
+            } else if (MainActivity.themeName.equals("Dark")) {
+                homeBtn.setImageResource(R.drawable.ic_home_dark);
+            }
+            homeBtn.setEnabled(false);
+        } else if (!homeBtn.isEnabled()) {
+            if (MainActivity.themeName.equals("Light")) {
+                homeBtn.setImageResource(R.drawable.ic_home_light_arrow);
+            } else if (MainActivity.themeName.equals("Dark")) {
+                homeBtn.setImageResource(R.drawable.ic_home_dark_arrow);
+            }
+            homeBtn.setEnabled(true);
+        }
+
+        daysToDisplay = getDaysToDisplay(currentMonthNum, currentYear);
+        adapter.setElements(daysToDisplay);
+        gridView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+    }
+
+    // On gridView swipe down
+    private void gridViewSwipeDown(GridView gridView) {
+        currentMonthNum -= 1;
+        if (currentMonthNum == 0) {
+            currentYear -= 1;
+            currentMonthNum = 12;
+        }
+
+        currentMonth = getMonthName(currentMonthNum);
+        textViewYear.setText(currentYear + ",");
+        textViewMonth.setText(getFullMonthName(currentMonth));
+
+        daysToDisplay = getDaysToDisplay(currentMonthNum, currentYear);
+        adapter.setElements(daysToDisplay);
+        gridView.setAdapter(adapter);
+
+        if (currentMonthNum == todaysMonth && currentYear == todaysYear) {
+            if (MainActivity.themeName.equals("Light")) {
+                homeBtn.setImageResource(R.drawable.ic_home_light);
+            } else if (MainActivity.themeName.equals("Dark")) {
+                homeBtn.setImageResource(R.drawable.ic_home_dark);
+            }
+            homeBtn.setEnabled(false);
+        } else if (!homeBtn.isEnabled()) {
+            if (MainActivity.themeName.equals("Light")) {
+                homeBtn.setImageResource(R.drawable.ic_home_light_arrow);
+            } else if (MainActivity.themeName.equals("Dark")) {
+                homeBtn.setImageResource(R.drawable.ic_home_dark_arrow);
+            }
+            homeBtn.setEnabled(true);
+        }
+        adapter.notifyDataSetChanged();
     }
 
     //Give the partial name of the month and get the full name
@@ -435,7 +486,7 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     //Give the number of the month and get the partial name of the month
-    private String getMonthName(int month) {
+    public static String getMonthName(int month) {
         switch (month) {
             case 1:
                 return "Jan";
@@ -468,5 +519,13 @@ public class CalendarActivity extends AppCompatActivity {
 
     public static Date getTodaysDate() {
         return todaysDate;
+    }
+
+    public static int getFromIndexGetDays() {
+        return fromIndexGetDays;
+    }
+
+    public static int getToIndexGetDays() {
+        return toIndexGetDays;
     }
 }

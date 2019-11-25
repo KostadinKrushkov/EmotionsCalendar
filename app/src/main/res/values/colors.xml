@@ -4,12 +4,13 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="colorWhite">#FFFFFF</color>
+    <color name="colorBlack">#000000</color>
 
     <color name="colorMainLight">#826091</color>
     <color name="colorDeadMainLight">#9E7AAD</color>
     <color name="colorLightBackground">#DBD7DD</color>
 
-    <color name="colorMainDark">#826091</color>
+    <color name="colorMainDark">#F2F3C0</color>
     <color name="colorDeadMainDark">#D7D592</color>
     <color name="colorDarkBackground">#616161</color>
 
