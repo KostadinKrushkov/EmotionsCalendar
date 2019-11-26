@@ -40,6 +40,10 @@ public class EmotionDayActivity extends AppCompatActivity {
     private String lastEmotionThatWasHighlighted = "-1";
     private View tempView;
 
+    // variables to come back to date once exit or tick clicked
+    private static int rememberDay;
+    private static int rememberMonth;
+    private static int rememberYear;
 
     // variable used to add emotion to date in the file
     private boolean flagChosenEmotion = false;
@@ -136,6 +140,13 @@ public class EmotionDayActivity extends AppCompatActivity {
         int month = Integer.parseInt(myIntent.getStringExtra("month"));
         int day = Integer.parseInt(myIntent.getStringExtra("day"));
 
+//        if (day > 0 && month > 0) {
+//            rememberYear = year;
+//            rememberMonth = month;
+//        }
+        CalendarActivity.cameBackFromYear = year;
+        CalendarActivity.cameBackFromMonth = month;
+
         //Gives them 0 if it < 10
         String fullDay = String.valueOf(day);
         if (fullDay.toCharArray().length == 1) {
@@ -188,65 +199,34 @@ public class EmotionDayActivity extends AppCompatActivity {
                         break;
                     case "Excited":
                         view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorExciting));
-//                        footerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorExciting));
-//                        acceptBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorExciting));
-//                        exitBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorExciting));
-//                        headerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorExciting));
+
                         break;
                     case "Happy":
                         view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorHappy));
-//                        footerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorHappy));
-//                        acceptBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorHappy));
-//                        exitBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorHappy));
-//                        headerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorHappy));
 
                         break;
                     case "Positive":
                         view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorPositive));
-//                        footerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorPositive));
-//                        acceptBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorPositive));
-//                        exitBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorPositive));
-//                        headerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorPositive));
 
                         break;
                     case "Average":
                         view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNeutral));
-//                        footerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNeutral));
-//                        acceptBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNeutral));
-//                        exitBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNeutral));
-//                        headerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNeutral));
 
                         break;
                     case "Mixed":
                         view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorMixed));
-//                        footerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorMixed));
-//                        acceptBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorMixed));
-//                        exitBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorMixed));
-//                        headerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorMixed));
 
                         break;
                     case "Negative":
                         view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNegative));
-//                        footerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNegative));
-//                        acceptBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNegative));
-//                        exitBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNegative));
-//                        headerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNegative));
 
                         break;
                     case "Sad":
                         view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorSad));
-//                        footerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorSad));
-//                        acceptBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorSad));
-//                        exitBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorSad));
-//                        headerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorSad));
 
                         break;
                     case "Boring":
                         view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorBoring));
-//                        footerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorBoring));
-//                        acceptBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorBoring));
-//                        exitBtn.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorBoring));
-//                        headerRelativeLayout.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorBoring));
 
                         break;
                     default:
@@ -259,6 +239,7 @@ public class EmotionDayActivity extends AppCompatActivity {
             }
 
         });
+
             exitBtn = (ImageButton) findViewById(R.id.exitBtn);
             exitBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -267,9 +248,6 @@ public class EmotionDayActivity extends AppCompatActivity {
                             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                             .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                    intent.putExtra("year", year + "");
-//                    intent.putExtra("month", month + "");
-//                    intent.putExtra("day", day + "");
                     startActivity(intent);
                     finish();
                 }
@@ -292,10 +270,18 @@ public class EmotionDayActivity extends AppCompatActivity {
                             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                             .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                    intent.putExtra("year", year + "");
-//                    intent.putExtra("month", month + "");
-//                    intent.putExtra("day", day + "");
-                    Toast.makeText(getBaseContext(), "Daily emotion: " + emotionToSave ,Toast.LENGTH_SHORT).show();
+                    if (emotionToSave != null) {
+                        Toast.makeText(getBaseContext(), "Daily emotion: " + emotionToSave, Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        String temp = GridAdapter.getDayFromFile(day, month, year);
+                        if (temp.toCharArray().length > 1)
+                            GridAdapter.overWriteDayInFile(day + "-" + month + "-" + year + "-" + "None");
+                        else
+                            GridAdapter.writeDayInFile(day + "-" + month + "-" + year + "-" + "None");
+
+                        Toast.makeText(getBaseContext(), "Emotion removed", Toast.LENGTH_SHORT).show();
+                    }
                     startActivity(intent);
                     finish();
                 }

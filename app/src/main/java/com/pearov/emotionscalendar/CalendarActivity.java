@@ -42,7 +42,10 @@ public class CalendarActivity extends AppCompatActivity {
     private int todaysDay;
     private static Date todaysDate;
 
-    // Variable used to restrict onClickListener for gridView
+    public static int cameBackFromMonth = 0;
+    public static int cameBackFromYear = 0;
+
+        // Variable used to restrict onClickListener for gridView
     private static int fromIndexGetDays;
     private static int toIndexGetDays;
 
@@ -121,7 +124,6 @@ public class CalendarActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
         context = getApplicationContext();
-
         relativeLayoutHeader = (RelativeLayout)findViewById(R.id.headerLayout);
         relativeLayoutTotal = (RelativeLayout) findViewById(R.id.calendarActivityLayout);
 
@@ -144,53 +146,7 @@ public class CalendarActivity extends AppCompatActivity {
         satTextView = (TextView) findViewById(R.id.textSaturday);
         sunTextView = (TextView) findViewById(R.id.textSunday);
 
-
-        // Also initializes the daysInNextMonth LastMonth and CurrentMonth lists
-        currentMonthNum = getMonthNum(currentMonth);
-        todaysMonth = currentMonthNum;
-        daysToDisplay = getDaysToDisplay(currentMonthNum, currentYear);
-        Log.d(TAG, "onCreate: Current date is: ".concat(currentDate));
-
-        textViewYear = findViewById(R.id.yearTextView);
-        textViewYear.setText(currentYear + ",");
-
-        String monthFullName = getFullMonthName(currentMonth);
-        textViewMonth = findViewById(R.id.monthName);
-//        textViewMonth.setSingleLine(false);
-//        textViewMonth.setText("" + currentYear);
-//        textViewMonth.append("\n");
-        textViewMonth.setText(monthFullName);
-        textViewMonth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(CalendarActivity.context, "Choose date", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(CalendarActivity.this, PopupChooseDateActivity.class));
-            }
-        });
-
-        GridView gridView = findViewById(R.id.calendarGridView);
-        adapter = new GridAdapter(daysToDisplay);
-        gridView.setAdapter(adapter);
-
-        // Moves to EmotionDayActivity after clicking some day and passes that info
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
-                if (position >= fromIndexGetDays && position < toIndexGetDays) {
-                    //Toast.makeText(CalendarActivity.this, "Clicked: " + position, Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(CalendarActivity.this, EmotionDayActivity.class);
-                    intent.putExtra("year", currentYear + "");
-                    intent.putExtra("month", currentMonthNum + "");
-                    intent.putExtra("day", daysToDisplay.get(position).toString().split("\\s+")[2] + "");
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(CalendarActivity.this, "Cannot edit other month while in current one.", Toast.LENGTH_LONG).show();
-                }
-
-            }
-        });
-
+        // Button to go to home month
         homeBtn = (ImageButton) findViewById(R.id.homeBtn);
         if (currentMonthNum == todaysMonth && currentYear == todaysYear) {
             if (MainActivity.themeName.equals("Light")) {
@@ -216,6 +172,7 @@ public class CalendarActivity extends AppCompatActivity {
             }
         });
 
+        // Button about statistics
         statsBtn = (ImageButton) findViewById(R.id.statisticsBtn);
         statsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -225,6 +182,85 @@ public class CalendarActivity extends AppCompatActivity {
 //                startActivity(getIntent());
             }
         });
+
+        // Also initializes the daysInNextMonth LastMonth and CurrentMonth lists
+        currentMonthNum = getMonthNum(currentMonth);
+        todaysMonth = currentMonthNum;
+        daysToDisplay = getDaysToDisplay(currentMonthNum, currentYear);
+        Log.d(TAG, "onCreate: Current date is: ".concat(currentDate));
+
+        textViewYear = findViewById(R.id.yearTextView);
+        textViewYear.setText(currentYear + ",");
+        textViewYear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(CalendarActivity.context, "Choose date", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(CalendarActivity.this, PopupChooseDateActivity.class));
+            }
+        });
+
+        String monthFullName = getFullMonthName(currentMonth);
+        textViewMonth = findViewById(R.id.monthName);
+//        textViewMonth.setSingleLine(false);
+//        textViewMonth.setText("" + currentYear);
+//        textViewMonth.append("\n");
+        textViewMonth.setText(monthFullName);
+        textViewMonth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(CalendarActivity.context, "Choose date", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(CalendarActivity.this, PopupChooseDateActivity.class));
+            }
+        });
+
+        if (cameBackFromMonth != 0 && cameBackFromYear != 0)  {
+            daysToDisplay = getDaysToDisplay(cameBackFromMonth, cameBackFromYear);
+
+            if (MainActivity.themeName.equals("Light")) {
+                homeBtn.setImageResource(R.drawable.ic_home_light_arrow);
+            } else if (MainActivity.themeName.equals("Dark")) {
+                homeBtn.setImageResource(R.drawable.ic_home_dark_arrow);
+            }
+            homeBtn.setEnabled(true);
+
+            textViewMonth.setText(getFullMonthName(getMonthName(cameBackFromMonth)));
+            textViewYear.setText(cameBackFromYear +",");
+
+            currentMonthNum = cameBackFromMonth;
+            currentYear = cameBackFromYear;
+            cameBackFromMonth = 0;
+            cameBackFromYear = 0;
+        }
+
+        GridView gridView = findViewById(R.id.calendarGridView);
+        adapter = new GridAdapter(daysToDisplay);
+        gridView.setAdapter(adapter);
+
+        // Moves to EmotionDayActivity after clicking some day and passes that info
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+                if (position >= fromIndexGetDays && position < toIndexGetDays) {
+                    //Toast.makeText(CalendarActivity.this, "Clicked: " + position, Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(CalendarActivity.this, EmotionDayActivity.class);
+                    intent.putExtra("year", currentYear + "");
+                    intent.putExtra("month", currentMonthNum + "");
+                    intent.putExtra("day", daysToDisplay.get(position).toString().split("\\s+")[2] + "");
+                    startActivity(intent);
+                } else {
+                    if (position > 20) {
+//                    Toast.makeText(CalendarActivity.this, "Cannot edit other month while in current one.", Toast.LENGTH_LONG).show();
+                        gridViewSwipeUp(gridView);
+                    } else if (position < 20) {
+                        gridViewSwipeDown(gridView);
+                    }
+                }
+
+            }
+        });
+
+
 
         // After swipe up or down changes info about buttons and gridview and notifies about the change
         gridView.setOnTouchListener(new OnSwipeListener(this) {
@@ -519,6 +555,11 @@ public class CalendarActivity extends AppCompatActivity {
 
     public static Date getTodaysDate() {
         return todaysDate;
+    }
+
+    public static String getTodaysDay() {
+        String [] params = getTodaysDate().toString().split("\\s+");
+        return params[2] + "-" + getMonthNum(params[1]) + "-" + String.valueOf(Integer.parseInt(params[5])-1900);
     }
 
     public static int getFromIndexGetDays() {

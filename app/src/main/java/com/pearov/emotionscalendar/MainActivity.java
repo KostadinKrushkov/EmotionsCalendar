@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     public static Context context;
     private static final String TAG = "MainActivity";
 
-    public static String themeName = "Light";
+    public static String themeName = "Dark";
     private static final String CALENDAR_FILE = "calendarOfEmotions.txt";
 
     @Override
@@ -30,14 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
         context = getApplicationContext();
         // Empty the file if we want to test.
-//        String filePath = MainActivity.context.getFilesDir().getPath().toString() + MainActivity.getCalendarFile();
-//        try {
-//            PrintWriter empty_writer = new PrintWriter(filePath);
-//            empty_writer.print("");
-//            empty_writer.close();
-//        } catch(Exception e) {
-//            e.printStackTrace();
-//        }
+//        clearFile();
 
         // Create emotion calendar text file
         createFile(getCalendarFile());
@@ -57,6 +50,21 @@ public class MainActivity extends AppCompatActivity {
 
     public static String getCalendarFile() {
         return CALENDAR_FILE;
+    }
+
+    public static String getFilePath() {
+        return context.getFilesDir().getPath() + getCalendarFile();
+    }
+
+    private void clearFile() {
+        String filePath = getFilePath();
+        try {
+            PrintWriter empty_writer = new PrintWriter(filePath);
+            empty_writer.print("");
+            empty_writer.close();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void createFile(String name) {

@@ -1,8 +1,12 @@
 package com.pearov.emotionscalendar;
 
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RectShape;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Gravity;
@@ -36,6 +40,7 @@ public final class GridAdapter extends BaseAdapter {
     List<Date> elems;
     int countElems;
     private static final String TAG = "GridAdapter";
+    public static ArrayList<String> daysThatHaveBeenSaved = new ArrayList<>();
 
     public GridAdapter(final List<Date> elems) {
         this.elems = elems;
@@ -98,49 +103,56 @@ public final class GridAdapter extends BaseAdapter {
 
 
         String emotionalDay = getDayFromFile(currentDay, currentMonthNum, currentYear);
-        if (!emotionalDay.equals("")) {
-            if (emotionalDay.endsWith("None")) {
-                if (MainActivity.themeName.equals("Light")) {
-                    view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorLightBackground));
-                } else if (MainActivity.themeName.equals("Dark")) {
-                    view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorDarkBackground));
+        String[] properties  = emotionalDay.split("-");
+        if (properties.length == 4) {
+            String emotion = emotionalDay.split("-")[3];
+
+                if (emotionalDay.endsWith("None")) {
+                    if (MainActivity.themeName.equals("Light")) {
+                        view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorLightBackground));
+                    } else if (MainActivity.themeName.equals("Dark")) {
+                        view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorDarkBackground));
+                    }
+                } else {
+//                String emotion = emotionalDay.split("-")[3];
+                    overWriteDayInFile(currentDay + "-" + currentMonthNum + "-" + currentYear + "-" + emotion);
+                    switch (emotion) {
+                        case "Excited":
+                            view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorExciting));
+                            break;
+                        case "Happy":
+                            view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorHappy));
+                            break;
+                        case "Positive":
+                            view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorPositive));
+                            break;
+                        case "Average":
+                            view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNeutral));
+                            break;
+                        case "Mixed":
+                            view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorMixed));
+                            break;
+                        case "Negative":
+                            view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNegative));
+                            break;
+                        case "Sad":
+                            view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorSad));
+                            break;
+                        case "Boring":
+                            view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorBoring));
+                            break;
+                        default:
+                            Log.d(TAG, "getView: Error couldn't find emotion name!");
+                            break;
+                    }
                 }
-            } else {
-                String emotion = emotionalDay.split("-")[3];
-                overWriteDayInFile(currentDay + "-" + currentMonthNum + "-" + currentYear + "-" + emotion);
-                switch (emotion)
-                {
-                    case "Excited":
-                        view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorExciting));
-                        break;
-                    case "Happy":
-                        view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorHappy));
-                        break;
-                    case "Positive":
-                        view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorPositive));
-                        break;
-                    case "Average":
-                        view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNeutral));
-                        break;
-                    case "Mixed":
-                        view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorMixed));
-                        break;
-                    case "Negative":
-                        view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNegative));
-                        break;
-                    case "Sad":
-                        view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorSad));
-                        break;
-                    case "Boring":
-                        view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorBoring));
-                        break;
-                    default:
-                        Log.d(TAG, "getView: Error couldn't find emotion name!");
-                        break;
-                }
-            }
         } else {
-            writeDayInFile(currentDay + "-" + currentMonthNum + "-" + currentYear + "-" + "None");
+            if (MainActivity.themeName.equals("Light")) {
+                view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorLightBackground));
+            } else if (MainActivity.themeName.equals("Dark")) {
+                view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorDarkBackground));
+            }
+//            writeDayInFile(currentDay + "-" + currentMonthNum + "-" + currentYear + "-" + "None");
         }
 
 
@@ -183,8 +195,11 @@ public final class GridAdapter extends BaseAdapter {
 //            But this is used for border
 
 //            view.setBackgroundColor(CalendarActivity.context.getResources().getColor(R.color.colorPositive));
-            view.setBackgroundResource(R.drawable.current_day_border);
+//            view.setBackgroundResource(R.drawable.current_day_border);
 //            view.setBackgroundResource(Integer.parseInt((getThumb(0, 0).toString())));
+
+
+            setDrawable(view);
 
         }
 
@@ -230,51 +245,123 @@ public final class GridAdapter extends BaseAdapter {
         return returnEmotinalDay;
     }
 
-    Drawable getThumb(int width, int height){
-        GradientDrawable thumb= new GradientDrawable(
-                GradientDrawable.Orientation.TOP_BOTTOM,
-                new int[] {Color.parseColor("#FFFFFF"),
-                        Color.parseColor("#FFFFFF")});
-        thumb.setShape(GradientDrawable.RECTANGLE);
-        thumb.setColor(CalendarActivity.context.getResources().getColor(R.color.colorPositive));
-        thumb.setStroke(2,Color.parseColor("#000000"));
-        thumb.setBounds(100, 100, 100, 100);
+    // Sets border on current day, and also saves it in the file.
+    void setDrawable (View view){
+        String params[] = CalendarActivity.getTodaysDay().split("-");
 
-        return thumb;
+        int day = Integer.parseInt(params[0]);
+        int month = Integer.parseInt(params[1]);
+        int year = Integer.parseInt(params[2]);
+        String properties[] = getDayFromFile(day, month, year).split("-");
+        String emotionForToday = "";
+        if (properties.length == 4) {
+            emotionForToday = properties[3];
+        } else {
+            emotionForToday = "None";
+            writeDayInFile(day + "-" + month + "-" + year + "-" + emotionForToday);
+        }
+
+        GradientDrawable drawable = new GradientDrawable();
+        if (MainActivity.themeName.equals("Light")) {
+            setDrawableColor(drawable, emotionForToday);
+            drawable.setStroke(6, CalendarActivity.context.getResources().getColor(R.color.colorMainLight));
+        } else if (MainActivity.themeName.equals("Dark")) {
+            drawable.setStroke(6, CalendarActivity.context.getResources().getColor(R.color.colorMainDark));
+            setDrawableColor(drawable, emotionForToday);
+        }
+        view.setBackground(drawable);
     }
 
-    public static ArrayList<String> getDaysInMonthFromFile(int month, int year) {
-        ArrayList<String> returnDaysInMonth = new ArrayList<String>();
-        try {
-            Reader reader = new FileReader(MainActivity.getCalendarFile());
-            try {
-                BufferedReader input = new BufferedReader(reader);
-                String line = input.readLine();
-                while (line != null) {
-                    String params[] = line.split("-");
-                    for (int i = 0; i < params.length-1; i++) {
-                        if(Integer.parseInt(params[i]) == month && Integer.parseInt(params[i+1]) == year) {
-                            returnDaysInMonth.add(line);
-                        }
-                    }
+    void setDrawableColor (GradientDrawable d, String emotion) {
+        switch (emotion) {
+            case "None":
+                if (MainActivity.themeName.equals("Light")) {
+                    d.setColor(CalendarActivity.context.getResources().getColorStateList(R.color.colorLightBackground));
+                } else if (MainActivity.themeName.equals("Dark")) {
+                    d.setColor(CalendarActivity.context.getResources().getColorStateList(R.color.colorDarkBackground));
                 }
+                break;
+            case "Excited":
+                d.setColor(CalendarActivity.context.getResources().getColorStateList(R.color.colorExciting));
+                break;
+            case "Happy":
+                d.setColor(CalendarActivity.context.getResources().getColorStateList(R.color.colorHappy));
+                break;
+            case "Positive":
+                d.setColor(CalendarActivity.context.getResources().getColorStateList(R.color.colorPositive));
+                break;
+            case "Average":
+                d.setColor(CalendarActivity.context.getResources().getColorStateList(R.color.colorNeutral));
+                break;
+            case "Mixed":
+                d.setColor(CalendarActivity.context.getResources().getColorStateList(R.color.colorMixed));
+                break;
+            case "Negative":
+                d.setColor(CalendarActivity.context.getResources().getColorStateList(R.color.colorNegative));
+                break;
+            case "Sad":
+                d.setColor(CalendarActivity.context.getResources().getColorStateList(R.color.colorSad));
+                break;
+            default:
+                break;
 
-            } catch (Exception e) {
-                Log.d(TAG, "getDaysInMonthFromFile: BufferedReader Error: From month " + month + " and year " + year);
+        }
+    }
+
+    // Enter a day month year and emotion and the list is going to be change if that value exists (*** MUST CALL saveDaysDynamically AFTERWARDS)
+
+    public static void changeDayDynamically(int day, int month, int year, String emotion) {
+        String someDay = day + "-" + month + "-" + year;
+        for (int i = 0; i < daysThatHaveBeenSaved.size(); i++) {
+            if (daysThatHaveBeenSaved.get(i).startsWith(someDay)) {
+                daysThatHaveBeenSaved.set(i, someDay + "-" + emotion);
             }
-            reader.close();
-        } catch (FileNotFoundException e) {
-            Log.d(TAG, "getDaysInMonthFromFile: From month " + month + " and year " + year);
-            e.printStackTrace();
+        }
+    }
+
+    public static void saveDaysDynamically() {
+        try {
+            // All contents are inside the list so we empty the file and fill the file with the new info
+            String filePath = MainActivity.context.getFilesDir().getPath() + MainActivity.getCalendarFile();
+            PrintWriter empty_writer = new PrintWriter(filePath);
+            empty_writer.print("");
+            empty_writer.close();
+
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filePath,true));
+
+            for (String str: daysThatHaveBeenSaved) {
+                writer.append(str.concat("\n"));
+                writer.flush();
+            }
+            writer.close();
         } catch (IOException e) {
-            Log.d(TAG, "getDaysInMonthFromFile: IOException on closeing reader");
+            Log.d(TAG, "saveDaysDynamically: IOException");
+            e.printStackTrace();
+        } catch (Exception e) {
+            Log.d(TAG, "saveDaysDynamically: Exception");
             e.printStackTrace();
         }
-        if (returnDaysInMonth.size() > 2) {
-            return returnDaysInMonth;
-        } else {
-            Log.d(TAG, "getDaysInMonthFromFile: Error could not find any days with these given month and year");
-            return returnDaysInMonth;
+    }
+
+    public static void loadDaysDynamically() {
+        daysThatHaveBeenSaved.clear();
+        try {
+            String filePath = MainActivity.context.getFilesDir().getPath() + MainActivity.getCalendarFile();
+            BufferedWriter writer = null;
+            BufferedReader reader = new BufferedReader(new FileReader(filePath));
+
+            String line = reader.readLine();
+            while (line != null) {
+                daysThatHaveBeenSaved.add(line);
+                line = reader.readLine();
+            }
+            reader.close();
+        } catch (IOException e) {
+            Log.d(TAG, "writeDayInFile: Error IOException!");
+            e.printStackTrace();
+        } catch (Exception e) {
+            Log.d(TAG, "overWriteDayInFile: Error while overwriting");
+            e.printStackTrace();
         }
     }
 
