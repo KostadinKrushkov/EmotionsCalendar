@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     public static Context context;
     private static final String TAG = "MainActivity";
 
-    public static String themeName = "Dark";
+    public static String themeName = "Light";
     private static final String CALENDAR_FILE = "calendarOfEmotions.txt";
 
     @Override

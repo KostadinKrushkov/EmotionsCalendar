@@ -34,9 +34,9 @@ public class CalendarActivity extends AppCompatActivity {
     public static Context context;
     private int currentChosenPosition = 0;
 
-    private int currentYear;
+    private static int currentYear;
     private String currentMonth;
-    private int currentMonthNum;
+    private static int currentMonthNum;
     private int todaysYear;
     private int todaysMonth;
     private int todaysDay;
@@ -568,5 +568,13 @@ public class CalendarActivity extends AppCompatActivity {
 
     public static int getToIndexGetDays() {
         return toIndexGetDays;
+    }
+
+    public static int getCurrentYear() {
+        return currentYear;
+    }
+
+    public static int getCurrentMonthNum() {
+        return currentMonthNum;
     }
 }
