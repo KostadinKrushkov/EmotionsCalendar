@@ -4,9 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ActivityExtendedSettings">
+    tools:context=".ActivityExtendedSettings"
+    >
 
     <TextView
+        android:fontFamily="@font/ukij_qolyazma"
         android:id="@+id/testTextView"
         android:layout_width="match_parent"
         android:layout_height="100dp"
@@ -15,6 +17,7 @@
         android:textSize="18sp" />
 
     <Button
+        android:fontFamily="@font/ukij_qolyazma"
         android:id="@+id/goBackBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

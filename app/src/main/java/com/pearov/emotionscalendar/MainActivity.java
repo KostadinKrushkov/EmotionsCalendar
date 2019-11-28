@@ -38,14 +38,14 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, CalendarActivity.class);
         startActivity(intent);
 
-        Button goToCalendarButton = findViewById(R.id.goToCalendarBtn);
-        goToCalendarButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), CalendarActivity.class);
-                startActivity(intent);
-            }
-        });
+//        Button goToCalendarButton = findViewById(R.id.goToCalendarBtn);
+//        goToCalendarButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(v.getContext(), CalendarActivity.class);
+//                startActivity(intent);
+//            }
+//        });
     }
 
     public static String getCalendarFile() {

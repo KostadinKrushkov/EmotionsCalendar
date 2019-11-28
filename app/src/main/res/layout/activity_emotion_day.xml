@@ -3,7 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".EmotionDayActivity">
+    tools:context=".EmotionDayActivity"
+    android:fontFamily="@font/ukij_qolyazma"
+    >
 
     <RelativeLayout
         android:id="@+id/headerEmotionDayActivity"
@@ -11,6 +13,7 @@
         android:layout_height="100dp">
 
         <TextView
+            android:fontFamily="@font/ukij_qolyazma"
             android:id="@+id/chosenDay"
             android:layout_width="wrap_content"
             android:layout_height="35dp"
@@ -24,6 +27,7 @@
             />
 
         <TextView
+            android:fontFamily="@font/ukij_qolyazma"
             android:id="@+id/chosenMonth"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
@@ -35,7 +39,7 @@
             android:layout_toStartOf="@id/textAndTagEmotionActivity"
             android:textSize="24sp"
             android:gravity="center"
-             />
+            />
 
         <RelativeLayout
             android:id="@+id/textAndTagEmotionActivity"
@@ -47,6 +51,7 @@
             >
 
             <TextView
+                android:fontFamily="@font/ukij_qolyazma"
                 android:id="@+id/dailyEmotionText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -62,6 +67,7 @@
                 android:textSize="26sp" />
 
             <TextView
+                android:fontFamily="@font/ukij_qolyazma"
                 android:id="@+id/textViewValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -76,6 +82,7 @@
 
         </RelativeLayout>
         <TextView
+            android:fontFamily="@font/ukij_qolyazma"
             android:id="@+id/instruction"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -129,7 +136,7 @@
             android:src="@drawable/ic_exit_light"
             android:scaleType="fitXY"
             android:adjustViewBounds="true"
-        />
+            />
 
         <ImageButton
             android:id="@+id/acceptBtn"

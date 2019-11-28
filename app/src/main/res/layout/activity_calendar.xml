@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fontFamily="@font/ukij_qolyazma"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -45,6 +46,7 @@
             android:src="@drawable/ic_statistics" />
 
         <TextView
+            android:fontFamily="@font/ukij_qolyazma"
             android:id="@+id/yearTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -52,22 +54,23 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_gravity="center"
-            android:layout_marginStart="122dp"
+            android:layout_marginStart="115dp"
             android:layout_marginTop="10dp"
-            android:layout_marginEnd="122dp"
+            android:layout_marginEnd="115dp"
             android:textAlignment="center"
             android:textSize="30sp" />
 
         <TextView
+            android:fontFamily="@font/ukij_qolyazma"
             android:id="@+id/monthName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/yearTextView"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginStart="122dp"
+            android:layout_marginStart="115dp"
             android:layout_marginTop="5dp"
-            android:layout_marginEnd="122dp"
+            android:layout_marginEnd="115dp"
             android:singleLine="false"
             android:textAlignment="center"
             android:textSize="24sp"
@@ -94,6 +97,7 @@
             android:src="@drawable/ic_settings" />
 
         <TextView
+            android:fontFamily="@font/ukij_qolyazma"
             android:id="@+id/textMonday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -105,6 +109,7 @@
             android:textColor="@color/colorWhite" />
 
         <TextView
+            android:fontFamily="@font/ukij_qolyazma"
             android:id="@+id/textTuesday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -116,6 +121,7 @@
             android:textColor="@color/colorWhite" />
 
         <TextView
+            android:fontFamily="@font/ukij_qolyazma"
             android:id="@+id/textWednesday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -127,6 +133,7 @@
             android:textColor="@color/colorWhite" />
 
         <TextView
+            android:fontFamily="@font/ukij_qolyazma"
             android:id="@+id/textThursday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -138,6 +145,7 @@
             android:textColor="@color/colorWhite" />
 
         <TextView
+            android:fontFamily="@font/ukij_qolyazma"
             android:id="@+id/textFriday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -149,6 +157,7 @@
             android:textColor="@color/colorWhite" />
 
         <TextView
+            android:fontFamily="@font/ukij_qolyazma"
             android:id="@+id/textSaturday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -160,6 +169,7 @@
             android:textColor="@color/colorWhite" />
 
         <TextView
+            android:fontFamily="@font/ukij_qolyazma"
             android:id="@+id/textSunday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -188,6 +198,7 @@
         >
 
         <GridView
+            android:fontFamily="@font/ukij_qolyazma"
             android:id="@+id/calendarGridView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -196,7 +207,4 @@
         </GridView>
 
     </RelativeLayout>
-
-
-
 </RelativeLayout>

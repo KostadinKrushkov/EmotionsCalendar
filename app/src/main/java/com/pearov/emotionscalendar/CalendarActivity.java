@@ -458,7 +458,7 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     //Give the partial name of the month and get the full name
-    private String getFullMonthName(String month) {
+    public static String getFullMonthName(String month) {
         switch (month) {
             case "Jan":
                 return "January";
