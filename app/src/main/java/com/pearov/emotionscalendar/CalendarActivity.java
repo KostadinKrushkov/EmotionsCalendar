@@ -135,6 +135,8 @@ public class CalendarActivity extends AppCompatActivity {
         todaysDay = Integer.parseInt(currentDayOfMonth);
         currentYear = Integer.parseInt(params[5]);
         todaysYear= currentYear;
+        currentMonthNum = getMonthNum(currentMonth);
+        todaysMonth = currentMonthNum;
         todaysDate = new Date(currentYear, getMonthNum(currentMonth)-1, Integer.parseInt(currentDayOfMonth));
 
         // Mon to Sun textViews
@@ -148,21 +150,7 @@ public class CalendarActivity extends AppCompatActivity {
 
         // Button to go to home month
         homeBtn = (ImageButton) findViewById(R.id.homeBtn);
-        if (currentMonthNum == todaysMonth && currentYear == todaysYear) {
-            if (MainActivity.themeName.equals("Light")) {
-                homeBtn.setImageResource(R.drawable.ic_home_light);
-            } else if (MainActivity.themeName.equals("Dark")) {
-                homeBtn.setImageResource(R.drawable.ic_home_dark);
-            }
-            homeBtn.setEnabled(false);
-        } else if (!homeBtn.isEnabled()) {
-            if (MainActivity.themeName.equals("Light")) {
-                homeBtn.setImageResource(R.drawable.ic_home_light_arrow);
-            } else if (MainActivity.themeName.equals("Dark")) {
-                homeBtn.setImageResource(R.drawable.ic_home_dark_arrow);
-            }
-            homeBtn.setEnabled(true);
-        }
+        setHomeButtonIsEffective();
         homeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -184,8 +172,6 @@ public class CalendarActivity extends AppCompatActivity {
         });
 
         // Also initializes the daysInNextMonth LastMonth and CurrentMonth lists
-        currentMonthNum = getMonthNum(currentMonth);
-        todaysMonth = currentMonthNum;
         daysToDisplay = getDaysToDisplay(currentMonthNum, currentYear);
         Log.d(TAG, "onCreate: Current date is: ".concat(currentDate));
 
@@ -216,18 +202,14 @@ public class CalendarActivity extends AppCompatActivity {
         if (cameBackFromMonth != 0 && cameBackFromYear != 0)  {
             daysToDisplay = getDaysToDisplay(cameBackFromMonth, cameBackFromYear);
 
-            if (MainActivity.themeName.equals("Light")) {
-                homeBtn.setImageResource(R.drawable.ic_home_light_arrow);
-            } else if (MainActivity.themeName.equals("Dark")) {
-                homeBtn.setImageResource(R.drawable.ic_home_dark_arrow);
-            }
-            homeBtn.setEnabled(true);
-
             textViewMonth.setText(getFullMonthName(getMonthName(cameBackFromMonth)));
             textViewYear.setText(cameBackFromYear +",");
 
+            // Changing the parameters from what month and year i came back from I reavaluate should we enable home button
             currentMonthNum = cameBackFromMonth;
             currentYear = cameBackFromYear;
+            setHomeButtonIsEffective();
+
             cameBackFromMonth = 0;
             cameBackFromYear = 0;
         }
@@ -401,21 +383,7 @@ public class CalendarActivity extends AppCompatActivity {
         adapter.setElements(daysToDisplay);
         gridView.setAdapter(adapter);
 
-        if (currentMonthNum == todaysMonth && currentYear == todaysYear) {
-            if (MainActivity.themeName.equals("Light")) {
-                homeBtn.setImageResource(R.drawable.ic_home_light);
-            } else if (MainActivity.themeName.equals("Dark")) {
-                homeBtn.setImageResource(R.drawable.ic_home_dark);
-            }
-            homeBtn.setEnabled(false);
-        } else if (!homeBtn.isEnabled()) {
-            if (MainActivity.themeName.equals("Light")) {
-                homeBtn.setImageResource(R.drawable.ic_home_light_arrow);
-            } else if (MainActivity.themeName.equals("Dark")) {
-                homeBtn.setImageResource(R.drawable.ic_home_dark_arrow);
-            }
-            homeBtn.setEnabled(true);
-        }
+        setHomeButtonIsEffective();
 
         daysToDisplay = getDaysToDisplay(currentMonthNum, currentYear);
         adapter.setElements(daysToDisplay);
@@ -439,6 +407,11 @@ public class CalendarActivity extends AppCompatActivity {
         adapter.setElements(daysToDisplay);
         gridView.setAdapter(adapter);
 
+        setHomeButtonIsEffective();
+        adapter.notifyDataSetChanged();
+    }
+
+    private void setHomeButtonIsEffective() {
         if (currentMonthNum == todaysMonth && currentYear == todaysYear) {
             if (MainActivity.themeName.equals("Light")) {
                 homeBtn.setImageResource(R.drawable.ic_home_light);
@@ -454,7 +427,6 @@ public class CalendarActivity extends AppCompatActivity {
             }
             homeBtn.setEnabled(true);
         }
-        adapter.notifyDataSetChanged();
     }
 
     //Give the partial name of the month and get the full name

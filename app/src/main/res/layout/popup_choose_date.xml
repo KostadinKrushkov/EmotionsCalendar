@@ -1,45 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/popupChooseDateRelativeLayout"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    >
-
+    android:layout_width="match_parent" android:layout_height="match_parent">
 
     <TextView
+        android:fontFamily="@font/ukij_qolyazma"
         android:id="@+id/showPopupTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="284dp"
-        android:text="TextView"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        android:gravity="center_horizontal"
+        android:layout_marginBottom="90dp"
+        android:lines="1"
         android:textSize="20sp" />
 
     <NumberPicker
+        android:fontFamily="@font/ukij_qolyazma"
         android:id="@+id/numberPickerMonth"
-        android:layout_width="80dp"
+        android:layout_width="110dp"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="74dp"
-        android:layout_marginTop="150dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="0dp"
         android:layout_marginEnd="30dp"
-        android:layout_marginBottom="350dp"
-        android:theme="@style/NumberPickerThemeLight" />
+        android:layout_marginBottom="150dp"
+        android:theme="@style/NumberPickerThemeDark" />
 
     <NumberPicker
+        android:fontFamily="@font/ukij_qolyazma"
         android:id="@+id/numberPickerYear"
-        android:layout_width="80dp"
+        android:layout_width="110dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginTop="150dp"
-        android:layout_marginEnd="63dp"
-        android:layout_marginBottom="350dp"
-        android:theme="@style/NumberPickerThemeLight" />
+        android:layout_marginEnd="40dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="150dp"
+        android:theme="@style/NumberPickerThemeDark"
+        />
 
+    <ImageButton
+        android:id="@+id/chooseDateBtn"
+        android:layout_width="50dp"
+        android:layout_height="70dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="5dp"
+        android:src="@drawable/ic_tick_light"
+        android:scaleType="fitXY"
+        android:adjustViewBounds="true"
+        />
 
 </RelativeLayout>

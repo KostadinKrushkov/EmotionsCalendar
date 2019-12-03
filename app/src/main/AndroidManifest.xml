@@ -20,7 +20,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".PopupChooseDateActivity"
-            android:theme="@style/AppTheme.PopupTheme"
+            android:theme="@style/Theme.AppCompat.Dialog.Alert"
+
             ></activity>
     </application>
 
