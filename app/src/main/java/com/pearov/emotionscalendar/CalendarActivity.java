@@ -165,9 +165,7 @@ public class CalendarActivity extends AppCompatActivity {
         statsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                daysToDisplay = getDaysToDisplay(currentMonthNum, currentYear);
-//                finish();
-//                startActivity(getIntent());
+                startActivity(new Intent(CalendarActivity.this, StatisticsActivity.class));
             }
         });
 

@@ -9,7 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".EmotionDayActivity"/>
+        <activity
+            android:name=".StatisticsActivity"
+            android:label="@string/title_activity_statistics"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".EmotionDayActivity" />
         <activity android:name=".CalendarActivity" />
         <activity android:name=".ActivityExtendedSettings" />
         <activity android:name=".MainActivity">
@@ -19,10 +23,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PopupChooseDateActivity"
-            android:theme="@style/Theme.AppCompat.Dialog.Alert"
-
-            ></activity>
+        <activity
+            android:name=".PopupChooseDateActivity"
+            android:theme="@style/Theme.AppCompat.Dialog.Alert" />
     </application>
 
 </manifest>

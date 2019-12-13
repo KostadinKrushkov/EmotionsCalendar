@@ -54,9 +54,9 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_gravity="center"
-            android:layout_marginStart="115dp"
+            android:layout_marginStart="140dp"
             android:layout_marginTop="10dp"
-            android:layout_marginEnd="115dp"
+            android:layout_marginEnd="140dp"
             android:textAlignment="center"
             android:textSize="30sp" />
 

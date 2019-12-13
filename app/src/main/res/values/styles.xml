@@ -8,12 +8,13 @@
         <item name="colorAccent">@color/colorAccent</item>
 
     </style>
-    <style name="AppTheme.PopupTheme" >
+
+    <style name="AppTheme.PopupTheme">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowCloseOnTouchOutside">true</item>
     </style>
 
-    <style name="NumberPickerThemeLight" parent="Theme.AppCompat.Light" >
+    <style name="NumberPickerThemeLight" parent="Theme.AppCompat.Light">
         <item name="colorAccent">@android:color/white</item>
         <item name="colorControlNormal">@android:color/transparent</item>
         <item name="android:textColorPrimary">@android:color/white</item>
@@ -21,11 +22,20 @@
         <item name="android:textSize">16sp</item>
     </style>
 
-    <style name="NumberPickerThemeDark" parent="Theme.AppCompat.Light" >
+    <style name="NumberPickerThemeDark" parent="Theme.AppCompat.Light">
         <item name="colorAccent">@android:color/black</item>
         <item name="colorControlNormal">@android:color/transparent</item>
         <item name="android:textColorPrimary">@android:color/black</item>
         <item name="android:background">@color/colorDeadMainDark</item>
         <item name="android:textSize">16sp</item>
     </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

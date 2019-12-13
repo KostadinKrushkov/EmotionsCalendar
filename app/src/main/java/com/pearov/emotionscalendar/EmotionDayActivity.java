@@ -62,13 +62,13 @@ public class EmotionDayActivity extends AppCompatActivity {
 
     private static void createEmotions() {
         Emotion none = new Emotion(0, "None", 1);
-        Emotion excited = new Emotion(0, "Excited", 2);
-        Emotion happy = new Emotion(0, "Happy", 2);
-        Emotion positive = new Emotion(0, "Positive", 1.5);
-        Emotion average = new Emotion(0, "Average", 1);
-        Emotion mixed = new Emotion(0, "Mixed", 1);
-        Emotion negative = new Emotion(0, "Negative", 0.5);
-        Emotion sad = new Emotion(0, "Sad", 0);
+        Emotion excited = new Emotion(1, "Excited", 2);
+        Emotion happy = new Emotion(2, "Happy", 2);
+        Emotion positive = new Emotion(3, "Positive", 1.5);
+        Emotion average = new Emotion(4, "Average", 1);
+        Emotion mixed = new Emotion(5, "Mixed", 1);
+        Emotion negative = new Emotion(6, "Negative", 0.5);
+        Emotion sad = new Emotion(7, "Sad", 0);
 
         Emotion[] emots = {none, excited, happy, positive, average, mixed, negative, sad};
         emotions = emots;
