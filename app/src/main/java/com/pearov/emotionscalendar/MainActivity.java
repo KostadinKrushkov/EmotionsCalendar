@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,9 +19,11 @@ public class MainActivity extends AppCompatActivity {
 
 
     public static Context context;
+    public static Screen screen;
     private static final String TAG = "MainActivity";
 
-    public static String themeName = "Light";
+
+    public static String themeName = "Dark";
     private static final String CALENDAR_FILE = "calendarOfEmotions.txt";
 
     @Override
@@ -34,6 +37,11 @@ public class MainActivity extends AppCompatActivity {
 
         // Create emotion calendar text file
         createFile(getCalendarFile());
+
+        screen = new Screen(this); // Setting Screen
+        float screenWidth = screen.getWidth();
+        float screenHeight = screen.getHeight();
+//        Toast.makeText(this, "Width: " + screenWidth + " /Height: " + screenHeight, Toast.LENGTH_SHORT).show();
 
         Intent intent = new Intent(this, CalendarActivity.class);
         startActivity(intent);
