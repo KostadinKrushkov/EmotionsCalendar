@@ -62,11 +62,11 @@ public class StatisticsAdapter extends BaseAdapter {
         TextView weekOverallInfo = convertView.findViewById(R.id.weekOverallInfo);
 
         // Testing relative layout with multiple elements
-        View bars[] = new View[numOfElements];
-        for (int i = 0; i < testGetCountWeek().length; i++) {
-            bars[i] = new View(StatisticsActivity.context);
-            // Add each next element with some margin
-        }
+//        View bars[] = new View[numOfElements];
+//        for (int i = 0; i < testGetCountWeek().length; i++) {
+//            bars[i] = new View(StatisticsActivity.context);
+//            // Add each next element with some margin
+//        }
 
         //
         return convertView;

@@ -5,7 +5,7 @@ public class Emotion {
     int id;
     String name;
     double value;
-    String colorCode;
+//    String colorCode;
 
     public Emotion(int id, String name, double value) {
         this.id = id;

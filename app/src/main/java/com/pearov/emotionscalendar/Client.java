@@ -23,4 +23,13 @@ public class Client {
     public String getCountry() {
         return country;
     }
+
+    @Override
+    public String toString() {
+        return "Client{" +
+                "username='" + username + '\'' +
+                ", joinedOnDate='" + joinedOnDate + '\'' +
+                ", country='" + country + '\'' +
+                '}';
+    }
 }

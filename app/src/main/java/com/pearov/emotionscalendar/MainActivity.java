@@ -12,7 +12,9 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -43,6 +45,9 @@ public class MainActivity extends AppCompatActivity {
         float screenHeight = screen.getHeight();
 //        Toast.makeText(this, "Width: " + screenWidth + " /Height: " + screenHeight, Toast.LENGTH_SHORT).show();
 
+
+        createAndFillDatabase();
+
         Intent intent = new Intent(this, CalendarActivity.class);
         startActivity(intent);
 
@@ -54,6 +59,74 @@ public class MainActivity extends AppCompatActivity {
 //                startActivity(intent);
 //            }
 //        });
+    }
+
+    private void createAndFillDatabase() {
+
+        // Testing database implementation
+        DatabaseHelper db = new DatabaseHelper(context);
+        db.dropDatabase(); // delete line when finished implementing all database calls
+        db.addClient(new Client("Malazzar", "03-01-2020", "Bulgaria"));
+        db.addClient(new Client("Preslava981", "02-01-2020", "Bulgaria"));
+
+        // Testing clients.
+        List<Client> clientList = db.getAllClients();
+        String temp = "";
+        for (Client c : clientList)
+            temp += c.toString();
+
+        Log.d(TAG, "Client list: " + temp);
+        Log.d(TAG, "Client: " + db.getClientById(1).toString());
+
+        // Testing emotions
+        db.addEmotion(new Emotion(0, "None", 1));
+        db.addEmotion(new Emotion(1, "Excited", 2));
+        db.addEmotion(new Emotion(2, "Happy", 2));
+        db.addEmotion(new Emotion(3, "Positive", 1.5));
+        db.addEmotion(new Emotion(4, "Average", 1));
+        db.addEmotion(new Emotion(5, "Mixed", 1));
+        db.addEmotion(new Emotion(6, "Negative", 0.5));
+        db.addEmotion(new Emotion(7, "Sad", 0));
+
+        List<Emotion> emotionList = db.getAllEmotions();
+        String allEmotions = "";
+        for (Emotion emotion: emotionList)
+            allEmotions += emotion.toString() + "\n";
+        Log.d(TAG, "createAndFillDatabase: " + allEmotions);
+        Log.d(TAG, "createAndFillDatabase: " + db.getEmotionById(5));
+
+        // Testing notes
+        db.addNote(new Note(0, "Birthday party", "Omg Bianca you have no idea what an amazing experince it was..."));
+        db.addNote(new Note(1, "Pity party", "Omg Bianca you have no idea how sad I am, I am like hella depressed"));
+
+        List<Note> noteList = db.getAllNotes();
+        String allNotes = "";
+        for (Note note: noteList)
+            allNotes += note.toString() + "\n";
+
+        Log.d(TAG, "createAndFillDatabase: " + allNotes);
+        Log.d(TAG, "createAndFillDatabase: " + db.getNoteById(1));
+
+        // Testing dates
+        List<Integer> calendarNotesList = new ArrayList<Integer>();
+        calendarNotesList.add(1);
+        if (db.addCalendarDate(new CalendarDate(4, 1, 2020, "Saturday", 1, 0)))
+            System.out.println("Yey");
+        else
+            System.out.println("Ney");
+        db.addCalendarDateWithNote(new CalendarDate(5, 1, 2020, "Sunday", 1, 7, calendarNotesList));
+        db.addCalendarDate(new CalendarDate(6, 1, 2020, "Monday", 2, 7));
+        db.addCalendarDate(new CalendarDate(7, 1, 2021, "Thursday", 2, 7));
+
+        CalendarDate date = db.getCalendarDateByDate(4, 1, 2020);
+        CalendarDate date2 = db.getCalendarDateByDate(5, 1, 2020);
+        List<CalendarDate> dateList = db.getCalendarDatesByMonthAndYear(1,2020);
+        List<CalendarDate> dateList2 = db.getCalendarDatesByYear(2020);
+
+        List<CalendarDate> allDates = db.getAllCalendarDates();
+
+        Log.d(TAG, "createAndFillDatabase: " + date.getDateJson());
+        Log.d(TAG, "createAndFillDatabase: " + dateList.toString());
     }
 
     public static String getCalendarFile() {
