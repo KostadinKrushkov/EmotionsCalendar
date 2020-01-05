@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     public static Context context;
     public static Screen screen;
     private static final String TAG = "MainActivity";
+    private static final String googleUsername = "Malazzar";
 
 
     public static String themeName = "Dark";
@@ -61,12 +62,16 @@ public class MainActivity extends AppCompatActivity {
 //        });
     }
 
+    public static String getGoogleUsername() {
+        return googleUsername;
+    }
+
     private void createAndFillDatabase() {
 
         // Testing database implementation
         DatabaseHelper db = new DatabaseHelper(context);
         db.dropDatabase(); // delete line when finished implementing all database calls
-        db.addClient(new Client("Malazzar", "03-01-2020", "Bulgaria"));
+        db.addClient(new Client(googleUsername, "03-01-2020", "Bulgaria"));
         db.addClient(new Client("Preslava981", "02-01-2020", "Bulgaria"));
 
         // Testing clients.
@@ -118,12 +123,25 @@ public class MainActivity extends AppCompatActivity {
         db.addCalendarDate(new CalendarDate(6, 1, 2020, "Monday", 2, 7));
         db.addCalendarDate(new CalendarDate(7, 1, 2021, "Thursday", 2, 7));
 
+        CalendarDate test1 = db.getCalendarDateByDate(6, 1, 2020);
+        db.deleteCalendarDate(6, 1, 2020);
+
+        List<ClientDate> clientDateList = db.getClient_DateByClientId(db.getClientIdByUsername(googleUsername));
+        //Testing ClientDate
+
+        List<ClientDate> client_dateList1 = db.getClient_DateByClientId(1);
+        List<ClientDate> client_dateList2 = db.getClient_DatesByDateId(2);
+        // End testing ClientDate
+
         CalendarDate date = db.getCalendarDateByDate(4, 1, 2020);
         CalendarDate date2 = db.getCalendarDateByDate(5, 1, 2020);
         List<CalendarDate> dateList = db.getCalendarDatesByMonthAndYear(1,2020);
         List<CalendarDate> dateList2 = db.getCalendarDatesByYear(2020);
-
+        List<CalendarDate> dateList3 = db.getCalendarDatesByWeekAndYear(1,2020);
         List<CalendarDate> allDates = db.getAllCalendarDates();
+
+        List<CalendarDate> dateListForWeekday = db.getAllDaysForWeekday("Monday");
+        List<CalendarDate> dateListForWeekdayForYear = db.getAllDaysForWeekdayforYear("Sunday", 2020);
 
         Log.d(TAG, "createAndFillDatabase: " + date.getDateJson());
         Log.d(TAG, "createAndFillDatabase: " + dateList.toString());
