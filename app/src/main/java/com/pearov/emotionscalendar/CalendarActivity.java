@@ -27,10 +27,10 @@ import java.util.List;
 
 public class CalendarActivity extends AppCompatActivity {
 
-    private List<Date> daysInCurrentMonth;
-    private List<Date> daysInLastMonth;
-    private List<Date> daysInNextMonth;
-    private List<Date> daysToDisplay;
+    private List<CalendarDate> daysInCurrentMonth;
+    private List<CalendarDate> daysInLastMonth;
+    private List<CalendarDate> daysInNextMonth;
+    private List<CalendarDate> daysToDisplay;
     public static Context context;
     private int currentChosenPosition = 0;
 
@@ -282,29 +282,31 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     // Get the days in a given and month and year
-    private ArrayList<Date> getDaysInMonth(int month, int year) {
+    private ArrayList<CalendarDate> getDaysInMonth(int month, int year) {
         if (month > 12) {
             month -= 12;
         } else if (month <= 0) {
             month += 12;
         }
 
-        ArrayList<Date> listDates = new ArrayList<Date>();
+        ArrayList<CalendarDate> listDates = new ArrayList<CalendarDate>();
 
         // Get number of days in particular month
         YearMonth yearMonthObject = YearMonth.of(year, month);
 
         // FIX THIS PART
         for (int i = 1; i <= yearMonthObject.lengthOfMonth(); i++) {
-            listDates.add(new Date(year-1900, month-1, i)); // Date object's month start at 0
-        }
+//            listDates.add(new Date(year-1900, month-1, i)); // Date object's month start at 0
+            listDates.add(new CalendarDate(i, month-1, year-1900, "", 1, 1)); // Date object's month start at 0
+
+            }
         return listDates;
     }
 
 
 
     // Gets days from the last monday of the last month to the first sunday of the next month
-    private List<Date> getDaysToDisplay(int month, int year) {
+    private List<CalendarDate> getDaysToDisplay(int month, int year) {
 
         if (month == 1) {
             daysInLastMonth = getDaysInMonth(month - 1, year-1);
@@ -313,14 +315,14 @@ public class CalendarActivity extends AppCompatActivity {
         }
         daysInCurrentMonth = getDaysInMonth(month, year);
         daysInNextMonth = getDaysInMonth(month+1, year);
-        daysToDisplay = new ArrayList<Date>();
+        daysToDisplay = new ArrayList<CalendarDate>();
 
         Calendar cal = Calendar.getInstance();
         int startingDayToDisplay = -1;
 
         for(int i = daysInLastMonth.size()-1; i > 0; i--) {
-            cal.setTime(daysInLastMonth.get(i));
-//            int tempDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+            CalendarDate tempDate = daysInLastMonth.get(i);
+            cal.setTime(new Date(tempDate.getYear(), tempDate.getMonth(), tempDate.getDay()));
             int tempDayOfWeek = daysInLastMonth.get(i).getDay();
             if (tempDayOfWeek == 1) { // Its monday
                 startingDayToDisplay = i;
@@ -345,7 +347,8 @@ public class CalendarActivity extends AppCompatActivity {
         int countSundays = 0;
 
         for(int i = 0; i < daysInNextMonth.size(); i++) {
-            cal.setTime(daysInNextMonth.get(i));
+            CalendarDate tempDate = daysInLastMonth.get(i);
+            cal.setTime(new Date(tempDate.getYear(), tempDate.getMonth(), tempDate.getDay()));
 //            int tempDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
             int tempDayOfWeek = daysInNextMonth.get(i).getDay();
 

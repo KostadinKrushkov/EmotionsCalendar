@@ -122,7 +122,8 @@ public class MainActivity extends AppCompatActivity {
         db.addCalendarDateWithNote(new CalendarDate(5, 1, 2020, "Sunday", 1, 7, calendarNotesList));
         db.addCalendarDate(new CalendarDate(6, 1, 2020, "Monday", 2, 7));
         db.addCalendarDate(new CalendarDate(7, 1, 2021, "Thursday", 2, 7));
-
+        db.updateCalendarDate(new CalendarDate(5, 1, 2020, "Sunday", 1, 7, calendarNotesList),
+                new CalendarDate(15, 12, 1512, "Sunday", 50, 7, calendarNotesList));
         CalendarDate test1 = db.getCalendarDateByDate(6, 1, 2020);
         db.deleteCalendarDate(6, 1, 2020);
 

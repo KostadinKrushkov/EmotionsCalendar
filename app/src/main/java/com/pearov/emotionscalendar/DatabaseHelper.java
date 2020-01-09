@@ -280,7 +280,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor != null)
             cursor.moveToFirst();
 
-        Note note= new Note(Integer.parseInt(cursor.getString(0)),cursor.getString(1), cursor.getString(2));
+        Note note = null;
+        try {
+            note = new Note(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2));
+        } catch (Exception e) {
+            return null;
+        }
 
         return note;
     }
@@ -435,6 +440,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.close();
             return true;
         }
+    }
+
+    public boolean updateCalendarDate(CalendarDate oldDate, CalendarDate newDate) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(TABLE_CALENDARDATE_DAY, newDate.getDay());
+        values.put(TABLE_CALENDARDATE_MONTH, newDate.getMonth());
+        values.put(TABLE_CALENDARDATE_YEAR, newDate.getYear());
+        values.put(TABLE_CALENDARDATE_EMOTIONID, newDate.getEmotionId());
+        values.put(TABLE_CALENDARDATE_WEEKOFYEAR, newDate.getWeekOfYear());
+        values.put(TABLE_CALENDARDATE_DAYOFWEEK, newDate.getDayOfWeek());
+
+        String noteIds = newDate.getNoteIdListString();
+        values.put(TABLE_CALENDARDATE_NOTEID, noteIds);
+
+
+        int res = db.update(TABLE_CALENDARDATE, values,TABLE_CALENDARDATE_DAY + " = ? AND "
+                + TABLE_CALENDARDATE_MONTH + " = ? AND "
+                + TABLE_CALENDARDATE_YEAR + " = ? ",
+                new String[]{String.valueOf(oldDate.getDay()),
+                        String.valueOf(oldDate.getMonth()),
+                        String.valueOf(oldDate.getYear())
+        });
+        if (res == -1) {
+            return false;
+        }
+        return true;
     }
 
     public boolean deleteCalendarDate(int day, int month, int year) {

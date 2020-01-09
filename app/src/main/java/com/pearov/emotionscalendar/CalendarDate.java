@@ -2,6 +2,7 @@ package com.pearov.emotionscalendar;
 
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CalendarDate {
@@ -21,6 +22,8 @@ public class CalendarDate {
         this.dayOfWeek = dayOfWeek;
         this.weekOfYear = weekOfYear;
         this.emotionId = emotionId;
+        this.noteIdList = new ArrayList<Integer>();
+
     }
 
     public CalendarDate( int day, int month, int year, String dayOfWeek, int weekOfYear, int emotionId, List<Integer> noteIdList) {
@@ -83,6 +86,14 @@ public class CalendarDate {
 
     public List<Integer> getNoteIdList() {
         return noteIdList;
+    }
+
+    public String getNoteIdListString() {
+        String notes = "";
+        for (int temp: getNoteIdList()) {
+            notes += temp + " ";
+        }
+        return notes;
     }
 
     public void setNoteIdList(List<Integer> noteIdList) {

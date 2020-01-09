@@ -37,19 +37,23 @@ import java.util.List;
 public final class GridAdapter extends BaseAdapter {
 
     private final int ROW_ITEMS = 7;
-    List<Date> elems;
+    List<CalendarDate> elems;
     int countElems;
     private static final String TAG = "GridAdapter";
     public static ArrayList<String> daysThatHaveBeenSaved = new ArrayList<>();
+    private DatabaseHelper database = null;
 
-    public GridAdapter(final List<Date> elems) {
+
+    public GridAdapter(final List<CalendarDate> elems) {
         this.elems = elems;
         this.countElems = elems.size();
+        this.database = new DatabaseHelper(CalendarActivity.context);
     }
 
-    public void setElements(List<Date> elems) {
+    public void setElements(List<CalendarDate> elems) {
         this.elems = elems;
         this.countElems = elems.size();
+
     }
 
     @Override
@@ -72,20 +76,24 @@ public final class GridAdapter extends BaseAdapter {
 
         View view = convertView;
 
-        String params[] = elems.get(position).toString().split("\\s+");
-        String currentMonth = params[1];
-        int currentMonthNum = CalendarActivity.getMonthNum(currentMonth);
-        int currentDay = Integer.parseInt(params[2]);
-        int currentYear = Integer.parseInt(params[5]);
+//        String params[] = elems.get(position).toString().split("\\s+");
+//        String currentMonth = params[1];
+//        int currentMonthNum = CalendarActivity.getMonthNum(currentMonth);
+//        int currentDay = Integer.parseInt(params[2]);
+//        int currentYear = Integer.parseInt(params[5]);
+
+        CalendarDate date = elems.get(position);
+        int currentDay = date.getDay();
+        String currentMonth = CalendarActivity.getMonthName(date.getMonth());
+        int currentMonthNum = date.getMonth();
+        int currentYear = date.getYear();
 
         if (view == null) {
             view = LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
         }
         view.setLayoutParams(new GridView.LayoutParams(GridView.AUTO_FIT, 216)); // h: height of box
 
-//        TextView textViewCell = (TextView) view.findViewById(android.R.id.text1);
         TextView text = (TextView) view.findViewById(android.R.id.text1);
-//        text.setTextColor(EmotionDayActivity.context.getResources().getColor(R.color.colorPositive));
         text.setTextSize(10);
 
 
@@ -101,20 +109,16 @@ public final class GridAdapter extends BaseAdapter {
         text.setGravity(Gravity.FILL_HORIZONTAL);
         text.setPadding(40, 20, 0, 0);
 
+        String emotion = database.getEmotionById(date.getEmotionId()).getName();
 
-        String emotionalDay = getDayFromFile(currentDay, currentMonthNum, currentYear);
-        String[] properties  = emotionalDay.split("-");
-        if (properties.length == 4) {
-            String emotion = emotionalDay.split("-")[3];
 
-                if (emotionalDay.endsWith("None")) {
+                if (emotion.equals("None")) {
                     if (MainActivity.themeName.equals("Light")) {
                         view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorLightBackground));
                     } else if (MainActivity.themeName.equals("Dark")) {
                         view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorDarkBackground));
                     }
                 } else {
-//                String emotion = emotionalDay.split("-")[3];
                     overWriteDayInFile(currentDay + "-" + currentMonthNum + "-" + currentYear + "-" + emotion);
                     switch (emotion) {
                         case "Excited":
@@ -146,25 +150,18 @@ public final class GridAdapter extends BaseAdapter {
                             break;
                     }
                 }
-        } else {
-            if (MainActivity.themeName.equals("Light")) {
-                view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorLightBackground));
-            } else if (MainActivity.themeName.equals("Dark")) {
-                view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorDarkBackground));
-            }
-//            writeDayInFile(currentDay + "-" + currentMonthNum + "-" + currentYear + "-" + "None");
-        }
-
-
-//        if (MainActivity.themeName.equals("Light")) {
-//            view.setTextColor(EmotionDayActivity.context.getResources().getColor(R.color.colorHappy));
-//        } else if (MainActivity.themeName.equals("Dark")) {
-//            text.setTextColor(EmotionDayActivity.context.getResources().getColor(R.color.colorPositive));
+//        } else {
+//            if (MainActivity.themeName.equals("Light")) {
+//                view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorLightBackground));
+//            } else if (MainActivity.themeName.equals("Dark")) {
+//                view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorDarkBackground));
+//            }
+////            writeDayInFile(currentDay + "-" + currentMonthNum + "-" + currentYear + "-" + "None");
 //        }
 
 
         if (position < 21) {
-            if (Integer.parseInt(elems.get(position).toString().split(" ")[2]) > 20) {
+            if (elems.get(position).getDay() > 20) {
                 if (MainActivity.themeName.equals("Light")) {
                     view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorDeadMainLight));
                 } else if (MainActivity.themeName.equals("Dark")) {
@@ -173,7 +170,7 @@ public final class GridAdapter extends BaseAdapter {
             }
         }
         else{
-            if (Integer.parseInt(elems.get(position).toString().split(" ")[2]) < 15) {
+            if (elems.get(position).getDay() < 15) {
                 if (MainActivity.themeName.equals("Light")) {
                     view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorDeadMainLight));
                 } else if (MainActivity.themeName.equals("Dark")) {
@@ -181,8 +178,8 @@ public final class GridAdapter extends BaseAdapter {
                 }        }
         }
 
-        if (Integer.parseInt(elems.get(position).toString().split(" ")[2]) == Integer.parseInt(CalendarActivity.getTodaysDate().toString().split(" ")[2])
-                && elems.get(position).toString().split(" ")[1].equals(CalendarActivity.getTodaysDate().toString().split(" ")[1])) {
+        if (elems.get(position).getDay() == Integer.parseInt(CalendarActivity.getTodaysDate().toString().split(" ")[2])
+                && elems.get(position).getMonth() == Integer.parseInt((CalendarActivity.getTodaysDate().toString().split(" ")[1]))) {
 //            These are used to set the color of the block and the text in the block to contrast
 //            view.setBackgroundColor(Color.parseColor("#1C1C1C"));
 //            text.setTextColor(Color.parseColor("#FFFFFF"));
@@ -205,8 +202,7 @@ public final class GridAdapter extends BaseAdapter {
 
 //        text.setBackgroundColor(backGroundUnavailable);
 
-        String tempDay = elems.get(position).toString();
-        int day = Integer.parseInt(tempDay.split("\\s+")[2]);
+        int day = elems.get(position).getDay();
         text.setText(String.valueOf(day));
 
         return view;
@@ -253,12 +249,13 @@ public final class GridAdapter extends BaseAdapter {
         int month = Integer.parseInt(params[1]);
         int year = Integer.parseInt(params[2]);
         String properties[] = getDayFromFile(day, month, year).split("-");
+        CalendarDate date = database.getCalendarDateByDate(day, month, year);
         String emotionForToday = "";
-        if (properties.length == 4) {
-            emotionForToday = properties[3];
-        } else {
+        if (date == null)
             emotionForToday = "None";
-            writeDayInFile(day + "-" + month + "-" + year + "-" + emotionForToday);
+        else {
+            Emotion emotion = database.getEmotionById(date.getEmotionId());
+            emotionForToday = emotion.getName();
         }
 
         GradientDrawable drawable = new GradientDrawable();
