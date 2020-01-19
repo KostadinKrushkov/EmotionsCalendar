@@ -35,7 +35,7 @@ public class EmotionAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return EmotionDayActivity.getEmotions().length;
+        return EmotionDayActivity.getEmotions().size();
     }
 
     @Override

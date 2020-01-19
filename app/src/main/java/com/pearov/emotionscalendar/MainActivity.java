@@ -47,7 +47,11 @@ public class MainActivity extends AppCompatActivity {
 //        Toast.makeText(this, "Width: " + screenWidth + " /Height: " + screenHeight, Toast.LENGTH_SHORT).show();
 
 
-        createAndFillDatabase();
+//        Used for full testing
+//        createAndFillDatabase();
+
+//        Used for base database
+        createBaseDatabase();
 
         Intent intent = new Intent(this, CalendarActivity.class);
         startActivity(intent);
@@ -66,11 +70,37 @@ public class MainActivity extends AppCompatActivity {
         return googleUsername;
     }
 
+    private void createBaseDatabase() {
+        DatabaseHelper db = new DatabaseHelper(context);
+        String params[] = CalendarActivity.getCurrentDayFull().split(" ");
+        int day = Integer.parseInt(params[2]);
+        int month = CalendarActivity.getMonthNum(params[1]);
+        int year = Integer.parseInt(params[5]);
+
+        db.addClient(new Client(googleUsername, day + "-" + month + "-" + year, "Bulgaria"));
+
+        db.addEmotion(new Emotion(0, "None", 1));
+        db.addEmotion(new Emotion(1, "Excited", 2));
+        db.addEmotion(new Emotion(2, "Happy", 2));
+        db.addEmotion(new Emotion(3, "Positive", 1.5));
+        db.addEmotion(new Emotion(4, "Average", 1));
+        db.addEmotion(new Emotion(5, "Mixed", 1));
+        db.addEmotion(new Emotion(6, "Negative", 0.5));
+        db.addEmotion(new Emotion(7, "Sad", 0));
+
+    }
+
+    private void dropDatabase() {
+        DatabaseHelper db = new DatabaseHelper(context);
+        db.dropDatabase();
+    }
+
     private void createAndFillDatabase() {
 
         // Testing database implementation
         DatabaseHelper db = new DatabaseHelper(context);
-        db.dropDatabase(); // delete line when finished implementing all database calls
+//        Uncomment this if we need to test the database again.
+//        db.dropDatabase(); // delete line when finished implementing all database calls
         db.addClient(new Client(googleUsername, "03-01-2020", "Bulgaria"));
         db.addClient(new Client("Preslava981", "02-01-2020", "Bulgaria"));
 
@@ -123,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
         db.addCalendarDate(new CalendarDate(6, 1, 2020, "Monday", 2, 7));
         db.addCalendarDate(new CalendarDate(7, 1, 2021, "Thursday", 2, 7));
         db.updateCalendarDate(new CalendarDate(5, 1, 2020, "Sunday", 1, 7, calendarNotesList),
-                new CalendarDate(15, 12, 1512, "Sunday", 50, 7, calendarNotesList));
+                new CalendarDate(3, 12, 2019, "Tuesday", 48, 7, calendarNotesList));
         CalendarDate test1 = db.getCalendarDateByDate(6, 1, 2020);
         db.deleteCalendarDate(6, 1, 2020);
 
@@ -146,6 +176,19 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d(TAG, "createAndFillDatabase: " + date.getDateJson());
         Log.d(TAG, "createAndFillDatabase: " + dateList.toString());
+
+        ArrayList<Note> testNotes = (ArrayList) db.getAllNotes();
+        db.updateNote(noteList.get(0), new Note(1, "Yes please", "No thank you"));
+        testNotes = (ArrayList) db.getAllNotes();
+        db.deleteNoteById(1);
+        testNotes = (ArrayList) db.getAllNotes();
+
+        ArrayList<Emotion> testEmotions = (ArrayList) db.getAllEmotions();
+//        db.updateEmotion(emotionList.get(0), new Emotion(1, "Testing", 10.0));  // its working
+        testEmotions = (ArrayList) db.getAllEmotions();
+        db.deleteEmotionById(1);
+        testEmotions = (ArrayList) db.getAllEmotions();
+
     }
 
     public static String getCalendarFile() {

@@ -17,8 +17,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.*;
 import org.apache.commons.collections4.ListUtils;
 
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -33,6 +37,8 @@ public class CalendarActivity extends AppCompatActivity {
     private List<CalendarDate> daysToDisplay;
     public static Context context;
     private int currentChosenPosition = 0;
+    private DatabaseHelper db;
+
 
     private static int currentYear;
     private String currentMonth;
@@ -56,7 +62,7 @@ public class CalendarActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed () {
-
+        // Stub
     }
 
     private RelativeLayout relativeLayoutHeader;
@@ -124,12 +130,12 @@ public class CalendarActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
         context = getApplicationContext();
+        db = new DatabaseHelper(context);
         relativeLayoutHeader = (RelativeLayout)findViewById(R.id.headerLayout);
         relativeLayoutTotal = (RelativeLayout) findViewById(R.id.calendarActivityLayout);
 
-        Calendar calendar = Calendar.getInstance();
-        String currentDate = calendar.getTime().toString();
-        String params[] = currentDate.split(" " );
+        String currentDate = getCurrentDayFull();
+        String params[] = currentDate.split(" ");
         currentMonth = params[1];
         String currentDayOfMonth = params[2];
         todaysDay = Integer.parseInt(currentDayOfMonth);
@@ -185,9 +191,6 @@ public class CalendarActivity extends AppCompatActivity {
 
         String monthFullName = getFullMonthName(currentMonth);
         textViewMonth = findViewById(R.id.monthName);
-//        textViewMonth.setSingleLine(false);
-//        textViewMonth.setText("" + currentYear);
-//        textViewMonth.append("\n");
         textViewMonth.setText(monthFullName);
         textViewMonth.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -226,7 +229,7 @@ public class CalendarActivity extends AppCompatActivity {
                     Intent intent = new Intent(CalendarActivity.this, EmotionDayActivity.class);
                     intent.putExtra("year", currentYear + "");
                     intent.putExtra("month", currentMonthNum + "");
-                    intent.putExtra("day", daysToDisplay.get(position).toString().split("\\s+")[2] + "");
+                    intent.putExtra("day", daysToDisplay.get(position).getDay() + "");
                     startActivity(intent);
                 } else {
                     if (position > 20) {
@@ -290,20 +293,100 @@ public class CalendarActivity extends AppCompatActivity {
         }
 
         ArrayList<CalendarDate> listDates = new ArrayList<CalendarDate>();
-
-        // Get number of days in particular month
         YearMonth yearMonthObject = YearMonth.of(year, month);
 
-        // FIX THIS PART
+        // Get number of days in particular month
         for (int i = 1; i <= yearMonthObject.lengthOfMonth(); i++) {
-//            listDates.add(new Date(year-1900, month-1, i)); // Date object's month start at 0
-            listDates.add(new CalendarDate(i, month-1, year-1900, "", 1, 1)); // Date object's month start at 0
-
+            listDates.add(new CalendarDate(i, month, year, "Default", 0, 0)); // Date object's month start at 0
             }
+
+        // Get db saved days and fill the rest of the days
+        ArrayList<CalendarDate> savedDates = (ArrayList) db.getCalendarDatesByMonthAndYear(month, year);
+        for (int i = 0; i < listDates.size(); i++) {
+            for (int j = 0; j < savedDates.size(); j++) {
+                if (savedDates.get(j).getDay() == listDates.get(i).getDay()) {
+                    listDates.set(i, savedDates.get(j));
+                }
+            }
+            if (listDates.get(i).getDayOfWeek().equals("Default"))
+                listDates.set(i, fillDate(listDates.get(i)));
+        }
+
         return listDates;
     }
 
+    public static CalendarDate fillDate(CalendarDate date) {
 
+        // Fill the date's weekday name and week num
+        Date tempDate = new Date(date.getYear()-1900, date.getMonth()-1, date.getDay()); // the Date class is obsolete but I can still use it fixing the date format
+        Calendar c = Calendar.getInstance();
+        c.setTime(tempDate);
+        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+
+        String nameOfWeekDay = getNameOfWeekDay(dayOfWeek);
+
+        int weekNumber = getNumberOfWeek(date.getDay(), date.getMonth(), date.getYear());
+
+        date.setWeekOfYear(weekNumber);
+        date.setDayOfWeek(nameOfWeekDay);
+
+        return date;
+    }
+
+    public static int getNumberOfWeek(int day, int month, int year) {
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar calendar = Calendar.getInstance();
+        try {
+            calendar.setTime(sdf.parse(year + "-" + month + "-" + day));
+        } catch (ParseException e){
+            Log.d(TAG, "getNumberOfWeek: Parse Exception while trying to parse date:"
+                    + year + "-" + month + "-" + day);
+            e.getStackTrace();
+        }
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // or any other date format
+//        cal.setTime(sdf.parse(dateTextField.getText()));
+
+        return calendar.get(Calendar.WEEK_OF_YEAR);
+    }
+
+    public static String getNameOfWeekDay(int numOfWeekday) {
+
+        String nameOfWeekDay = "";
+        switch (numOfWeekday) {
+
+            case 1:
+                nameOfWeekDay = "Sunday";
+                break;
+            case 2:
+                nameOfWeekDay = "Monday";
+                break;
+            case 3:
+                nameOfWeekDay = "Tuesday";
+                break;
+            case 4:
+                nameOfWeekDay = "Wednesday";
+                break;
+            case 5:
+                nameOfWeekDay = "Thursday";
+                break;
+            case 6:
+                nameOfWeekDay = "Friday";
+                break;
+            case 7:
+                nameOfWeekDay = "Saturday";
+                break;
+            default:
+                break;
+        }
+
+        return nameOfWeekDay;
+    }
+
+    public static String getCurrentDayFull() { // Get full current day
+        Calendar calendar = Calendar.getInstance();
+        return calendar.getTime().toString();
+    }
 
     // Gets days from the last monday of the last month to the first sunday of the next month
     private List<CalendarDate> getDaysToDisplay(int month, int year) {
@@ -323,19 +406,15 @@ public class CalendarActivity extends AppCompatActivity {
         for(int i = daysInLastMonth.size()-1; i > 0; i--) {
             CalendarDate tempDate = daysInLastMonth.get(i);
             cal.setTime(new Date(tempDate.getYear(), tempDate.getMonth(), tempDate.getDay()));
-            int tempDayOfWeek = daysInLastMonth.get(i).getDay();
-            if (tempDayOfWeek == 1) { // Its monday
+            if (daysInLastMonth.get(i).getDayOfWeek().equals("Monday")) {
                 startingDayToDisplay = i;
                 break;
             }
         }
 
-        if (startingDayToDisplay != -1) {
-            for (int i = startingDayToDisplay; i < daysInLastMonth.size(); i++) {
-                daysToDisplay.add(daysInLastMonth.get(i));
-            }
-        } else
-            Log.d(TAG, "getDaysToDisplay: Error could not find last monday of last month.");
+        for (int i = startingDayToDisplay; i < daysInLastMonth.size(); i++) {
+            daysToDisplay.add(daysInLastMonth.get(i));
+        }
 
         fromIndexGetDays = daysToDisplay.size();
         toIndexGetDays = fromIndexGetDays + daysInCurrentMonth.size();
@@ -346,29 +425,25 @@ public class CalendarActivity extends AppCompatActivity {
         // Used to get the days until the second sunday in the next month
         int countSundays = 0;
 
+        // Add days until the second sunday of the next month is added
         for(int i = 0; i < daysInNextMonth.size(); i++) {
             CalendarDate tempDate = daysInLastMonth.get(i);
             cal.setTime(new Date(tempDate.getYear(), tempDate.getMonth(), tempDate.getDay()));
-//            int tempDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-            int tempDayOfWeek = daysInNextMonth.get(i).getDay();
-
-            if (tempDayOfWeek == 1) {
+            if (tempDate.getDayOfWeek().equals("Sunday")) {
                 countSundays++;
             }
+
             daysToDisplay.add(daysInNextMonth.get(i));
             if(daysToDisplay.size() == 42) {
                 break;
             }
 
-            // Find out why sometimes it gets the monday after the sunday.
-            //Log.d(TAG, "Display: " + daysInNextMonth.get(i).getDay() + "-" + month);
-
             if (countSundays >= 2)
                 break;
-
         }
         return daysToDisplay;
     }
+
     // On gridView swipe up
     private void gridViewSwipeUp(GridView gridView) {
         currentMonthNum += 1;

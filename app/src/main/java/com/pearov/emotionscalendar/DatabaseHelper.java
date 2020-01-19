@@ -121,8 +121,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             Log.d(TAG, "dropDatabase: Delete successful");
         else
             Log.d(TAG, "dropDatabase: Delete failed");
-
-
     }
 
     @Override
@@ -175,6 +173,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         Client client = new Client(cursor.getString(0),cursor.getString(1), cursor.getString(2));
 
+        db.close();
+        cursor.close();
         return client;
     }
 
@@ -188,11 +188,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor != null)
             cursor.moveToFirst();
 
-
+        int result = -1;
         if (cursor.getString(0) != null )
-            return Integer.parseInt(cursor.getString(0));
+            result = Integer.parseInt(cursor.getString(0));
         else
-            return -1;
+            Log.d(TAG, "getClientIdByUsername: ERROR while trying to get client id by username: " + username);
+
+        db.close();
+        cursor.close();
+        return result;
     }
 
     public List<Client> getAllClients() {
@@ -209,6 +213,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             } while(cursor.moveToNext());
         }
 
+        db.close();
+        cursor.close();
         return clientList;
     }
 
@@ -225,6 +231,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    public boolean updateEmotion(Emotion oldEmotion, Emotion newEmotion) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(TABLE_EMOTIONS_VALUE, newEmotion.getValue());
+        values.put(TABLE_EMOTIONS_NAME, newEmotion.getName());
+
+        int res = db.update(TABLE_EMOTIONS, values,TABLE_EMOTIONS_ID+ " = ? ",
+                new String[]{String.valueOf(oldEmotion.getId()),
+                });
+
+        db.close();
+        if (res == -1) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean deleteEmotionById(int emotionId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        int result = db.delete(TABLE_EMOTIONS, TABLE_EMOTIONS_ID + "=" + emotionId, null);
+
+        db.close();
+        if (result == -1)
+            return false;
+
+        return true;
+    }
+
     public Emotion getEmotionById(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -235,9 +271,42 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor != null)
             cursor.moveToFirst();
 
-        Emotion emotion = new Emotion(Integer.parseInt(cursor.getString(0)),cursor.getString(1), Double.parseDouble(cursor.getString(2)));
+        Emotion emotion = null;
 
+        try {
+            emotion = new Emotion(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Double.parseDouble(cursor.getString(2)));
+        } catch (NullPointerException e) {
+            Log.d(TAG, "getEmotionById: NullPointerException while trying to get emotion by id: " + id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        db.close();
+        cursor.close();
         return emotion;
+    }
+
+    public int getEmotionIdByName(String emotionName) {
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_EMOTIONS, new String[]
+                        { TABLE_NOTES_ID },
+                TABLE_EMOTIONS_NAME + "=?", new String[]
+                        { emotionName }, null, null, null, null );
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        int resultId = -1;
+        try {
+            resultId = Integer.parseInt(cursor.getString(0));
+        } catch (NullPointerException e) {
+            Log.d(TAG, "getEmotionIdByName: Failed to get emotion id for emotion:" + emotionName);
+        }
+
+        db.close();
+        cursor.close();
+        return resultId;
     }
 
     public List<Emotion> getAllEmotions() {
@@ -254,6 +323,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             } while(cursor.moveToNext());
         }
 
+        cursor.close();
+        db.close();
         return emotionList;
     }
 
@@ -270,6 +341,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    public boolean updateNote(Note oldNote, Note newNote) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(TABLE_NOTES_NOTETEXT, newNote.getNoteText());
+        values.put(TABLE_NOTES_TITLE, newNote.getTitle());
+
+        int res = db.update(TABLE_NOTES, values,TABLE_NOTES_ID + " = ? ",
+                new String[]{String.valueOf(oldNote.getId()),
+                });
+
+        db.close();
+        if (res == -1) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean deleteNoteById(int noteId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        int result = db.delete(TABLE_NOTES, TABLE_NOTES_ID  + "=" + noteId, null);
+
+        db.close();
+        if (result == -1)
+            return false;
+
+        return true;
+    }
+
     public Note getNoteById(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -284,9 +385,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         try {
             note = new Note(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2));
         } catch (Exception e) {
-            return null;
+            Log.d(TAG, "getNoteById: NullPointerException while trying to get Note by id: " + id);
         }
 
+        cursor.close();
+        db.close();
         return note;
     }
 
@@ -305,6 +408,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             } while(cursor.moveToNext());
         }
 
+        cursor.close();
+        db.close();
         return noteList;
     }
 
@@ -326,6 +431,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         int result = db.delete(TABLE_CLIENT_DATE, TABLE_CLIENT_DATE_DATEID+ "=" + dateId
                 + " AND " + TABLE_CLIENT_DATE_CLIENTID + " = " + clientId, null);
 
+        db.close();
         if (result != -1)
             return true;
         else
@@ -350,6 +456,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             } while(cursor.moveToNext());
         }
 
+        cursor.close();
+        db.close();
         return clientDateList;
     }
 
@@ -371,6 +479,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             } while(cursor.moveToNext());
         }
 
+        cursor.close();
+        db.close();
         return clientDateList;
     }
 
@@ -442,6 +552,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public boolean updateCalendarDateEmotionByDate(int day, int month, int year, int emotionId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(TABLE_CALENDARDATE_EMOTIONID, emotionId);
+
+        int res = db.update(TABLE_CALENDARDATE, values,TABLE_CALENDARDATE_DAY + " = ? AND "
+                        + TABLE_CALENDARDATE_MONTH + " = ? AND "
+                        + TABLE_CALENDARDATE_YEAR + " = ? ",
+                new String[]{String.valueOf(day),
+                        String.valueOf(month),
+                        String.valueOf(year)
+                });
+
+        db.close();
+        if (res == -1) {
+            return false;
+        }
+        return true;
+    }
+
     public boolean updateCalendarDate(CalendarDate oldDate, CalendarDate newDate) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -464,6 +595,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         String.valueOf(oldDate.getMonth()),
                         String.valueOf(oldDate.getYear())
         });
+
+        db.close();
         if (res == -1) {
             return false;
         }
@@ -471,22 +604,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public boolean deleteCalendarDate(int day, int month, int year) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
         int dateId = getCalendarDateId(day, month, year);
+
+        SQLiteDatabase db = this.getWritableDatabase();
         int result = db.delete(TABLE_CALENDARDATE, TABLE_CALENDARDATE_DAY  + "=" + day
                 + " AND " + TABLE_CALENDARDATE_MONTH + " = " + month
                 + " AND " + TABLE_CALENDARDATE_YEAR + " = " + year, null);
+
 
         if (result == -1)
             return false;
         else {
             int clientId = getClientIdByUsername(MainActivity.getGoogleUsername());
 
-            if (deleteClientDate(dateId,clientId))
+            if (deleteClientDate(dateId,clientId)) {
+                db.close();
                 return true;
-            else
+            }
+            else {
+                db.close();
                 return false;
+            }
         }
     }
 
@@ -502,13 +640,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor != null)
             cursor.moveToFirst();
 
+        int result = -1;
         if (cursor.getString(0) != null)
-            return Integer.parseInt(cursor.getString(0));
+            result =  Integer.parseInt(cursor.getString(0));
         else
-            return -1;
+            Log.d(TAG, "getCalendarDateId: ERROR while trying to get calendar date id for date:\n "
+                + day + "-" + month + "-" + year);
+
+        db.close();
+        cursor.close();
+        return result;
     }
 
     public CalendarDate getCalendarDateByDate(int day, int month, int year) {
+        CalendarDate date = null;
         try {
             SQLiteDatabase db = this.getReadableDatabase();
 
@@ -531,7 +676,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     noteIdList.add(Integer.parseInt(temp));
             }
 
-            CalendarDate date = null;
             if (noteIdList.size() != 0) {
                 date = new CalendarDate(
                         Integer.parseInt(cursor.getString(0)),
@@ -549,10 +693,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         Integer.parseInt(cursor.getString(5)));
             }
 
-            return date;
+            db.close();
+            cursor.close();
         } catch (Exception e) {
-            return null;
+            Log.d(TAG, "getCalendarDateByDate: ERROR while trying to get calendar date by date:\n"
+                    + day + "-" + month + "-" + year);
         }
+        return date;
+
     }
 
     public List<CalendarDate> getCalendarDatesByMonthAndYear(int month, int year) {
@@ -578,6 +726,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             } while(cursor.moveToNext());
         }
 
+        db.close();
+        cursor.close();
         return calendarDateList;
     }
 
@@ -603,6 +753,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             } while(cursor.moveToNext());
         }
 
+        db.close();
+        cursor.close();
         return calendarDateList;
     }
 
@@ -629,6 +781,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             } while(cursor.moveToNext());
         }
 
+        db.close();
+        cursor.close();
         return calendarDateList;
     }
 
@@ -655,6 +809,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             } while(cursor.moveToNext());
         }
 
+        db.close();
+        cursor.close();
         return calendarDateList;
     }
 
@@ -680,6 +836,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             } while(cursor.moveToNext());
         }
 
+        db.close();
+        cursor.close();
         return calendarDateList;
     }
 
@@ -722,6 +880,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             } while(cursor.moveToNext());
         }
 
+        db.close();
+        cursor.close();
         return calendarDateList;
     }
 }

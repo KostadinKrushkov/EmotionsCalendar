@@ -109,56 +109,57 @@ public final class GridAdapter extends BaseAdapter {
         text.setGravity(Gravity.FILL_HORIZONTAL);
         text.setPadding(40, 20, 0, 0);
 
-        String emotion = database.getEmotionById(date.getEmotionId()).getName();
+        Emotion emotion = database.getEmotionById(date.getEmotionId());
+        String emotionName = emotion.getName();
 
+        if (emotionName.equals("None")) {
+            if (MainActivity.themeName.equals("Light")) {
+                view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorLightBackground));
+            } else if (MainActivity.themeName.equals("Dark")) {
+                view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorDarkBackground));
+            }
+        } else {
+            if(database.updateCalendarDateEmotionByDate(elems.get(position).getDay(),
+                    elems.get(position).getMonth(),
+                    elems.get(position).getYear(),
+                    emotion.getId())) {
+                Log.d(TAG, "getView: Emotion for the day has been updated. \n" + elems.get(position));
+            } else {
+                Log.d(TAG, "getView: ERROR while trying to update day. \n" + elems.get(position));
+            }
 
-                if (emotion.equals("None")) {
-                    if (MainActivity.themeName.equals("Light")) {
-                        view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorLightBackground));
-                    } else if (MainActivity.themeName.equals("Dark")) {
-                        view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorDarkBackground));
-                    }
-                } else {
-                    overWriteDayInFile(currentDay + "-" + currentMonthNum + "-" + currentYear + "-" + emotion);
-                    switch (emotion) {
-                        case "Excited":
-                            view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorExciting));
-                            break;
-                        case "Happy":
-                            view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorHappy));
-                            break;
-                        case "Positive":
-                            view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorPositive));
-                            break;
-                        case "Average":
-                            view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNeutral));
-                            break;
-                        case "Mixed":
-                            view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorMixed));
-                            break;
-                        case "Negative":
-                            view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNegative));
-                            break;
-                        case "Sad":
-                            view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorSad));
-                            break;
-                        case "Boring":
-                            view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorBoring));
-                            break;
-                        default:
-                            Log.d(TAG, "getView: Error couldn't find emotion name!");
-                            break;
-                    }
-                }
-//        } else {
-//            if (MainActivity.themeName.equals("Light")) {
-//                view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorLightBackground));
-//            } else if (MainActivity.themeName.equals("Dark")) {
-//                view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorDarkBackground));
-//            }
-////            writeDayInFile(currentDay + "-" + currentMonthNum + "-" + currentYear + "-" + "None");
-//        }
-
+            // In the previous version the files were the emotion storage.
+            // overWriteDayInFile(currentDay + "-" + currentMonthNum + "-" + currentYear + "-" + emotionName);
+            switch (emotionName) {
+                case "Excited":
+                    view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorExciting));
+                    break;
+                case "Happy":
+                    view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorHappy));
+                    break;
+                case "Positive":
+                    view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorPositive));
+                    break;
+                case "Average":
+                    view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNeutral));
+                    break;
+                case "Mixed":
+                    view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorMixed));
+                    break;
+                case "Negative":
+                    view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorNegative));
+                    break;
+                case "Sad":
+                    view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorSad));
+                    break;
+                case "Boring":
+                    view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorBoring));
+                    break;
+                default:
+                    Log.d(TAG, "getView: Error couldn't find emotion name!");
+                    break;
+            }
+        }
 
         if (position < 21) {
             if (elems.get(position).getDay() > 20) {
@@ -178,29 +179,23 @@ public final class GridAdapter extends BaseAdapter {
                 }        }
         }
 
-        if (elems.get(position).getDay() == Integer.parseInt(CalendarActivity.getTodaysDate().toString().split(" ")[2])
-                && elems.get(position).getMonth() == Integer.parseInt((CalendarActivity.getTodaysDate().toString().split(" ")[1]))) {
+        String todaysDayParams[] = CalendarActivity.getTodaysDay().toString().split("-");
+        if (elems.get(position).getDay() == Integer.parseInt(todaysDayParams[0]) &&
+            elems.get(position).getMonth() == Integer.parseInt(todaysDayParams[1]) &&
+            elems.get(position).getYear() == Integer.parseInt(todaysDayParams[2])) {
 //            These are used to set the color of the block and the text in the block to contrast
 //            view.setBackgroundColor(Color.parseColor("#1C1C1C"));
 //            text.setTextColor(Color.parseColor("#FFFFFF"));
-
 
 //            These also work for background
 //            text.setBackgroundColor(ContextCompat.getColor(CalendarActivity.class, R.color.currentDayBorder));
 //            text.setBackgroundColor(R.drawable.current_day_border);
 
 //            But this is used for border
-
 //            view.setBackgroundColor(CalendarActivity.context.getResources().getColor(R.color.colorPositive));
 //            view.setBackgroundResource(R.drawable.current_day_border);
 //            view.setBackgroundResource(Integer.parseInt((getThumb(0, 0).toString())));
-
-
-            setDrawable(view);
-
         }
-
-//        text.setBackgroundColor(backGroundUnavailable);
 
         int day = elems.get(position).getDay();
         text.setText(String.valueOf(day));

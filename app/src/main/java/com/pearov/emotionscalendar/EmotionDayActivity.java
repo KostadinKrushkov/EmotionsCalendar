@@ -17,12 +17,15 @@ import android.widget.AdapterView.OnItemClickListener;
 import org.w3c.dom.Text;
 
 import java.util.Calendar;
+import java.util.List;
 
 public class EmotionDayActivity extends AppCompatActivity {
 
     private static final String TAG = "EmotionDayActivity";
     public static Context context;
     private String chosenDate = "default";
+    private static DatabaseHelper db;
+
 
     private TextView chosenDayTextView;
     private TextView chosenMonthTextView;
@@ -54,30 +57,30 @@ public class EmotionDayActivity extends AppCompatActivity {
         return chosenDate;
     }
 
-    private static Emotion[] emotions;
+    private static List<Emotion> emotions;
 
-    public static Emotion[] getEmotions(){
+    public static List<Emotion> getEmotions(){
         return emotions;
     }
 
     private static void createEmotions() {
-        Emotion none = new Emotion(0, "None", 1);
-        Emotion excited = new Emotion(1, "Excited", 2);
-        Emotion happy = new Emotion(2, "Happy", 2);
-        Emotion positive = new Emotion(3, "Positive", 1.5);
-        Emotion average = new Emotion(4, "Average", 1);
-        Emotion mixed = new Emotion(5, "Mixed", 1);
-        Emotion negative = new Emotion(6, "Negative", 0.5);
-        Emotion sad = new Emotion(7, "Sad", 0);
-
-        Emotion[] emots = {none, excited, happy, positive, average, mixed, negative, sad};
-        emotions = emots;
+//        Emotion none = new Emotion(0, "None", 1);
+//        Emotion excited = new Emotion(1, "Excited", 2);
+//        Emotion happy = new Emotion(2, "Happy", 2);
+//        Emotion positive = new Emotion(3, "Positive", 1.5);
+//        Emotion average = new Emotion(4, "Average", 1);
+//        Emotion mixed = new Emotion(5, "Mixed", 1);
+//        Emotion negative = new Emotion(6, "Negative", 0.5);
+//        Emotion sad = new Emotion(7, "Sad", 0);
+//
+//        Emotion[] emots = {none, excited, happy, positive, average, mixed, negative, sad};
+        emotions = db.getAllEmotions();
     }
 
     public static String[] getEmotionNames() {
-        String[] names = new String[getEmotions().length];
+        String[] names = new String[getEmotions().size()];
         for(int i = 0; i < names.length; i++) {
-            names[i] = emotions[i].getName();
+            names[i] = emotions.get(i).getName();
         }
         return names;
     }
@@ -128,6 +131,7 @@ public class EmotionDayActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_emotion_day);
         context = getApplicationContext();
+        db = new DatabaseHelper(context);
         createEmotions();
 
         textAndTagEmotionActivity = (RelativeLayout) findViewById(R.id.textAndTagEmotionActivity);
@@ -188,7 +192,7 @@ public class EmotionDayActivity extends AppCompatActivity {
                     }
                 }
 
-                switch (emotions[position].getName())
+                switch (emotions.get(position).getName())
                 {
                     case "None":
                         if (MainActivity.themeName.equals("Light")) {
@@ -233,7 +237,7 @@ public class EmotionDayActivity extends AppCompatActivity {
                         Log.d(TAG, "getView: Error couldn't find emotion name! E.G None");
                         break;
                 }
-                emotionToSave = emotions[position].getName();
+                emotionToSave = emotions.get(position).getName();
                 tempView = view;
                 existingDay = GridAdapter.getDayFromFile(day, month, year);
             }
@@ -257,35 +261,65 @@ public class EmotionDayActivity extends AppCompatActivity {
             acceptBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    int emotionIdToSave = db.getEmotionIdByName("None");
+                    boolean isFinished = false;
 
+                    if (emotionToSave != null) {
+                        emotionIdToSave = db.getEmotionIdByName(emotionToSave);
+                    }
                     if(flagChosenEmotion && existingDay.toCharArray().length > 2) {
-                        GridAdapter.overWriteDayInFile(day + "-" + month + "-" + year + "-" + emotionToSave);
-                        Toast.makeText(getBaseContext(), "Emotion changed to: " + emotionToSave, Toast.LENGTH_SHORT).show();
+//                        GridAdapter.overWriteDayInFile(day + "-" + month + "-" + year + "-" + emotionToSave);
+                        if (db.getCalendarDateByDate(day, month, year) != null)
+                            db.updateCalendarDateEmotionByDate(day, month, year, emotionIdToSave);
+                        else {
+                            CalendarDate date = new CalendarDate(day, month, year, "Default", 0, emotionIdToSave);
+                            CalendarActivity.fillDate(date);
+                            db.addCalendarDate(date);
+                        }
+
+                        if (emotionToSave.equals("None"))
+                            Toast.makeText(getBaseContext(), "Emotion removed", Toast.LENGTH_SHORT).show();
+                        else
+                            Toast.makeText(getBaseContext(), "Emotion changed to: " + emotionToSave, Toast.LENGTH_SHORT).show();
+                        isFinished = true;
                     } else if (flagChosenEmotion && existingDay.toCharArray().length < 2) {
-                        GridAdapter.writeDayInFile(day + "-" + month + "-" + year + "-" + emotionToSave);
-                        Toast.makeText(getBaseContext(), "Emotion changed to: " + emotionToSave, Toast.LENGTH_SHORT).show();
+//                        GridAdapter.writeDayInFile(day + "-" + month + "-" + year + "-" + emotionToSave);
+                        CalendarDate date = new CalendarDate(day, month, year, "Default", 0, emotionIdToSave);
+                        CalendarActivity.fillDate(date);
+                        db.addCalendarDate(date);
+                        if (emotionToSave.equals("None"))
+                            Toast.makeText(getBaseContext(), "Emotion removed", Toast.LENGTH_SHORT).show();
+                        else
+                            Toast.makeText(getBaseContext(), "Emotion changed to: " + emotionToSave, Toast.LENGTH_SHORT).show();
+                        isFinished = true;
                     }
 
+                    if (emotionToSave == null) {
+                        Toast.makeText(getBaseContext(), "You have not chosen an emotion.", Toast.LENGTH_SHORT).show();
+                    }
+//                    else {
+//                        if (db.getCalendarDateByDate(day, month, year) != null)
+//                            db.updateCalendarDateEmotionByDate(day, month, year, emotionIdToSave);
+//                        else {
+//                            CalendarDate date = new CalendarDate(day, month, year, "Default", 0, emotionIdToSave);
+//                            CalendarActivity.fillDate(date);
+//                            db.addCalendarDate(date);
+//                        }
+//
+//                        Toast.makeText(getBaseContext(), "Emotion removed", Toast.LENGTH_SHORT).show();
+//                    }
                     Intent intent = new Intent(EmotionDayActivity.context, CalendarActivity.class)
                             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                             .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    if (emotionToSave != null) {
-                        Toast.makeText(getBaseContext(), "Daily emotion: " + emotionToSave, Toast.LENGTH_SHORT).show();
-                    }
-                    else {
-                        String temp = GridAdapter.getDayFromFile(day, month, year);
-                        if (temp.toCharArray().length > 1)
-                            GridAdapter.overWriteDayInFile(day + "-" + month + "-" + year + "-" + "None");
-                        else
-                            GridAdapter.writeDayInFile(day + "-" + month + "-" + year + "-" + "None");
 
-                        Toast.makeText(getBaseContext(), "Emotion removed", Toast.LENGTH_SHORT).show();
+                    if (isFinished) {
+                        startActivity(intent);
+                        finish();
                     }
-                    startActivity(intent);
-                    finish();
                 }
             });
             fillBackGroundColours();
     }
 }
+

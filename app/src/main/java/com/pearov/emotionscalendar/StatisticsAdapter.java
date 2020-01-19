@@ -16,7 +16,7 @@ public class StatisticsAdapter extends BaseAdapter {
 
     public StatisticsAdapter(int numOfStatistics) {
         this.numOfStatistics = numOfStatistics;
-        this.numOfElements = EmotionDayActivity.getEmotions().length;
+        this.numOfElements = EmotionDayActivity.getEmotions().size();
     }
 
     public StatisticsAdapter(int numOfStatistics, int numOfElements) {
