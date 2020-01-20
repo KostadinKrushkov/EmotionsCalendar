@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 public class StatisticsActivity extends AppCompatActivity {
 
     private static final String TAG = "StatisticsActivity";

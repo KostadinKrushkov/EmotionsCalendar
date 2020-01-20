@@ -29,6 +29,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+
 public class CalendarActivity extends AppCompatActivity {
 
     private List<CalendarDate> daysInCurrentMonth;
@@ -427,8 +428,7 @@ public class CalendarActivity extends AppCompatActivity {
 
         // Add days until the second sunday of the next month is added
         for(int i = 0; i < daysInNextMonth.size(); i++) {
-            CalendarDate tempDate = daysInLastMonth.get(i);
-            cal.setTime(new Date(tempDate.getYear(), tempDate.getMonth(), tempDate.getDay()));
+            CalendarDate tempDate = daysInNextMonth.get(i);
             if (tempDate.getDayOfWeek().equals("Sunday")) {
                 countSundays++;
             }

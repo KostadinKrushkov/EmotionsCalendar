@@ -76,12 +76,6 @@ public final class GridAdapter extends BaseAdapter {
 
         View view = convertView;
 
-//        String params[] = elems.get(position).toString().split("\\s+");
-//        String currentMonth = params[1];
-//        int currentMonthNum = CalendarActivity.getMonthNum(currentMonth);
-//        int currentDay = Integer.parseInt(params[2]);
-//        int currentYear = Integer.parseInt(params[5]);
-
         CalendarDate date = elems.get(position);
         int currentDay = date.getDay();
         String currentMonth = CalendarActivity.getMonthName(date.getMonth());
@@ -176,7 +170,8 @@ public final class GridAdapter extends BaseAdapter {
                     view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorDeadMainLight));
                 } else if (MainActivity.themeName.equals("Dark")) {
                     view.setBackgroundColor(CalendarActivity.context.getColor(R.color.colorDeadMainDark));
-                }        }
+                }
+            }
         }
 
         String todaysDayParams[] = CalendarActivity.getTodaysDay().toString().split("-");
@@ -204,6 +199,7 @@ public final class GridAdapter extends BaseAdapter {
     }
 
     public static String getDayFromFile(int day, int month, int year) {
+
         String returnEmotinalDay = "";
         String testDay = day + "-" + month + "-" + year;
         try {
@@ -238,6 +234,7 @@ public final class GridAdapter extends BaseAdapter {
 
     // Sets border on current day, and also saves it in the file.
     void setDrawable (View view){
+
         String params[] = CalendarActivity.getTodaysDay().split("-");
 
         int day = Integer.parseInt(params[0]);
@@ -265,6 +262,7 @@ public final class GridAdapter extends BaseAdapter {
     }
 
     void setDrawableColor (GradientDrawable d, String emotion) {
+
         switch (emotion) {
             case "None":
                 if (MainActivity.themeName.equals("Light")) {
@@ -296,12 +294,11 @@ public final class GridAdapter extends BaseAdapter {
                 break;
             default:
                 break;
-
         }
     }
 
+    // These files are no longer used.
     // Enter a day month year and emotion and the list is going to be change if that value exists (*** MUST CALL saveDaysDynamically AFTERWARDS)
-
     public static void changeDayDynamically(int day, int month, int year, String emotion) {
         String someDay = day + "-" + month + "-" + year;
         for (int i = 0; i < daysThatHaveBeenSaved.size(); i++) {

@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void createBaseDatabase() {
+
         DatabaseHelper db = new DatabaseHelper(context);
         String params[] = CalendarActivity.getCurrentDayFull().split(" ");
         int day = Integer.parseInt(params[2]);
@@ -91,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void dropDatabase() {
+
         DatabaseHelper db = new DatabaseHelper(context);
         db.dropDatabase();
     }
@@ -200,6 +202,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void clearFile() {
+
         String filePath = getFilePath();
         try {
             PrintWriter empty_writer = new PrintWriter(filePath);
@@ -211,6 +214,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void createFile(String name) {
+
         File fileName = new File(name);
         try {
             fileName.createNewFile();
