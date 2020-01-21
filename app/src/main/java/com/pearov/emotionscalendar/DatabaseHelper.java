@@ -171,7 +171,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor != null)
             cursor.moveToFirst();
 
-        Client client = new Client(cursor.getString(0),cursor.getString(1), cursor.getString(2));
+        Client client = null;
+        try {
+            client = new Client(cursor.getString(0), cursor.getString(1), cursor.getString(2));
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d(TAG, "getClientById: Exception while trying to get client id: " + id);
+            db.close();
+            cursor.close();
+            return client;
+        }
 
         db.close();
         cursor.close();
@@ -487,6 +496,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // CalendarDates
     public boolean addCalendarDate(CalendarDate date) {
+        CalendarDate otherDate = getCalendarDateByDate(date.getDay(), date.getMonth(), date.getYear());
+        if (otherDate != null) {
+            return updateCalendarDate(otherDate, date);
+        }
+
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -496,6 +510,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(TABLE_CALENDARDATE_DAYOFWEEK, date.getDayOfWeek());
         values.put(TABLE_CALENDARDATE_WEEKOFYEAR, date.getWeekOfYear());
         values.put(TABLE_CALENDARDATE_EMOTIONID, date.getEmotionId());
+
+        String noteIds = date.getNoteIdListString();
+        values.put(TABLE_CALENDARDATE_NOTEID, noteIds);
 
         long result = db.insert(TABLE_CALENDARDATE, null, values);
         if (result == -1) {
@@ -517,40 +534,40 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public boolean addCalendarDateWithNote(CalendarDate date) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-
-        values.put(TABLE_CALENDARDATE_DAY, date.getDay());
-        values.put(TABLE_CALENDARDATE_MONTH, date.getMonth());
-        values.put(TABLE_CALENDARDATE_YEAR, date.getYear());
-        values.put(TABLE_CALENDARDATE_DAYOFWEEK, date.getDayOfWeek());
-        values.put(TABLE_CALENDARDATE_WEEKOFYEAR, date.getWeekOfYear());
-        values.put(TABLE_CALENDARDATE_EMOTIONID, date.getEmotionId());
-        String noteIds = "";
-        for (int a: date.getNoteIdList())
-            noteIds += a + " ";
-        values.put(TABLE_CALENDARDATE_NOTEID, noteIds);
-
-        long result = db.insert(TABLE_CALENDARDATE, null, values);
-        if (result == -1) {
-            db.close();
-            return false;
-        } else {
-            // Adding entry in client_date
-            int calendarDateId = getCalendarDateId(date.getDay(), date.getMonth(), date.getYear());
-            int clientId = getClientIdByUsername(MainActivity.getGoogleUsername());
-            if (clientId != -1 && calendarDateId != -1) {
-                addClient_Date(new ClientDate(calendarDateId, clientId));
-            } else {
-                deleteCalendarDate(date.getDay(), date.getMonth(), date.getYear());
-                return false;
-            }
-            //
-            db.close();
-            return true;
-        }
-    }
+//    public boolean addCalendarDateWithNote(CalendarDate date) {
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        ContentValues values = new ContentValues();
+//
+//        values.put(TABLE_CALENDARDATE_DAY, date.getDay());
+//        values.put(TABLE_CALENDARDATE_MONTH, date.getMonth());
+//        values.put(TABLE_CALENDARDATE_YEAR, date.getYear());
+//        values.put(TABLE_CALENDARDATE_DAYOFWEEK, date.getDayOfWeek());
+//        values.put(TABLE_CALENDARDATE_WEEKOFYEAR, date.getWeekOfYear());
+//        values.put(TABLE_CALENDARDATE_EMOTIONID, date.getEmotionId());
+//        String noteIds = "";
+//        for (int a: date.getNoteIdList())
+//            noteIds += a + " ";
+//        values.put(TABLE_CALENDARDATE_NOTEID, noteIds);
+//
+//        long result = db.insert(TABLE_CALENDARDATE, null, values);
+//        if (result == -1) {
+//            db.close();
+//            return false;
+//        } else {
+//            // Adding entry in client_date
+//            int calendarDateId = getCalendarDateId(date.getDay(), date.getMonth(), date.getYear());
+//            int clientId = getClientIdByUsername(MainActivity.getGoogleUsername());
+//            if (clientId != -1 && calendarDateId != -1) {
+//                addClient_Date(new ClientDate(calendarDateId, clientId));
+//            } else {
+//                deleteCalendarDate(date.getDay(), date.getMonth(), date.getYear());
+//                return false;
+//            }
+//            //
+//            db.close();
+//            return true;
+//        }
+//    }
 
     public boolean updateCalendarDateEmotionByDate(int day, int month, int year, int emotionId) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -672,8 +689,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             List<Integer> noteIdList = new ArrayList<Integer>();
             if (cursor.getString(6) != null) {
                 String params[] = cursor.getString(6).split(" ");
-                for (String temp : params)
-                    noteIdList.add(Integer.parseInt(temp));
+                for (String temp : params) {
+                    if (!temp.equals(""))
+                        noteIdList.add(Integer.parseInt(temp));
+                }
             }
 
             if (noteIdList.size() != 0) {
@@ -696,7 +715,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.close();
             cursor.close();
         } catch (Exception e) {
-            Log.d(TAG, "getCalendarDateByDate: ERROR while trying to get calendar date by date:\n"
+            Log.d(TAG, "getCalendarDateByDate: Exception while trying to get calendar date by date:\n"
                     + day + "-" + month + "-" + year);
         }
         return date;

@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
 //        Used for full testing
 //        createAndFillDatabase();
 
+//        Used to delete whole database
+//        dropDatabase();
 //        Used for base database
         createBaseDatabase();
 
@@ -78,9 +80,12 @@ public class MainActivity extends AppCompatActivity {
         int month = CalendarActivity.getMonthNum(params[1]);
         int year = Integer.parseInt(params[5]);
 
+        if (db.getClientById(1) != null)
+            return;
+
         db.addClient(new Client(googleUsername, day + "-" + month + "-" + year, "Bulgaria"));
 
-        db.addEmotion(new Emotion(0, "None", 1));
+        db.addEmotion(new Emotion(0, "None", 0));
         db.addEmotion(new Emotion(1, "Excited", 2));
         db.addEmotion(new Emotion(2, "Happy", 2));
         db.addEmotion(new Emotion(3, "Positive", 1.5));
@@ -151,7 +156,8 @@ public class MainActivity extends AppCompatActivity {
             System.out.println("Yey");
         else
             System.out.println("Ney");
-        db.addCalendarDateWithNote(new CalendarDate(5, 1, 2020, "Sunday", 1, 7, calendarNotesList));
+//        db.addCalendarDateWithNote(new CalendarDate(5, 1, 2020, "Sunday", 1, 7, calendarNotesList));
+        db.addCalendarDate(new CalendarDate(5, 1, 2020, "Sunday", 1, 7, calendarNotesList));
         db.addCalendarDate(new CalendarDate(6, 1, 2020, "Monday", 2, 7));
         db.addCalendarDate(new CalendarDate(7, 1, 2021, "Thursday", 2, 7));
         db.updateCalendarDate(new CalendarDate(5, 1, 2020, "Sunday", 1, 7, calendarNotesList),

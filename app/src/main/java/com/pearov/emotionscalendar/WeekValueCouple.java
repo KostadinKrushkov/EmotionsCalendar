@@ -23,4 +23,9 @@ public class WeekValueCouple {
         this.year = year;
         this.value = value;
     }
+
+    @Override
+    public String toString() {
+        return "Week number: " + weekNum + ", year = " + year + ", value = " + value;
+    }
 }

@@ -327,6 +327,8 @@ public class CalendarActivity extends AppCompatActivity {
         String nameOfWeekDay = getNameOfWeekDay(dayOfWeek);
 
         int weekNumber = getNumberOfWeek(date.getDay(), date.getMonth(), date.getYear());
+        if (nameOfWeekDay.equals("Sunday"))
+            weekNumber-=1;
 
         date.setWeekOfYear(weekNumber);
         date.setDayOfWeek(nameOfWeekDay);

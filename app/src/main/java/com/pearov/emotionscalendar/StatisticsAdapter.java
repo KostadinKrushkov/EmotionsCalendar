@@ -1,11 +1,13 @@
 package com.pearov.emotionscalendar;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,17 +75,22 @@ public class StatisticsAdapter extends BaseAdapter {
         db.close();
     }
 
-    public WeekValueCouple getWeeklyStatisticForYear(String type, int year) throws Exception{
+    // Possibly do it with sorting all of the weeks and getting the top X of them.
+    public List<WeekValueCouple> getWeeklyStatisticForYear(String type, int year) throws Exception{
         /* type can be positive, negative or neutral */
         db = new DatabaseHelper(StatisticsActivity.context);
         List<CalendarDate> allDates = db.getCalendarDatesByYear(year);
+        QuickSortDates quickSorter = new QuickSortDates();
+        quickSorter.sortByWeekNum((ArrayList) allDates);
+        List<WeekValueCouple> returnList = new ArrayList<>();
         int resultWeek = -1;
         double returnValue = 0;
 
         switch (type) {
-            case "Positive":
+            case "positive":
                 returnValue = -10;
                 double tempValue = 0;
+
                 for (int i = 0; i < allDates.size(); i++) {
                     int weekNum = allDates.get(i).getWeekOfYear();
                     double dailyValue = getValueForEmotion(allDates.get(i).getEmotionId());
@@ -91,23 +98,35 @@ public class StatisticsAdapter extends BaseAdapter {
                         throw new Exception();
                     tempValue += dailyValue;
 
-                    while(allDates.get(i+1).getWeekOfYear() == weekNum) {
-                        dailyValue = getValueForEmotion(allDates.get(i).getEmotionId());
-                        if (dailyValue == -100)
-                            throw new Exception();
-                        tempValue += dailyValue;
-                        i++;
+                    for(int j = i+1; j+1 <= allDates.size(); ++j) {
+
+                        if (allDates.get(j).getWeekOfYear() == weekNum) {
+                            dailyValue = getValueForEmotion(allDates.get(j).getEmotionId());
+                            if (dailyValue == -100)
+                                throw new Exception();
+                            tempValue += dailyValue;
+                        } else {
+                            i = j-1;
+                            break;
+                        }
                     }
+
 
                     if (tempValue > returnValue) {
                         returnValue = tempValue;
                         resultWeek = weekNum;
+                        returnList.clear();
+                        returnList.add(new WeekValueCouple(resultWeek, year, returnValue));
+                    } else if (tempValue == returnValue) {
+                        resultWeek = weekNum;
+                        returnList.add(new WeekValueCouple(resultWeek, year, returnValue));
                     }
+
                     tempValue = 0;
                 }
 
                 db.close();
-                return new WeekValueCouple(resultWeek, year, returnValue);
+                return returnList;
             case "Negative":
                 return null;
             case "All":
@@ -152,6 +171,20 @@ public class StatisticsAdapter extends BaseAdapter {
         } else if (this.numOfElements == 10) {
             typeOfStatistic = "10 Days";
         }
+
+
+        List<WeekValueCouple> happiestWeek = null;
+        try {
+            happiestWeek = getWeeklyStatisticForYear("positive", 2020);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d(TAG, "getView: Exception occurred while getting the positive weekly statistic.");
+        }
+
+        String result = "";
+        for (WeekValueCouple temp : happiestWeek)
+            result += temp + "\n";
+        Toast.makeText(StatisticsActivity.context, result, Toast.LENGTH_SHORT).show();
 
 
 
