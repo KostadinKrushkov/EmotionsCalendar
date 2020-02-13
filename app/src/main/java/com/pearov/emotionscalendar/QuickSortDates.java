@@ -6,6 +6,11 @@ public class QuickSortDates {
 
     private int length;
     private ArrayList<CalendarDate> arrayList;
+    private StatisticsHelper statsHelper;
+
+    public QuickSortDates() {
+        statsHelper = new StatisticsHelper();
+    }
 
     public void sortByWeekNum(ArrayList<CalendarDate> list) {
 
@@ -52,5 +57,47 @@ public class QuickSortDates {
         CalendarDate temp = arrayList.get(i);
         arrayList.set(i, arrayList.get(j));
         arrayList.set(j, temp);
+    }
+
+    // Second attempt using Comparable
+    public void sort(ArrayList<CalendarDate> list) {
+
+        if (list == null || list.size() == 0) {
+            return;
+        }
+
+        this.arrayList = list;
+        this.length = list.size();
+        quickSortByMonthNum(0, length - 1);
+    }
+
+    private void quickSortByMonthNum(int lowerIndex, int higherIndex) {
+
+        int lower = lowerIndex;
+        int higher = higherIndex;
+
+        CalendarDate pivot = arrayList.get(lowerIndex + (higherIndex-lowerIndex)/2);
+
+        while (lower <= higher) {
+
+            while (arrayList.get(lower).compareTo(pivot) < 0) {
+                lower++;
+            }
+
+            while (arrayList.get(higher).compareTo(pivot) > 0) {
+                higher--;
+            }
+
+            if (lower <= higher) {
+                swapElements(lower, higher);
+                lower++;
+                higher--;
+            }
+        }
+
+        if (lowerIndex < higher)
+            quickSortByMonthNum(lowerIndex, higher);
+        if (lower < higherIndex)
+            quickSortByMonthNum(lower, higherIndex);
     }
 }

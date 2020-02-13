@@ -19,7 +19,7 @@ public class StatisticsActivity extends AppCompatActivity {
     private TextView header;
     private RelativeLayout relativeLayout;
     private ListView listView;
-    private int numOfStatistics = 5; // 10 if negative
+    private int numOfStatistics = 1; // 10 if negative
     private int numOfEmotionsToDisplay = 1; // 1 is default, the max is the amount of emotions currently implemented
 
     private void fillBackGroundColours() {

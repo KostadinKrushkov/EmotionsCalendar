@@ -758,7 +758,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         { TABLE_CALENDARDATE_DAY, TABLE_CALENDARDATE_MONTH, TABLE_CALENDARDATE_YEAR,
                                 TABLE_CALENDARDATE_DAYOFWEEK, TABLE_CALENDARDATE_WEEKOFYEAR, TABLE_CALENDARDATE_EMOTIONID },
                         TABLE_CALENDARDATE_YEAR + "=?", new String[]
-                        {  String.valueOf(year) }, null, null, null, null );
+                        {  String.valueOf(year) }, null, null, TABLE_CALENDARDATE_MONTH, null );
 
         if (cursor.moveToFirst()) {
             do {

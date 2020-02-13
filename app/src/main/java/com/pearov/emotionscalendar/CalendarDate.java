@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CalendarDate {
+public class CalendarDate implements Comparable<CalendarDate> {
 
     private int day;
     private int month;
@@ -108,5 +108,27 @@ public class CalendarDate {
     public String getDateJson() {
         Gson gson = new Gson();
         return gson.toJson(this);
+    }
+
+    public int compareTo(CalendarDate other) {
+        if (this.getYear() > other.getYear()) {
+            return 1;
+        } else if (this.getYear() < other.getYear()) {
+            return -1;
+        } else {
+            if (this.getMonth() > other.getMonth()) {
+                return 1;
+            } else if (this.getMonth() < other.getMonth()) {
+                return -1;
+            } else {
+                if (this.getDay() > other.getDay()) {
+                    return 1;
+                } else if (this.getDay() < other.getDay()) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            }
+        }
     }
 }
