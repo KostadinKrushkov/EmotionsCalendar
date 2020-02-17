@@ -22,6 +22,20 @@ public class StatisticsHelper {
         return emotionIdForValue;
     }
 
+    public HashMap<String, Double> getWeekdayMap() {
+
+        HashMap<String, Double> map = new HashMap<>();
+        map.put("Monday", 0.0);
+        map.put("Tuesday", 0.0);
+        map.put("Wednesday", 0.0);
+        map.put("Thursday", 0.0);
+        map.put("Friday", 0.0);
+        map.put("Saturday", 0.0);
+        map.put("Sunday", 0.0);
+
+        return map;
+    }
+
     public List<CalendarDate> getAllDaysForYear(int year) {
         return db.getCalendarDatesByYear(year);
     }

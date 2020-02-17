@@ -12,6 +12,86 @@ public class QuickSortDates {
         statsHelper = new StatisticsHelper();
     }
 
+    public void sortByMonthlyValue(ArrayList<MonthValueCouple> list) {
+        if ((list == null) || list.size() == 0) {
+            return;
+        }
+
+        quickSortByMonthValue(list, 0, list.size()-1);
+    }
+
+    private void quickSortByMonthValue(ArrayList<MonthValueCouple> list, int left, int right) {
+
+        int leftIndex = left;
+        int rightIndex = right;
+        double pivot = list.get((left + right)/2).getValue();
+
+        while (left <= right) {
+
+            while (list.get(left).getValue() < pivot) {
+                left++;
+            }
+
+            while (list.get(right).getValue() > pivot) {
+                right--;
+            }
+
+            if (left <= right) {
+                swap(list, left, right);
+                left++;
+                right--;
+            }
+        }
+
+        if (leftIndex < left)
+            quickSortByMonthValue(list, leftIndex, right);
+        if (rightIndex > right)
+            quickSortByMonthValue(list, left, rightIndex);
+    }
+
+    public void sortByWeeklyValue(ArrayList<WeekValueCouple> list) {
+        if (list == null || list.size() == 0) {
+            return;
+        }
+
+        quickSortByWeeklyValue(list, 0, list.size()-1);
+    }
+
+    private void quickSortByWeeklyValue(ArrayList<WeekValueCouple> list, int left, int right) {
+        int leftIndex = left;
+        int rightIndex = right;
+
+        double pivot = list.get((left+right)/2).getValue();
+
+        while(left <= right) {
+
+            while (list.get(left).getValue() < pivot) {
+                left++;
+            }
+
+            while (list.get(right).getValue() > pivot) {
+                right--;
+            }
+
+            if (left <= right) {
+                swap(list, left, right);
+                left++;
+                right--;
+            }
+        }
+
+        if (leftIndex < left)
+            quickSortByWeeklyValue(list, leftIndex, right);
+        if (rightIndex > right)
+            quickSortByWeeklyValue(list, left, rightIndex);
+    }
+
+    private void swap(ArrayList list, int first, int second) {
+        Object temp  = list.get(first);
+        list.set(first, list.get(second));
+        list.set(second, temp);
+    }
+
     public void sortByWeekNum(ArrayList<CalendarDate> list) {
 
         if (list == null || list.size() == 0) {

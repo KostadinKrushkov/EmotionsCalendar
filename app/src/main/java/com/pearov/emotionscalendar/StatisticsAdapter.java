@@ -10,6 +10,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -27,6 +29,7 @@ public class StatisticsAdapter extends BaseAdapter {
     private int year;
     private QuickSortDates quickSorter;
     private HashMap<Integer, Double> emotionValues;
+    private HashMap<String, Double> weekdayMap;
     private List<CalendarDate> datesForCurrentYear;
 
     public static final double MONTH_CONSTANT = 30.43;
@@ -197,24 +200,47 @@ public class StatisticsAdapter extends BaseAdapter {
 
 
         try {
-            // Average week.
+            //1. Average week.
 //            TimeUnit.SECONDS.sleep(2);
-            String averageWeek = getAverageWeek(year);
+            datesForCurrentYear = statsHelper.getAllDaysForYear(year);
+            String averageWeek = getAverageWeek();
 //            Toast.makeText(StatisticsActivity.context, averageWeek, Toast.LENGTH_SHORT).show();
 
+            //2. Average month
 //            TimeUnit.SECONDS.sleep(2);
-            String averageMonth = getAverageMonth(year);
+            String averageMonth = getAverageMonth();
 //            Toast.makeText(StatisticsActivity.context, averageMonth, Toast.LENGTH_LONG).show();
 
-            // Best week
+            //3. Best week
             String bestWeek = getBestWeek();
 //            Toast.makeText(StatisticsActivity.context, bestWeek, Toast.LENGTH_LONG).show();
 
-            // Best month
-            datesForCurrentYear = statsHelper.getAllDaysForYear(year);
+            //4. Best month
             quickSorter.sort((ArrayList) datesForCurrentYear);
             String bestMonth = getBestMonth();
 //            Toast.makeText(StatisticsActivity.context, bestMonth, Toast.LENGTH_LONG).show();
+
+            //5. Largest possitve streak
+            String bestDays = getLargestPositiveStreak();
+//            Toast.makeText(StatisticsActivity.context, bestDays, Toast.LENGTH_LONG).show();
+
+            //6. Happiest day of week
+            weekdayMap = statsHelper.getWeekdayMap();
+            String happiestDay = getHappiestWeekday();
+            Toast.makeText(StatisticsActivity.context, happiestDay, Toast.LENGTH_LONG).show();
+
+            //7. Weeks ranked by happiness
+            ArrayList<WeekValueCouple> weeksRanked = getWeeksRanked();
+
+
+            //7.1 All weeks
+            WeekValueCouple allWeeks[] = getWeeks();
+
+            //8. Months ranked by happiness
+            ArrayList<MonthValueCouple> monthsRanked = getMonthsRanked();
+
+            //8.1 All months
+            ArrayList<MonthValueCouple> allMonths = getMonths();
 
 
         } catch (Exception e) {
@@ -222,6 +248,187 @@ public class StatisticsAdapter extends BaseAdapter {
         }
 
         return convertView;
+    }
+
+    private ArrayList<MonthValueCouple> getMonths() {
+
+        double monthValue = 0;
+        ArrayList<MonthValueCouple> list = new ArrayList<>();
+        List<CalendarDate> temp;
+
+        for (int i = 1; i < 13; i++) {
+            temp = db.getCalendarDatesByMonthAndYear(i, year);
+            for (int j = 0; j < temp.size(); j++) {
+                monthValue += emotionValues.get(temp.get(j).getEmotionId());
+            }
+            list.add(new MonthValueCouple(i, year, monthValue));
+            monthValue = 0;
+        }
+
+        return list;
+    }
+
+    private ArrayList<MonthValueCouple> getMonthsRanked() {
+
+        MonthValueCouple allMonths[] = new MonthValueCouple[12];
+        ArrayList<CalendarDate> temp;
+        double monthValue = 0;
+
+        for (int i = 1; i < 13; i++) {
+            temp =(ArrayList) db.getCalendarDatesByMonthAndYear(i, year);
+            for (int j = 0; j < temp.size(); j++) {
+                monthValue += emotionValues.get(temp.get(j).getEmotionId());
+            }
+            allMonths[i-1] = new MonthValueCouple(i, year, monthValue);
+            monthValue = 0;
+        }
+
+
+        ArrayList<MonthValueCouple> allMonthsList = new ArrayList();
+        Collections.addAll(allMonthsList, allMonths);
+        quickSorter.sortByMonthlyValue(allMonthsList);
+        // sort the shit out of it
+
+        return allMonthsList;
+    }
+
+    private WeekValueCouple[] getWeeks() {
+
+        WeekValueCouple allWeeks[] = new WeekValueCouple[52];
+        ArrayList<CalendarDate> temp;
+        double weekValue = 0;
+
+        for (int i = 1; i < 53; i++) {
+            temp =(ArrayList) db.getCalendarDatesByWeekAndYear(i, year);
+            for (int j = 0; j < temp.size(); j++) {
+                weekValue += emotionValues.get(temp.get(j).getEmotionId());
+            }
+            allWeeks[i-1] = new WeekValueCouple(i, year, weekValue);
+            weekValue = 0;
+        }
+
+        return allWeeks;
+    }
+
+    private ArrayList<WeekValueCouple> getWeeksRanked() {
+
+        WeekValueCouple allWeeks[] = new WeekValueCouple[52];
+        ArrayList<CalendarDate> temp;
+        double weekValue = 0;
+
+        for (int i = 1; i < 53; i++) {
+            temp =(ArrayList) db.getCalendarDatesByWeekAndYear(i, year);
+            for (int j = 0; j < temp.size(); j++) {
+                weekValue += emotionValues.get(temp.get(j).getEmotionId());
+            }
+            allWeeks[i-1] = new WeekValueCouple(i, year, weekValue);
+            weekValue = 0;
+        }
+
+
+        ArrayList<WeekValueCouple> allWeeksList = new ArrayList();
+        Collections.addAll(allWeeksList, allWeeks);
+        quickSorter.sortByWeeklyValue(allWeeksList);
+        // sort the shit out of it
+
+        return allWeeksList;
+    }
+
+    private int getNumberOfWeekdaysInYear(String day) {
+
+        int counter = 0;
+
+        for (int i = 0; i < datesForCurrentYear.size(); i++) {
+            if (datesForCurrentYear.get(i).getDayOfWeek().equals(day)) {
+                counter++;
+            }
+        }
+
+        return counter;
+    }
+
+    private String getHappiestWeekday() {
+
+        String tempDay = "";
+        for (int i = 0; i < datesForCurrentYear.size(); i++) {
+            tempDay = datesForCurrentYear.get(i).getDayOfWeek();
+            weekdayMap.put(tempDay, weekdayMap.get(tempDay) + emotionValues.get(datesForCurrentYear.get(i).getEmotionId()));
+        }
+
+
+        Iterator<HashMap.Entry<String, Double>> iterator = weekdayMap.entrySet().iterator();
+        double maxValue = 0;
+        String happiestDay = "";
+
+
+        while (iterator.hasNext()) {
+            HashMap.Entry<String, Double> entry = iterator.next();
+            if (entry.getValue() > maxValue) {
+                happiestDay = entry.getKey();
+                maxValue = entry.getValue();
+            }
+        }
+
+        return "Your happiest day of week is: " + happiestDay + " with a total of: " + maxValue
+            + " and average value: " + String.format("%.2f", + maxValue / getNumberOfWeekdaysInYear(happiestDay));
+    }
+
+    // It requires the datesForCurrentYear to be filled and sorted
+    // It gets the largest positive streak of days without counting the days that haven't been entered in the db(None)
+    private String getLargestPositiveStreak() {
+
+        ArrayList<CalendarDate> streakOfDates = new ArrayList<>();
+        CalendarDate[][] array = new CalendarDate[datesForCurrentYear.size()][datesForCurrentYear.size()];
+        int countStreaks = 0;
+        int countElems = 0;
+
+        for (int i = 0; i < datesForCurrentYear.size(); i++) {
+            if (emotionValues.get(datesForCurrentYear.get(i).getEmotionId()) > 1) {
+                array[countStreaks][countElems] = datesForCurrentYear.get(i);
+                countElems++;
+            } else {
+                if (countElems > 0) {
+                    countStreaks++;
+                    countElems=0;
+                }
+            }
+        }
+
+        int tempIndex[] = new int[2];
+        int highestStreakSize = 0;
+        double maxValue = 0;
+        double tempMaxValue = 0;
+
+        for (int i = 0; i < array.length; i++) {
+            for(int j = 0; j < array[i].length; j++) {
+                if (array[i][j] != null) {
+                    if (j > highestStreakSize) {
+                        highestStreakSize = j;
+                        tempIndex[0] = i;
+                        tempIndex[1] = j;
+                    }
+                    tempMaxValue += emotionValues.get(array[i][j].getEmotionId());
+                } else {
+                    if (tempMaxValue > maxValue)
+                        maxValue = tempMaxValue;
+                    tempMaxValue = 0;
+                    break;
+                }
+            }
+        }
+
+        for (int i = 0; i < tempIndex[1]; i++) {
+            streakOfDates.add(array[tempIndex[0]][i]);
+        }
+
+        Log.d(TAG, "getLargestPositiveStreak: The largest positive streak without counting None is:\n" +
+                "Streak count: " + highestStreakSize + ", Value for streak: " + maxValue);
+
+        String result = "The largest positive streak without counting None is:\\n\" +\n" + "Streak count:" + highestStreakSize + ", Value for streak:" + maxValue;
+        for(int i = 0; i < streakOfDates.size(); i++) {
+            result += streakOfDates.get(i).toString() + "\n";
+        }
+        return result;
     }
 
     // It requires the datesForCurrentYear to be filled and sorted
@@ -311,13 +518,12 @@ public class StatisticsAdapter extends BaseAdapter {
     }
 
     // Average week for certain year
-    private String getAverageWeek(int year) {
+    private String getAverageWeek() {
 
-        List<CalendarDate> allWeeks = db.getCalendarDatesByYear(year);
         double averageWeekValue = 0;
-        for (int i = 0; i < allWeeks.size(); i++) {
+        for (int i = 0; i < datesForCurrentYear.size(); i++) {
             try {
-                averageWeekValue += emotionValues.get(allWeeks.get(i).getEmotionId());
+                averageWeekValue += emotionValues.get(datesForCurrentYear.get(i).getEmotionId());
             } catch (Exception e) {
                 e.printStackTrace();
                 Log.d(TAG, "getAverageWeek: Exception while trying to get average week for year: " + year);
@@ -325,19 +531,18 @@ public class StatisticsAdapter extends BaseAdapter {
             }
         }
 
-        averageWeekValue = averageWeekValue / allWeeks.size() * 7;
+        averageWeekValue = averageWeekValue / datesForCurrentYear.size() * 7;
 
         return "Your average weekly value for year: " + year + " is: " + String.format("%.2f", averageWeekValue);
     }
 
     // Average month for certain year
-    private String getAverageMonth(int year) {
+    private String getAverageMonth() {
 
-        List<CalendarDate> allDays = db.getCalendarDatesByYear(year);
         double average = 0;
-        for (int i = 0; i < allDays.size(); i++) {
+        for (int i = 0; i < datesForCurrentYear.size(); i++) {
             try {
-                average += emotionValues.get(allDays.get(i).getEmotionId());
+                average += emotionValues.get(datesForCurrentYear.get(i).getEmotionId());
             } catch (Exception e) {
                 e.printStackTrace();
                 Log.d(TAG, "getAverageWeek: Exception while trying to get average month for year: " + year);
@@ -345,7 +550,7 @@ public class StatisticsAdapter extends BaseAdapter {
             }
         }
 
-        average = average / allDays.size();
+        average = average / datesForCurrentYear.size();
 
         return "Your average monthly value for year: " + year + " is: " + String.format("%.2f", average * MONTH_CONSTANT);
     }
