@@ -119,14 +119,7 @@
         android:layout_below="@+id/headerEmotionDayActivity"
         android:layout_above="@+id/footerEmotionDayActivity">
 
-        <ListView
-            android:id="@+id/emotionsListViewColour"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="0dp">
 
-        </ListView>
     </RelativeLayout>
 
     <RelativeLayout
@@ -134,35 +127,8 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        >
+        android:layout_alignParentEnd="true">
 
-        <ImageButton
-            android:id="@+id/exitBtn"
-            android:layout_width="50dp"
-            android:layout_height="70dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginEnd="15dp"
-            android:layout_marginBottom="5dp"
-            android:layout_toStartOf="@+id/acceptBtn"
-            android:src="@drawable/ic_exit_light"
-            android:scaleType="fitXY"
-            android:adjustViewBounds="true"
-            />
-
-        <ImageButton
-            android:id="@+id/acceptBtn"
-            android:layout_width="50dp"
-            android:layout_height="70dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginEnd="15dp"
-            android:layout_marginBottom="5dp"
-            android:src="@drawable/ic_tick_light"
-            android:scaleType="fitXY"
-            android:adjustViewBounds="true"
-
-            />
 
     </RelativeLayout>
 </RelativeLayout>

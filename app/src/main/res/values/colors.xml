@@ -9,10 +9,12 @@
     <color name="colorMainLight">#826091</color>
     <color name="colorDeadMainLight">#9E7AAD</color>
     <color name="colorLightBackground">#DBD7DD</color>
+    <color name="colorLighter">#FDFDFD</color>
 
     <color name="colorMainDark">#F2F3C0</color>
     <color name="colorDeadMainDark">#D7D592</color>
     <color name="colorDarkBackground">#616161</color>
+    <color name="colorDarker">#424242</color>
 
     <color name="colorExciting">#FEDC4B</color>
     <color name="colorHappy">#EC8A46</color>

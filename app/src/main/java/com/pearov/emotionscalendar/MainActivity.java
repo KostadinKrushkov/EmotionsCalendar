@@ -5,11 +5,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -26,7 +29,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String googleUsername = "Malazzar";
 
 
-    public static String themeName = "Dark";
+    public static String themeName = "";
+    public static final String CALENDAR_THEME_FILE = "theme.txt";
     private static final String CALENDAR_FILE = "calendarOfEmotions.txt";
 
     @Override
@@ -35,15 +39,24 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         context = getApplicationContext();
-        // Empty the file if we want to test.
+        readThemeName();
+
+        if (themeName.isEmpty()) {
+            themeName = "Light";
+            Intent chooseTheme = new Intent(context, ChooseThemeActivity.class);
+            startActivity(chooseTheme);
+            finish();
+        } else {
+
+            // Empty the file if we want to test.
 //        clearFile();
 
-        // Create emotion calendar text file
-        createFile(getCalendarFile());
+            // Create emotion calendar text file
+//        createFile(getCalendarFile());
 
-        screen = new Screen(this); // Setting Screen
-        float screenWidth = screen.getWidth();
-        float screenHeight = screen.getHeight();
+            screen = new Screen(this); // Setting Screen
+            float screenWidth = screen.getWidth();
+            float screenHeight = screen.getHeight();
 //        Toast.makeText(this, "Width: " + screenWidth + " /Height: " + screenHeight, Toast.LENGTH_SHORT).show();
 
 
@@ -53,19 +66,38 @@ public class MainActivity extends AppCompatActivity {
 //        Used to delete whole database
 //        dropDatabase();
 //        Used for base database
-        createBaseDatabase();
+            createBaseDatabase();
 
-        Intent intent = new Intent(this, CalendarActivity.class);
-        startActivity(intent);
+            Intent intent = new Intent(this, CalendarActivity.class);
+            startActivity(intent);
+        }
+    }
 
-//        Button goToCalendarButton = findViewById(R.id.goToCalendarBtn);
-//        goToCalendarButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(v.getContext(), CalendarActivity.class);
-//                startActivity(intent);
-//            }
-//        });
+    public static void writeThemeToFile() {
+
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(new File(getFilePath() + CALENDAR_THEME_FILE)));
+            writer.write(themeName);
+            writer.flush();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d(TAG, "writeThemeToFile: Error. Could not write to file: " + CALENDAR_THEME_FILE);
+        }
+    }
+
+    private void readThemeName() {
+        createFile(CALENDAR_THEME_FILE);
+        try {
+            BufferedReader buffReader = new BufferedReader(new FileReader(getThemeFilePath()));
+            String temp = "";
+            while((temp = buffReader.readLine()) != null) {
+                themeName = temp;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d(TAG, "readThemeName: Error while trying to open file.");
+        }
     }
 
     public static String getGoogleUsername() {
@@ -207,9 +239,25 @@ public class MainActivity extends AppCompatActivity {
         return context.getFilesDir().getPath() + getCalendarFile();
     }
 
+    public static String getThemeFilePath() {
+        return context.getFilesDir().getPath() + CALENDAR_THEME_FILE;
+    }
+
     private void clearFile() {
 
         String filePath = getFilePath();
+        try {
+            PrintWriter empty_writer = new PrintWriter(filePath);
+            empty_writer.print("");
+            empty_writer.close();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void clearFile(String fileName) {
+
+        String filePath = context.getFilesDir().getPath() + fileName;
         try {
             PrintWriter empty_writer = new PrintWriter(filePath);
             empty_writer.print("");
@@ -226,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
             fileName.createNewFile();
         } catch (IOException e) {
             // This is normal. It is supposed to create a file only the first time.
-            Log.d(TAG, "createFile: Error while trying to create file.");
+            Log.d(TAG, "createFile: Error while trying to create file. " + name + " has already been created.");
         }
     }
 }

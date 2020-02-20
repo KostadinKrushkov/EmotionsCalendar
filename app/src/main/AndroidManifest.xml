@@ -9,10 +9,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".ChooseThemeActivity"></activity>
+        <activity android:name=".NoteForDayActivity" />
         <activity
             android:name=".StatisticsActivity"
             android:label="@string/title_activity_statistics"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".EmotionDayActivity" />
         <activity android:name=".CalendarActivity" />
         <activity android:name=".ActivityExtendedSettings" />

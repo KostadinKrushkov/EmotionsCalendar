@@ -30,6 +30,7 @@ public class EmotionDayActivity extends AppCompatActivity {
     private TextView chosenDayTextView;
     private TextView chosenMonthTextView;
     private TextView textViewValue;
+    private TextView testViewNotes;
     private TextView dailyEmotionText;
     private ListView listView;
     private RelativeLayout textAndTagEmotionActivity;
@@ -87,7 +88,6 @@ public class EmotionDayActivity extends AppCompatActivity {
 
     private void fillBackGroundColours() {
         if (MainActivity.themeName.equals("Light")) {
-            textAndTagEmotionActivity.setBackgroundColor(context.getResources().getColor(R.color.colorMainLight));
             acceptBtn.setImageResource(R.drawable.ic_tick_light);
             acceptBtn.setBackgroundColor(context.getResources().getColor(R.color.colorLightBackground));
             exitBtn.setImageResource(R.drawable.ic_exit_light);
@@ -98,15 +98,17 @@ public class EmotionDayActivity extends AppCompatActivity {
             chosenMonthTextView.setTextColor(context.getResources().getColor(R.color.colorBlack));
             textViewValue.setTextColor(context.getResources().getColor(R.color.colorBlack));
             textViewValue.setBackgroundColor(context.getResources().getColor(R.color.colorLightBackground));
+            testViewNotes.setTextColor(context.getResources().getColor(R.color.colorBlack));
+            testViewNotes.setBackgroundColor(context.getResources().getColor(R.color.colorLighter));
             dailyEmotionText.setTextColor(context.getResources().getColor(R.color.colorWhite));
             dailyEmotionText.setBackgroundColor(context.getResources().getColor(R.color.colorMainLight));
 
+            textAndTagEmotionActivity.setBackgroundColor(context.getResources().getColor(R.color.colorMainLight));
             headerRelativeLayout.setBackgroundColor(context.getResources().getColor(R.color.colorLightBackground));
             bodyRelativeLayout.setBackgroundColor(context.getResources().getColor(R.color.colorLightBackground));
             footerRelativeLayout.setBackgroundColor(context.getResources().getColor(R.color.colorLightBackground));
 
         } else if (MainActivity.themeName.equals("Dark")) {
-            textAndTagEmotionActivity.setBackgroundColor(context.getResources().getColor(R.color.colorMainDark));
             acceptBtn.setImageResource(R.drawable.ic_tick_dark);
             acceptBtn.setBackgroundColor(context.getResources().getColor(R.color.colorDarkBackground));
             exitBtn.setImageResource(R.drawable.ic_exit_dark);
@@ -117,9 +119,12 @@ public class EmotionDayActivity extends AppCompatActivity {
             chosenMonthTextView.setTextColor(context.getResources().getColor(R.color.colorWhite));
             textViewValue.setTextColor(context.getResources().getColor(R.color.colorWhite));
             textViewValue.setBackgroundColor(context.getResources().getColor(R.color.colorDarkBackground));
+            testViewNotes.setTextColor(context.getResources().getColor(R.color.colorWhite));
+            testViewNotes.setBackgroundColor(context.getResources().getColor(R.color.colorDarker));
             dailyEmotionText.setTextColor(context.getResources().getColor(R.color.colorBlack));
             dailyEmotionText.setBackgroundColor(context.getResources().getColor(R.color.colorMainDark));
 
+            textAndTagEmotionActivity.setBackgroundColor(context.getResources().getColor(R.color.colorMainDark));
             headerRelativeLayout.setBackgroundColor(context.getResources().getColor(R.color.colorDarkBackground));
             bodyRelativeLayout.setBackgroundColor(context.getResources().getColor(R.color.colorDarkBackground));
             footerRelativeLayout.setBackgroundColor(context.getResources().getColor(R.color.colorDarkBackground));
@@ -140,29 +145,29 @@ public class EmotionDayActivity extends AppCompatActivity {
         footerRelativeLayout = (RelativeLayout) findViewById(R.id.footerEmotionDayActivity);
 
         Intent myIntent = getIntent();
-        int year = Integer.parseInt(myIntent.getStringExtra("year"));
-        int month = Integer.parseInt(myIntent.getStringExtra("month"));
-        int day = Integer.parseInt(myIntent.getStringExtra("day"));
+        rememberYear = Integer.parseInt(myIntent.getStringExtra("year"));
+        rememberMonth = Integer.parseInt(myIntent.getStringExtra("month"));
+        rememberDay = Integer.parseInt(myIntent.getStringExtra("day"));
 
 //        if (day > 0 && month > 0) {
 //            rememberYear = year;
 //            rememberMonth = month;
 //        }
-        CalendarActivity.cameBackFromYear = year;
-        CalendarActivity.cameBackFromMonth = month;
+        CalendarActivity.cameBackFromYear = rememberYear;
+        CalendarActivity.cameBackFromMonth = rememberMonth;
 
         //Gives them 0 if it < 10
-        String fullDay = String.valueOf(day);
+        String fullDay = String.valueOf(rememberDay);
         if (fullDay.toCharArray().length == 1) {
             fullDay = "0" + fullDay;
         }
 
-        String fullMonth = CalendarActivity.getMonthName(month);
+        String fullMonth = CalendarActivity.getMonthName(rememberMonth);
 //        String fullMonth = String.valueOf(month);
 //        if (fullMonth.toCharArray().length == 1) {
 //            fullMonth = "0" + fullMonth;
 //        }
-        chosenDate = fullDay + "." + fullMonth + "." + year;
+        chosenDate = fullDay + "." + fullMonth + "." + rememberYear;
 
         chosenDayTextView = (TextView) findViewById(R.id.chosenDay);
         chosenDayTextView.setText(fullDay);
@@ -173,8 +178,23 @@ public class EmotionDayActivity extends AppCompatActivity {
         textViewValue = (TextView) findViewById(R.id.textViewValue);
         textViewValue.setText("value");
 
+        testViewNotes = (TextView) findViewById(R.id.textViewNotes);
+        testViewNotes.setText("notes");
+
         dailyEmotionText = (TextView) findViewById(R.id.dailyEmotionText);
         dailyEmotionText.setText("Your emotion for the day");
+
+        testViewNotes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(EmotionDayActivity.context, NoteForDayActivity.class);
+                intent.putExtra("year", rememberYear + "");
+                intent.putExtra("month", rememberMonth+ "");
+                intent.putExtra("day", rememberDay + "");
+                startActivity(intent);
+                finish();
+            }
+        });
 
         listView = (ListView) findViewById(R.id.emotionsListViewColour);
         EmotionAdapter adapter = new EmotionAdapter();
@@ -239,7 +259,7 @@ public class EmotionDayActivity extends AppCompatActivity {
                 }
                 emotionToSave = emotions.get(position).getName();
                 tempView = view;
-                existingDay = GridAdapter.getDayFromFile(day, month, year);
+                existingDay = GridAdapter.getDayFromFile(rememberDay, rememberMonth, rememberYear);
             }
 
         });
@@ -269,10 +289,10 @@ public class EmotionDayActivity extends AppCompatActivity {
                     }
                     if(flagChosenEmotion && existingDay.toCharArray().length > 2) {
 //                        GridAdapter.overWriteDayInFile(day + "-" + month + "-" + year + "-" + emotionToSave);
-                        if (db.getCalendarDateByDate(day, month, year) != null)
-                            db.updateCalendarDateEmotionByDate(day, month, year, emotionIdToSave);
+                        if (db.getCalendarDateByDate(rememberDay, rememberMonth, rememberYear) != null)
+                            db.updateCalendarDateEmotionByDate(rememberDay, rememberMonth, rememberYear, emotionIdToSave);
                         else {
-                            CalendarDate date = new CalendarDate(day, month, year, "Default", 0, emotionIdToSave);
+                            CalendarDate date = new CalendarDate(rememberDay, rememberMonth, rememberYear, "Default", 0, emotionIdToSave);
                             CalendarActivity.fillDate(date);
                             db.addCalendarDate(date);
                         }
@@ -284,7 +304,7 @@ public class EmotionDayActivity extends AppCompatActivity {
                         isFinished = true;
                     } else if (flagChosenEmotion && existingDay.toCharArray().length < 2) {
 //                        GridAdapter.writeDayInFile(day + "-" + month + "-" + year + "-" + emotionToSave);
-                        CalendarDate date = new CalendarDate(day, month, year, "Default", 0, emotionIdToSave);
+                        CalendarDate date = new CalendarDate(rememberDay, rememberMonth, rememberYear, "Default", 0, emotionIdToSave);
                         CalendarActivity.fillDate(date);
                         db.addCalendarDate(date);
                         if (emotionToSave.equals("None"))
