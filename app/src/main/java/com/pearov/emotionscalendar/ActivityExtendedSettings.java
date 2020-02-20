@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ActivityExtendedSettings extends AppCompatActivity {
 
@@ -59,6 +60,9 @@ public class ActivityExtendedSettings extends AppCompatActivity {
         changeTheme.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(context, ChooseThemeActivity.class);
+                startActivity(intent);
+                finish();
                 // Go to startup activity theme choice
             }
         });
@@ -66,6 +70,8 @@ public class ActivityExtendedSettings extends AppCompatActivity {
         importData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(context, "Hello there", Toast.LENGTH_LONG).show();
+
                 // Popup view for importing data from excel format ?
             }
         });
@@ -73,6 +79,8 @@ public class ActivityExtendedSettings extends AppCompatActivity {
         exportData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(context, "General Kenobi", Toast.LENGTH_LONG).show();
+
                 // Popup view for export data to excel format ?
             }
         });
