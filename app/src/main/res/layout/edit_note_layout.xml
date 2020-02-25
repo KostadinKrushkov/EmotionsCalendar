@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <EditText
+        android:id="@+id/noteTitleEditText"
+        android:gravity="center|start"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:fontFamily="@font/ukij_qolyazma"
+        android:paddingTop="10dp"
+        android:paddingHorizontal="30dp"
+        android:textSize="18sp" />
+
+    <EditText
+        android:id="@+id/noteEditText"
+        android:gravity="clip_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/noteTitleEditText"
+        android:fontFamily="@font/ukij_qolyazma"
+        android:paddingHorizontal="30dp"
+        android:text="asdsad'fl;asdflk;asjdflk;asdjfalskdfjasl;kfjk;asdjfalskdfjasl;kfjk;asdjfalskdfjasl;kfjk;asdjfalskdfjasl;kfjk;asdjfalskdfjasl;kfjk;asdjfalskdfjasl;kfjk;asdjfalskdfjasl;kfjk"
+        android:textSize="18sp" />
+
+    <ImageButton
+        android:id="@+id/acceptButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="30dp"
+        android:layout_marginTop="35dp"
+        android:adjustViewBounds="true"
+        android:background="@drawable/roundcorner"
+        android:scaleType="fitXY" />
+
+</RelativeLayout>

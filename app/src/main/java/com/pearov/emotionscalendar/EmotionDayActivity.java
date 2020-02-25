@@ -14,9 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
-import org.w3c.dom.Text;
-
-import java.util.Calendar;
 import java.util.List;
 
 public class EmotionDayActivity extends AppCompatActivity {
@@ -101,9 +98,9 @@ public class EmotionDayActivity extends AppCompatActivity {
             testViewNotes.setTextColor(context.getResources().getColor(R.color.colorBlack));
             testViewNotes.setBackgroundColor(context.getResources().getColor(R.color.colorLighter));
             dailyEmotionText.setTextColor(context.getResources().getColor(R.color.colorWhite));
-            dailyEmotionText.setBackgroundColor(context.getResources().getColor(R.color.colorMainLight));
+            dailyEmotionText.setBackgroundColor(context.getResources().getColor(R.color.colorDeadMainLight));
 
-            textAndTagEmotionActivity.setBackgroundColor(context.getResources().getColor(R.color.colorMainLight));
+            textAndTagEmotionActivity.setBackgroundColor(context.getResources().getColor(R.color.colorDeadMainLight));
             headerRelativeLayout.setBackgroundColor(context.getResources().getColor(R.color.colorLightBackground));
             bodyRelativeLayout.setBackgroundColor(context.getResources().getColor(R.color.colorLightBackground));
             footerRelativeLayout.setBackgroundColor(context.getResources().getColor(R.color.colorLightBackground));
@@ -122,9 +119,9 @@ public class EmotionDayActivity extends AppCompatActivity {
             testViewNotes.setTextColor(context.getResources().getColor(R.color.colorWhite));
             testViewNotes.setBackgroundColor(context.getResources().getColor(R.color.colorDarker));
             dailyEmotionText.setTextColor(context.getResources().getColor(R.color.colorBlack));
-            dailyEmotionText.setBackgroundColor(context.getResources().getColor(R.color.colorMainDark));
+            dailyEmotionText.setBackgroundColor(context.getResources().getColor(R.color.colorDeadMainDark));
 
-            textAndTagEmotionActivity.setBackgroundColor(context.getResources().getColor(R.color.colorMainDark));
+            textAndTagEmotionActivity.setBackgroundColor(context.getResources().getColor(R.color.colorDeadMainDark));
             headerRelativeLayout.setBackgroundColor(context.getResources().getColor(R.color.colorDarkBackground));
             bodyRelativeLayout.setBackgroundColor(context.getResources().getColor(R.color.colorDarkBackground));
             footerRelativeLayout.setBackgroundColor(context.getResources().getColor(R.color.colorDarkBackground));
@@ -187,7 +184,7 @@ public class EmotionDayActivity extends AppCompatActivity {
         testViewNotes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(EmotionDayActivity.context, NoteForDayActivity.class);
+                Intent intent = new Intent(EmotionDayActivity.context, NotesForDayActivity.class);
                 intent.putExtra("year", rememberYear + "");
                 intent.putExtra("month", rememberMonth+ "");
                 intent.putExtra("day", rememberDay + "");

@@ -19,7 +19,9 @@ import android.widget.TextView;
 public class ChooseThemeActivity extends AppCompatActivity {
 
     private Context context;
-    private RelativeLayout chooseThemeRelativeLayout;
+    private RelativeLayout bodyRelativeLayout;
+    private RelativeLayout headerRelativeLayout;
+    private RelativeLayout footerRelativeLayout;
     private TextView chooseThemeTextView;
     private TextView lightThemeTextView;
     private TextView darkThemeTextView;
@@ -53,20 +55,29 @@ public class ChooseThemeActivity extends AppCompatActivity {
 
     private void fillBackGroundColours() {
         if (MainActivity.themeName.equals("Light")) {
-            chooseThemeRelativeLayout.setBackgroundColor(context.getResources().getColor(R.color.colorDeadMainLight));
+            bodyRelativeLayout.setBackgroundColor(context.getResources().getColor(R.color.colorDeadMainLight));
+            footerRelativeLayout.setBackgroundColor(context.getResources().getColor(R.color.colorMainLight));
+            headerRelativeLayout.setBackgroundColor(context.getResources().getColor(R.color.colorMainLight));
             chooseThemeTextView.setTextColor(context.getResources().getColor(R.color.colorWhite));
             lightThemeTextView.setTextColor(context.getResources().getColor(R.color.colorWhite));
+            lightThemeTextView.setBackgroundColor(context.getResources().getColor(R.color.colorMainLight));
             darkThemeTextView.setTextColor(context.getResources().getColor(R.color.colorWhite));
+            darkThemeTextView.setBackgroundColor(context.getResources().getColor(R.color.colorDeadMainLight));
 
             acceptButton.setImageResource(R.drawable.ic_tick_light);
             acceptButton.setBackgroundColor(context.getResources().getColor(R.color.colorLightBackground));
 //            acceptButton.setImageDrawable(context.getResources().getDrawable(R.drawable.roundcorner));
 
         } else if (MainActivity.themeName.equals("Dark")) {
-            chooseThemeRelativeLayout.setBackgroundColor(context.getResources().getColor(R.color.colorDeadMainDark));
+            bodyRelativeLayout.setBackgroundColor(context.getResources().getColor(R.color.colorDeadMainDark));
+            footerRelativeLayout.setBackgroundColor(context.getResources().getColor(R.color.colorDarkBackground));
+            headerRelativeLayout.setBackgroundColor(context.getResources().getColor(R.color.colorDarkBackground));
             chooseThemeTextView.setTextColor(context.getResources().getColor(R.color.colorBlack));
             lightThemeTextView.setTextColor(context.getResources().getColor(R.color.colorBlack));
+            lightThemeTextView.setBackgroundColor(context.getResources().getColor(R.color.colorDeadMainDark));
+
             darkThemeTextView.setTextColor(context.getResources().getColor(R.color.colorBlack));
+            darkThemeTextView.setBackgroundColor(context.getResources().getColor(R.color.colorDarkBackground));
 
             acceptButton.setImageResource(R.drawable.ic_tick_dark);
             acceptButton.setBackgroundColor(context.getResources().getColor(R.color.colorDarkBackground));
@@ -76,7 +87,7 @@ public class ChooseThemeActivity extends AppCompatActivity {
 
     private void writeThemeNameToFile() {
         MainActivity.clearFile(MainActivity.CALENDAR_THEME_FILE);
-        MainActivity.writeThemeToFile();
+        MainActivity.writeThemeToFile(MainActivity.CALENDAR_THEME_FILE);
     }
 
     @Override
@@ -85,7 +96,9 @@ public class ChooseThemeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_choose_theme);
         context = getApplicationContext();
 
-        chooseThemeRelativeLayout = findViewById(R.id.chooseThemeRelativeLayout);
+        bodyRelativeLayout = findViewById(R.id.bodyRelativeLayout);
+        headerRelativeLayout = findViewById(R.id.headerRelativeLayout);
+        footerRelativeLayout = findViewById(R.id.footerRelativeLayout);
         chooseThemeTextView = findViewById(R.id.textViewChooseTheme);
         lightThemeTextView = findViewById(R.id.textViewChoseLight);
         darkThemeTextView = findViewById(R.id.textViewChoseDark);

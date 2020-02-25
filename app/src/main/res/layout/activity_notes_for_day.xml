@@ -112,23 +112,14 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/bodyEmotionDayActivity"
+    <android.support.v4.view.ViewPager
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:id="@+id/containter"
         android:layout_below="@+id/headerEmotionDayActivity"
-        android:layout_above="@+id/footerEmotionDayActivity">
+        android:layout_marginTop="0dp"
+        >
 
+    </android.support.v4.view.ViewPager>
 
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/footerEmotionDayActivity"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true">
-
-
-    </RelativeLayout>
 </RelativeLayout>

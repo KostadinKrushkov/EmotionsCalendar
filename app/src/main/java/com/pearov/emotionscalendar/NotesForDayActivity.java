@@ -1,17 +1,17 @@
 package com.pearov.emotionscalendar;
 
-        import android.content.Context;
-        import android.content.Intent;
-        import android.os.Bundle;
-        import android.support.v7.app.AppCompatActivity;
-        import android.util.Log;
-        import android.view.View;
-        import android.widget.RelativeLayout;
-        import android.widget.TextView;
-        import android.widget.Toast;
-        import java.util.List;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
-public class NoteForDayActivity extends AppCompatActivity {
+import java.util.List;
+
+public class NotesForDayActivity extends AppCompatActivity {
 
     private static final String TAG = "EmotionDayActivity";
     public static Context context;
@@ -20,13 +20,15 @@ public class NoteForDayActivity extends AppCompatActivity {
 
     private RelativeLayout textAndTagEmotionActivity;
     private RelativeLayout headerRelativeLayout;
-    private RelativeLayout bodyRelativeLayout;
-    private RelativeLayout footerRelativeLayout;
     private TextView chosenDayTextView;
     private TextView chosenMonthTextView;
     private TextView textViewValue;
-    private TextView testViewNotes;
+    private TextView textViewNotes;
     private TextView dailyEmotionText;
+
+    private NotesFragmentAdapter notesAdapter;
+    private ViewPager viewPager;
+    private static String noteTitle = "";
 
     // variable to be used to rember which emotion is picked
     private String lastEmotionThatWasHighlighted = "-1";
@@ -37,27 +39,38 @@ public class NoteForDayActivity extends AppCompatActivity {
     private static int rememberMonth;
     private static int rememberYear;
 
-    // variable used to add emotion to date in the file
-    private boolean flagChosenEmotion = false;
-    private String existingDay;
-    private String emotionToSave;
+    private static boolean goBackToFragment = false;
 
-    public String getChosenDate() {
-        return chosenDate;
+    public static boolean isGoBackToFragment() {
+        return goBackToFragment;
     }
 
-    private static List<Emotion> emotions;
-
-    public static List<Emotion> getEmotions(){
-        return emotions;
+    public static void setGoBackToFragment(boolean flag) {
+        goBackToFragment = flag;
     }
 
-    public static String[] getEmotionNames() {
-        String[] names = new String[getEmotions().size()];
-        for(int i = 0; i < names.length; i++) {
-            names[i] = emotions.get(i).getName();
-        }
-        return names;
+    public static Context getContext() {
+        return context;
+    }
+
+    public static String getNoteTitle() {
+        return noteTitle;
+    }
+
+    public static void setNoteTitle(String noteTitle) {
+        NotesForDayActivity.noteTitle = noteTitle;
+    }
+
+    public static int getRememberDay() {
+        return rememberDay;
+    }
+
+    public static int getRememberMonth() {
+        return rememberMonth;
+    }
+
+    public static int getRememberYear() {
+        return rememberYear;
     }
 
     private void fillBackGroundColours() {
@@ -68,15 +81,15 @@ public class NoteForDayActivity extends AppCompatActivity {
             chosenMonthTextView.setTextColor(context.getResources().getColor(R.color.colorBlack));
             textViewValue.setTextColor(context.getResources().getColor(R.color.colorBlack));
             textViewValue.setBackgroundColor(context.getResources().getColor(R.color.colorLighter));
-            testViewNotes.setTextColor(context.getResources().getColor(R.color.colorBlack));
-            testViewNotes.setBackgroundColor(context.getResources().getColor(R.color.colorLightBackground));
+            textViewNotes.setTextColor(context.getResources().getColor(R.color.colorBlack));
+            textViewNotes.setBackgroundColor(context.getResources().getColor(R.color.colorDeadMainLight));
+//            textViewNotes.setBackgroundColor(context.getResources().getColor(R.color.colorLightBackground));
             dailyEmotionText.setTextColor(context.getResources().getColor(R.color.colorWhite));
-            dailyEmotionText.setBackgroundColor(context.getResources().getColor(R.color.colorMainLight));
+            dailyEmotionText.setBackgroundColor(context.getResources().getColor(R.color.colorDeadMainLight));
 
-            textAndTagEmotionActivity.setBackgroundColor(context.getResources().getColor(R.color.colorMainLight));
+            textAndTagEmotionActivity.setBackgroundColor(context.getResources().getColor(R.color.colorDeadMainLight));
             headerRelativeLayout.setBackgroundColor(context.getResources().getColor(R.color.colorLightBackground));
-            bodyRelativeLayout.setBackgroundColor(context.getResources().getColor(R.color.colorLightBackground));
-            footerRelativeLayout.setBackgroundColor(context.getResources().getColor(R.color.colorLightBackground));
+
 
         } else if (MainActivity.themeName.equals("Dark")) {
             textAndTagEmotionActivity.setBackgroundColor(context.getResources().getColor(R.color.colorMainDark));
@@ -86,15 +99,14 @@ public class NoteForDayActivity extends AppCompatActivity {
             chosenMonthTextView.setTextColor(context.getResources().getColor(R.color.colorWhite));
             textViewValue.setTextColor(context.getResources().getColor(R.color.colorWhite));
             textViewValue.setBackgroundColor(context.getResources().getColor(R.color.colorDarker));
-            testViewNotes.setTextColor(context.getResources().getColor(R.color.colorWhite));
-            testViewNotes.setBackgroundColor(context.getResources().getColor(R.color.colorDarkBackground));
+            textViewNotes.setTextColor(context.getResources().getColor(R.color.colorWhite));
+            textViewNotes.setBackgroundColor(context.getResources().getColor(R.color.colorDarkBackground));
             dailyEmotionText.setTextColor(context.getResources().getColor(R.color.colorBlack));
-            dailyEmotionText.setBackgroundColor(context.getResources().getColor(R.color.colorMainDark));
+            dailyEmotionText.setBackgroundColor(context.getResources().getColor(R.color.colorDeadMainDark));
 
-            textAndTagEmotionActivity.setBackgroundColor(context.getResources().getColor(R.color.colorMainDark));
+            textAndTagEmotionActivity.setBackgroundColor(context.getResources().getColor(R.color.colorDeadMainDark));
             headerRelativeLayout.setBackgroundColor(context.getResources().getColor(R.color.colorDarkBackground));
-            bodyRelativeLayout.setBackgroundColor(context.getResources().getColor(R.color.colorDarkBackground));
-            footerRelativeLayout.setBackgroundColor(context.getResources().getColor(R.color.colorDarkBackground));
+
         }
     }
 
@@ -107,12 +119,16 @@ public class NoteForDayActivity extends AppCompatActivity {
 
         textAndTagEmotionActivity = (RelativeLayout) findViewById(R.id.textAndTagEmotionActivity);
         headerRelativeLayout = (RelativeLayout) findViewById(R.id.headerEmotionDayActivity);
-        bodyRelativeLayout = (RelativeLayout) findViewById(R.id.bodyEmotionDayActivity);
-        footerRelativeLayout = (RelativeLayout) findViewById(R.id.footerEmotionDayActivity);
+
         Intent myIntent = getIntent();
         rememberYear = Integer.parseInt(myIntent.getStringExtra("year"));
         rememberMonth = Integer.parseInt(myIntent.getStringExtra("month"));
         rememberDay = Integer.parseInt(myIntent.getStringExtra("day"));
+
+        // Fragments
+        notesAdapter = new NotesFragmentAdapter(getSupportFragmentManager());
+        viewPager = (ViewPager) findViewById(R.id.containter);
+        setupViewPager(viewPager);
 
         CalendarActivity.cameBackFromYear = rememberYear;
         CalendarActivity.cameBackFromMonth = rememberMonth;
@@ -135,8 +151,8 @@ public class NoteForDayActivity extends AppCompatActivity {
         textViewValue = (TextView) findViewById(R.id.textViewValue);
         textViewValue.setText("value");
 
-        testViewNotes = (TextView) findViewById(R.id.textViewNotes);
-        testViewNotes.setText("notes");
+        textViewNotes = (TextView) findViewById(R.id.textViewNotes);
+        textViewNotes.setText("notes");
 
         dailyEmotionText = (TextView) findViewById(R.id.dailyEmotionText);
         dailyEmotionText.setText("Your notes for the day");
@@ -144,7 +160,7 @@ public class NoteForDayActivity extends AppCompatActivity {
         textViewValue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(NoteForDayActivity.context, EmotionDayActivity.class);
+                Intent intent = new Intent(NotesForDayActivity.context, EmotionDayActivity.class);
                 intent.putExtra("year", rememberYear + "");
                 intent.putExtra("month", rememberMonth+ "");
                 intent.putExtra("day", rememberDay + "");
@@ -155,6 +171,44 @@ public class NoteForDayActivity extends AppCompatActivity {
 
 
         fillBackGroundColours();
+    }
+
+    public static List<Note> getNotes() {
+        return db.getAllNotesForDay(rememberDay, rememberMonth, rememberYear);
+    }
+
+    public static int getCountNotes() {
+        return db.getAllNotesForDay(rememberDay, rememberMonth, rememberYear).size();
+    }
+
+    public void refreshNotes() {
+        getSupportFragmentManager().beginTransaction().replace(R.id.AllNotesFragment, new NotesForDayFragment()).commit();
+        setViewPager(0);
+    }
+
+    private void setupViewPager(ViewPager viewPager) {
+
+        NotesFragmentAdapter adapter = new NotesFragmentAdapter(getSupportFragmentManager());
+        adapter.addFragment(new NotesForDayFragment());
+        adapter.addFragment(new NoteForEditFragment());
+        viewPager.setAdapter(adapter);
+    }
+
+    public void setViewPager(int fragmentNumber) {
+        viewPager.setCurrentItem(fragmentNumber);
+    }
+
+    // Make it have a default that goes to previous and a fragment one that goes back to the other fragment
+    @Override
+    public void onBackPressed() {
+        if (!goBackToFragment) {
+            super.onBackPressed();
+        } else {
+            goBackToFragment = false;
+            NotesForDayFragment.setTickMode(false);
+            setViewPager(0);
+            refreshNotes();
+        }
     }
 }
 

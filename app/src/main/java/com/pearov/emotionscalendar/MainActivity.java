@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static String themeName = "";
     public static final String CALENDAR_THEME_FILE = "theme.txt";
-    private static final String CALENDAR_FILE = "calendarOfEmotions.txt";
+    public static final String CALENDAR_FILE = "calendarOfEmotions.txt";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +39,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         context = getApplicationContext();
-        readThemeName();
 
+
+        readThemeName(CALENDAR_THEME_FILE);
         if (themeName.isEmpty()) {
             themeName = "Light";
             Intent chooseTheme = new Intent(context, ChooseThemeActivity.class);
@@ -73,23 +74,23 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public static void writeThemeToFile() {
+    public static void writeThemeToFile(String fileName) {
 
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(new File(getFilePath() + CALENDAR_THEME_FILE)));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(new File(context.getFilesDir().getPath() + "/" + fileName)));
             writer.write(themeName);
             writer.flush();
 
         } catch (Exception e) {
             e.printStackTrace();
-            Log.d(TAG, "writeThemeToFile: Error. Could not write to file: " + CALENDAR_THEME_FILE);
+            Log.d(TAG, "writeThemeToFile: Error. Could not write to file: " + fileName);
         }
     }
 
-    private void readThemeName() {
-        createFile(CALENDAR_THEME_FILE);
+    private void readThemeName(String fileName) {
+        createFile(fileName);
         try {
-            BufferedReader buffReader = new BufferedReader(new FileReader(getThemeFilePath()));
+            BufferedReader buffReader = new BufferedReader(new FileReader(context.getFilesDir().getPath() + "/" + fileName));
             String temp = "";
             while((temp = buffReader.readLine()) != null) {
                 themeName = temp;
@@ -231,33 +232,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public static String getCalendarFile() {
-        return CALENDAR_FILE;
-    }
-
-    public static String getFilePath() {
-        return context.getFilesDir().getPath() + getCalendarFile();
-    }
-
-    public static String getThemeFilePath() {
-        return context.getFilesDir().getPath() + CALENDAR_THEME_FILE;
-    }
-
-    private void clearFile() {
-
-        String filePath = getFilePath();
-        try {
-            PrintWriter empty_writer = new PrintWriter(filePath);
-            empty_writer.print("");
-            empty_writer.close();
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void clearFile(String fileName) {
 
-        String filePath = context.getFilesDir().getPath() + fileName;
+        String filePath = context.getFilesDir().getPath() + "/" + fileName;
         try {
             PrintWriter empty_writer = new PrintWriter(filePath);
             empty_writer.print("");
@@ -269,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void createFile(String name) {
 
-        File fileName = new File(name);
+        File fileName = new File(context.getFilesDir().getPath() + "/" + name);
         try {
             fileName.createNewFile();
         } catch (IOException e) {

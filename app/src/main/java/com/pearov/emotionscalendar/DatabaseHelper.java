@@ -3,6 +3,7 @@ package com.pearov.emotionscalendar;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
@@ -74,6 +75,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL(CREATE_EMOTIONS_TABLE);
 
+        // All note ids are added by checking how many notes have been created for a particular day
         String CREATE_NOTES_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NOTES + "("
                 + TABLE_NOTES_ID + " INTEGER PRIMARY KEY NOT NULL,"
                 + TABLE_NOTES_TITLE + " TEXT NOT NULL,"
@@ -338,7 +340,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // Notes
-    public void addNote(Note note) {
+    public boolean addNote(Note note) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -346,8 +348,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(TABLE_NOTES_TITLE, note.getTitle());
         values.put(TABLE_NOTES_NOTETEXT, note.getNoteText());
 
-        db.insert(TABLE_NOTES, null, values);
-        db.close();
+        long res = -111;
+        try {
+            res = db.insert(TABLE_NOTES, null, values);
+        } catch (SQLiteConstraintException e) {
+            Log.d(TAG, "addNote: SQLiteConstraintException occurred while inserting note: " + note.toString());
+            res = -1;
+        }
+
+        if (res < 0) {
+            db.close();
+            return false;
+        } else {
+            db.close();
+            return true;
+        }
     }
 
     public boolean updateNote(Note oldNote, Note newNote) {
@@ -371,13 +386,57 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public boolean deleteNoteById(int noteId) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        int result = db.delete(TABLE_NOTES, TABLE_NOTES_ID  + "=" + noteId, null);
-
-        db.close();
-        if (result == -1)
-            return false;
-
+        List<CalendarDate> list = getAllCalendarDates();
+        for (int i = 0; i < list.size(); i++) {
+            CalendarDate tempDate = list.get(i);
+            List<Integer> notes = list.get(i).getNoteIdList();
+            for(int j = 0; j < notes.size(); j++) {
+                if (notes.get(j) == noteId) {
+                    // The note was found in this particular date. Update the date without it and delete the note.
+                    notes.remove(j);
+                    tempDate.setNoteIdList(notes);
+                    boolean res = updateCalendarDate(list.get(i), tempDate);
+                    if (res) {
+                        db = this.getWritableDatabase();
+                        int result = db.delete(TABLE_NOTES, TABLE_NOTES_ID  + "=" + noteId, null);
+                        db.close();
+                        if (result == -1) {
+                            Log.d(TAG, "deleteNoteById: Failed to delete note from TABLE_NOTES.\n");
+                            return false;
+                        }
+                        return true;
+                    } else {
+                        Log.d(TAG, "deleteNoteById: Failed to delete note from CalendarDate Notes string.\n");
+                        return false;
+                    }
+                }
+            }
+        }
         return true;
+    }
+
+    public Note getNoteIdByTitleAndDay(String title, int day, int month, int year) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Note note = null;
+
+        List<CalendarDate> calendarDateList = new ArrayList<CalendarDate>();
+
+        Cursor cursor = db.query(TABLE_CALENDARDATE, new String[]
+                        { TABLE_CALENDARDATE_NOTEID },
+                TABLE_CALENDARDATE_DAY + "=? AND "
+                        +TABLE_CALENDARDATE_MONTH + "=? AND "
+                        +TABLE_CALENDARDATE_YEAR + "=?", new String[]
+                        { String.valueOf(day), String.valueOf(month), String.valueOf(year) }, null, null, null, null );
+
+        if (cursor.moveToFirst()) {
+            do {
+                Note tempNote = getNoteById(Integer.parseInt(cursor.getString(0)));
+                if (tempNote.getTitle().equals(title))
+                    note = tempNote;
+            } while(cursor.moveToNext());
+        }
+
+        return note;
     }
 
     public Note getNoteById(int id) {
@@ -400,6 +459,45 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return note;
+    }
+
+    public List<Note> getAllNotesForDay(int day, int month, int year) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        List<Note> noteList = new ArrayList<Note>();
+
+        Cursor cursor;
+
+        try {
+            cursor = db.query(TABLE_CALENDARDATE, new String[]
+                            {TABLE_CALENDARDATE_NOTEID},
+                    TABLE_CALENDARDATE_DAY + "=? AND "
+                            + TABLE_CALENDARDATE_MONTH + "=? AND "
+                            + TABLE_CALENDARDATE_YEAR + "=?", new String[]
+                            {String.valueOf(day), String.valueOf(month), String.valueOf(year)}, null, null, TABLE_NOTES_ID, null);
+        } catch (NullPointerException e) {
+            // No notes have been created for this day.
+            return noteList;
+        }
+
+        if (cursor.moveToFirst()) {
+            do {
+                if (cursor.getString(0) != null && !cursor.getString(0).isEmpty()) {
+                    String allNoteIds[] = cursor.getString(0).split(" ");
+                    for (String temp : allNoteIds) {
+                        Note note = getNoteById(Integer.parseInt(temp));
+                        if (note != null)
+                            noteList.add(note);
+                        else
+                            return noteList;
+                    }
+                }
+            } while(cursor.moveToNext());
+        }
+
+        db.close();
+        cursor.close();
+        return noteList;
     }
 
     public List<Note> getAllNotes() {
@@ -590,6 +688,59 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return true;
     }
 
+    public boolean updateCalendarDateById(int calendarDateId, CalendarDate date) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(TABLE_CALENDARDATE_DAY, date.getDay());
+        values.put(TABLE_CALENDARDATE_MONTH, date.getMonth());
+        values.put(TABLE_CALENDARDATE_YEAR, date.getYear());
+        values.put(TABLE_CALENDARDATE_EMOTIONID, date.getEmotionId());
+        values.put(TABLE_CALENDARDATE_WEEKOFYEAR, date.getWeekOfYear());
+        values.put(TABLE_CALENDARDATE_DAYOFWEEK, date.getDayOfWeek());
+
+        String noteIds = date.getNoteIdListString();
+        values.put(TABLE_CALENDARDATE_NOTEID, noteIds);
+
+        CalendarDate tempDate = getCalendarDateById(calendarDateId);
+
+        int res = db.update(TABLE_CALENDARDATE, values,TABLE_CALENDARDATE_DAY + " = ? AND "
+                        + TABLE_CALENDARDATE_MONTH + " = ? AND "
+                        + TABLE_CALENDARDATE_YEAR + " = ? ",
+                new String[]{String.valueOf(tempDate.getDay()),
+                        String.valueOf(tempDate.getMonth()),
+                        String.valueOf(tempDate.getYear())
+                });
+
+        db.close();
+        if (res == -1) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean updateCalendarDateNotes(CalendarDate date, String notes) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+
+        values.put(TABLE_CALENDARDATE_NOTEID, notes);
+
+        int res = db.update(TABLE_CALENDARDATE, values,TABLE_CALENDARDATE_DAY + " = ? AND "
+                        + TABLE_CALENDARDATE_MONTH + " = ? AND "
+                        + TABLE_CALENDARDATE_YEAR + " = ? ",
+                new String[]{String.valueOf(date.getDay()),
+                        String.valueOf(date.getMonth()),
+                        String.valueOf(date.getYear())
+                });
+
+        db.close();
+        if (res == -1) {
+            return false;
+        }
+        return true;
+    }
+
     public boolean updateCalendarDate(CalendarDate oldDate, CalendarDate newDate) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -645,6 +796,55 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public CalendarDate getCalendarDateById(int calendarDateId) {
+        CalendarDate date = null;
+        try {
+            SQLiteDatabase db = this.getReadableDatabase();
+
+            Cursor cursor = db.query(TABLE_CALENDARDATE, new String[]
+                            {TABLE_CALENDARDATE_DAY, TABLE_CALENDARDATE_MONTH, TABLE_CALENDARDATE_YEAR,
+                                    TABLE_CALENDARDATE_DAYOFWEEK, TABLE_CALENDARDATE_WEEKOFYEAR,
+                                    TABLE_CALENDARDATE_EMOTIONID, TABLE_CALENDARDATE_NOTEID},
+                    TABLE_CALENDARDATE_ID + " =? ", new String[]
+                            {String.valueOf(calendarDateId)}, null, null, null, null);
+            if (cursor != null)
+                cursor.moveToFirst();
+
+
+            List<Integer> noteIdList = new ArrayList<Integer>();
+            if (cursor.getString(6) != null && !cursor.getString(6).isEmpty()){
+                String params[] = cursor.getString(6).split(" ");
+                for (String temp : params) {
+                    if (!temp.equals(""))
+                        noteIdList.add(Integer.parseInt(temp));
+                }
+            }
+
+            if (noteIdList.size() != 0) {
+                date = new CalendarDate(
+                        Integer.parseInt(cursor.getString(0)),
+                        Integer.parseInt(cursor.getString(1)),
+                        Integer.parseInt(cursor.getString(2)),
+                        cursor.getString(3), Integer.parseInt(cursor.getString(4)),
+                        Integer.parseInt(cursor.getString(5)),
+                        noteIdList);
+            } else {
+                date = new CalendarDate(
+                        Integer.parseInt(cursor.getString(0)),
+                        Integer.parseInt(cursor.getString(1)),
+                        Integer.parseInt(cursor.getString(2)),
+                        cursor.getString(3), Integer.parseInt(cursor.getString(4)),
+                        Integer.parseInt(cursor.getString(5)));
+            }
+
+            db.close();
+            cursor.close();
+        } catch (Exception e) {
+            Log.d(TAG, "getCalendarDateById: Exception while trying to get calendar date by id: " + calendarDateId + "\n");
+        }
+        return date;
+    }
+
     public int getCalendarDateId(int day, int month, int year) {
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -687,7 +887,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
             List<Integer> noteIdList = new ArrayList<Integer>();
-            if (cursor.getString(6) != null) {
+            if (cursor.getString(6) != null && !cursor.getString(6).isEmpty()){
                 String params[] = cursor.getString(6).split(" ");
                 for (String temp : params) {
                     if (!temp.equals(""))
@@ -871,7 +1071,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 List<Integer> noteIdList = new ArrayList<Integer>();
-                if (cursor.getString(7) != null) {
+                if (cursor.getString(7) != null && !cursor.getString(7).isEmpty()) {
                     String params[] = cursor.getString(7).split(" ");
                     for (String temp : params)
                         noteIdList.add(Integer.parseInt(temp));

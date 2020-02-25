@@ -4,57 +4,91 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".EmotionDayActivity"
-    android:fontFamily="@font/ukij_qolyazma"
     android:id="@+id/chooseThemeRelativeLayout"
     >
 
-
-    <TextView
-        android:id="@+id/textViewChooseTheme"
-        android:fontFamily="@font/ukij_qolyazma"
+    <RelativeLayout
+        android:id="@+id/headerRelativeLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="125dp"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="150dp"
-        android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:textSize="24sp"
-        android:text="Please choose a theme" />
-
-    <TextView
-        android:id="@+id/textViewChoseLight"
-        android:fontFamily="@font/ukij_qolyazma"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="300dp"
-        android:textSize="20sp"
-        android:text="Light" />
-
-    <TextView
-        android:id="@+id/textViewChoseDark"
-        android:fontFamily="@font/ukij_qolyazma"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="300dp"
-        android:layout_marginEnd="100dp"
-        android:textSize="20sp"
-        android:text="Dark" />
-
-    <ImageButton
-        android:id="@+id/acceptBtn"
-        android:background="@drawable/roundcorner"
-        android:layout_width="50dp"
-        android:layout_height="60dp"
-        android:scaleType="fitXY"
-        android:adjustViewBounds="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="50dp"
-        android:layout_marginBottom="50dp"
+        android:layout_marginTop="0dp"
         />
+
+    <RelativeLayout
+        android:id="@+id/bodyRelativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="125dp"
+        android:layout_marginBottom="125dp"
+        android:fontFamily="@font/ukij_qolyazma">
+
+        <TextView
+            android:id="@+id/textViewChooseTheme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="100dp"
+            android:fontFamily="@font/ukij_qolyazma"
+            android:gravity="center"
+            android:text="Please choose a theme"
+            android:textSize="28sp" />
+
+        <TextView
+            android:id="@+id/textViewChoseLight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="75dp"
+            android:layout_marginTop="250dp"
+            android:fontFamily="@font/ukij_qolyazma"
+            android:gravity="center"
+            android:paddingHorizontal="25dp"
+            android:paddingVertical="25dp"
+            android:text="Light"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/textViewChoseDark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="250dp"
+            android:layout_marginEnd="75dp"
+            android:fontFamily="@font/ukij_qolyazma"
+            android:gravity="center"
+            android:paddingHorizontal="25dp"
+            android:paddingVertical="25dp"
+            android:text="Dark"
+            android:textSize="20sp" />
+
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/footerRelativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="125dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="0dp" >
+
+        <ImageButton
+            android:id="@+id/acceptBtn"
+            android:layout_width="40dp"
+            android:layout_height="50dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="40dp"
+            android:layout_marginBottom="40dp"
+            android:adjustViewBounds="true"
+            android:background="@drawable/roundcorner"
+            android:scaleType="fitXY" />
+
+    </RelativeLayout>
+
 </RelativeLayout>
+

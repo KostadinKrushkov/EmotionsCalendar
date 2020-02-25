@@ -1,13 +1,6 @@
 package com.pearov.emotionscalendar;
 
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.RectShape;
-import android.os.Build;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -16,8 +9,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -28,8 +19,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 
@@ -204,7 +193,7 @@ public final class GridAdapter extends BaseAdapter {
         String testDay = day + "-" + month + "-" + year;
         try {
 
-            String filePath = MainActivity.context.getFilesDir().getPath().toString() + MainActivity.getCalendarFile();
+            String filePath = MainActivity.context.getFilesDir().getPath().toString() + MainActivity.CALENDAR_FILE;
             Reader reader = new FileReader(filePath);
             try {
                 BufferedReader input = new BufferedReader(reader);
@@ -311,7 +300,7 @@ public final class GridAdapter extends BaseAdapter {
     public static void saveDaysDynamically() {
         try {
             // All contents are inside the list so we empty the file and fill the file with the new info
-            String filePath = MainActivity.context.getFilesDir().getPath() + MainActivity.getCalendarFile();
+            String filePath = MainActivity.context.getFilesDir().getPath() + MainActivity.CALENDAR_FILE;
             PrintWriter empty_writer = new PrintWriter(filePath);
             empty_writer.print("");
             empty_writer.close();
@@ -335,7 +324,7 @@ public final class GridAdapter extends BaseAdapter {
     public static void loadDaysDynamically() {
         daysThatHaveBeenSaved.clear();
         try {
-            String filePath = MainActivity.context.getFilesDir().getPath() + MainActivity.getCalendarFile();
+            String filePath = MainActivity.context.getFilesDir().getPath() + MainActivity.CALENDAR_FILE;
             BufferedWriter writer = null;
             BufferedReader reader = new BufferedReader(new FileReader(filePath));
 
@@ -357,7 +346,7 @@ public final class GridAdapter extends BaseAdapter {
     public static void writeDayInFile(String emotinalDay) {
         String[] params = emotinalDay.split("-");
         try {
-            String filePath = MainActivity.context.getFilesDir().getPath().toString() + MainActivity.getCalendarFile();
+            String filePath = MainActivity.context.getFilesDir().getPath().toString() + MainActivity.CALENDAR_FILE;
             BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true));
             writer.append(emotinalDay + "\n");
             writer.flush();
@@ -375,7 +364,7 @@ public final class GridAdapter extends BaseAdapter {
         String testDay = params[0] + "-" + params[1] + "-" + params[2];
         try {
 
-            String filePath = MainActivity.context.getFilesDir().getPath().toString() + MainActivity.getCalendarFile();
+            String filePath = MainActivity.context.getFilesDir().getPath().toString() + MainActivity.CALENDAR_FILE;
             BufferedWriter writer = null;
             BufferedReader reader = new BufferedReader(new FileReader(filePath));
             ArrayList<String> list = new ArrayList<>();

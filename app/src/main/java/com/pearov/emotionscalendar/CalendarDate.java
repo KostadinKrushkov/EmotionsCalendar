@@ -88,12 +88,16 @@ public class CalendarDate implements Comparable<CalendarDate> {
         return noteIdList;
     }
 
+    public void addNoteIdToString(int noteId) {
+        noteIdList.add(noteId);
+    }
+
     public String getNoteIdListString() {
         String notes = "";
         for (int temp: getNoteIdList()) {
             notes += temp + " ";
         }
-        return notes;
+        return notes.trim();
     }
 
     public void setNoteIdList(List<Integer> noteIdList) {

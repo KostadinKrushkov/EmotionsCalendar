@@ -232,7 +232,6 @@ public class StatisticsAdapter extends BaseAdapter {
             //7. Weeks ranked by happiness
             ArrayList<WeekValueCouple> weeksRanked = getWeeksRanked();
 
-
             //7.1 All weeks
             WeekValueCouple allWeeks[] = getWeeks();
 

@@ -100,7 +100,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/chosenDay"
             android:layout_marginTop="100dp"
-            android:layout_marginLeft="50dp"
+            android:layout_marginStart="50dp"
             android:text="How was your day:" />
 
         <View
