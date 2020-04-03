@@ -24,6 +24,7 @@ public class NoteForEditFragment extends Fragment {
     private Note note = null;
     private String noteTitle;
     private DatabaseHelper db;
+    private boolean createNewNote = false;
 
     private void fillBackGroundColours() {
 
@@ -83,6 +84,20 @@ public class NoteForEditFragment extends Fragment {
         return view;
     }
 
+    public void fillData() {
+        noteTitle = NotesForDayActivity.getNoteTitle();
+        titleEditText.setText(NotesForDayActivity.getNoteTitle());
+        noteEditText.setText(NotesForDayActivity.getNoteText());
+    }
+
+    public boolean isCreateNewNote() {
+        return createNewNote;
+    }
+
+    public void setCreateNewNote(boolean createNewNote) {
+        this.createNewNote = createNewNote;
+    }
+
     // Created outside of the onClick method because the user may save the note while leaving (popup)
     private void acceptButtonOnClick() {
 
@@ -105,41 +120,74 @@ public class NoteForEditFragment extends Fragment {
             Toast.makeText(getActivity(), "Maximum length (2000) exceeded by: " + (2000-text.length()), Toast.LENGTH_LONG).show();
             // We didn't finish the note.
             ((NotesForDayActivity) getActivity()).setGoBackToFragment(true);
+            NotesForDayActivity.setCreateNewNoteFlag(false);
             return;
         } else if (text.length() == 0) {
             Toast.makeText(getActivity(), "To save a note you need to enter some text.", Toast.LENGTH_SHORT).show();
             // We didn't finish the note.
             ((NotesForDayActivity) getActivity()).setGoBackToFragment(true);
+            NotesForDayActivity.setCreateNewNoteFlag(false);
             return;
         }
 
         if(!title.isEmpty() && !text.isEmpty()) {
 
             // If it is empty we are creating a new note
-            if (noteTitle.isEmpty()) {
+            Note tempNote = null;
+            if (createNewNote) {
                 noteTitle = title;
-                int noteId = db.getAllNotes().size();
+
+                // Check if title matches other note titles.
+                if(!noteTitle.isEmpty()) {
+                    List list  = db.getAllNotesForDay(NotesForDayActivity.getRememberDay(), NotesForDayActivity.getRememberMonth(), NotesForDayActivity.getRememberYear());
+                    for (int i = 0; i < list.size(); i++) {
+                        if (((Note)list.get(i)).getTitle().equals(noteTitle)) {
+                            tempNote = ((Note) list.get(i));
+                            break;
+                        }
+                    }
+                    if (tempNote != null) {
+                        Toast.makeText(getContext(), "There is a note with that title already.", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+
+                List<Note> tempList = db.getAllNotesForDay(NotesForDayActivity.getRememberDay(), NotesForDayActivity.getRememberMonth(), NotesForDayActivity.getRememberYear());
+                int noteId = tempList.size();
+                for (Note t: tempList) {
+                    if (t.getId() > noteId)
+                        noteId = t.getId();
+                }
+                noteId += 1;
+
                 Note temp = new Note(noteId, title, text);
                 date.addNoteIdToString(noteId);
                 String notesString = date.getNoteIdListString();
                 boolean res = db.addNote(temp);
                 if (res) {
-                    db.updateCalendarDateNotes(date, notesString);
-                }
-                else {
+                    if (!db.updateCalendarDateNotes(date, notesString)) {
+                        db.deleteNoteById(noteId);
+                        Toast.makeText(getContext(), "Something went wrong trying to update the note.", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                } else {
                     Toast.makeText(getContext(), "Error note with such name already exists", Toast.LENGTH_LONG).show();
                     return;
                 }
 
                 Toast.makeText(getActivity(), "Note saved.", Toast.LENGTH_SHORT).show();
                 ((NotesForDayActivity) getActivity()).refreshNotes();
+                ((NotesForDayActivity) getActivity()).refreshNoteListAdapter();
+                NotesForDayActivity.setCreateNewNoteFlag(false);
             } // If it isn't empty we are updating an old note
             else {
                 Note note = db.getNoteIdByTitleAndDay(noteTitle, NotesForDayActivity.getRememberDay(), NotesForDayActivity.getRememberMonth(), NotesForDayActivity.getRememberYear());
                 db.updateNote(note, new Note(note.getId(), title, text));
                 noteTitle = title;
                 Toast.makeText(getActivity(), "Note updated.", Toast.LENGTH_SHORT).show();
-                ((NotesForDayActivity) getActivity()).setViewPager(0);
+                ((NotesForDayActivity) getActivity()).refreshNotes();
+                ((NotesForDayActivity) getActivity()).refreshNoteListAdapter();
+                NotesForDayActivity.setCreateNewNoteFlag(false);
             }
         } else {
             ((NotesForDayActivity) getActivity()).setGoBackToFragment(true);

@@ -36,6 +36,10 @@ public class CalendarDate implements Comparable<CalendarDate> {
         this.noteIdList = noteIdList;
     }
 
+    public void clearNotes() {
+        noteIdList.clear();
+    }
+
     public int getDay() {
         return day;
     }

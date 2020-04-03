@@ -27,8 +27,15 @@ public class NotesListAdapter extends BaseAdapter  {
     private View listItemsView;
 
     public NotesListAdapter(Context context) {
-        notes = NotesForDayActivity.getNotes();
         this.context = context;
+    }
+
+    public List<Note> getNotes() {
+        return notes;
+    }
+
+    public void setupNotes() {
+        notes = NotesForDayActivity.getNotes();
     }
 
     private void fillBackGroundColours() {
@@ -70,6 +77,7 @@ public class NotesListAdapter extends BaseAdapter  {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
+        notes = NotesForDayActivity.getNotes();
         listItemsView = convertView;
         if (listItemsView == null) {
             listItemsView = LayoutInflater.from(NotesForDayActivity.context).inflate(R.layout.notes_list_layout, null);

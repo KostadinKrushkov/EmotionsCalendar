@@ -159,7 +159,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 //                + TABLE_CLIENTS_JOINEDONDATE + ", " + TABLE_CLIENTS_COUNTRY + ")" + " VALUES "
 //                + "(" +  client.getUsername() + ", " + client.getJoinedOnDate() + ", " + client.getCountry() + ")";
 //        db.rawQuery(tempQuery, null);
-         db.insert(TABLE_CLIENTS, null, values);
+        db.insert(TABLE_CLIENTS, null, values);
         db.close();
     }
 
@@ -167,7 +167,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_CLIENTS, new String[]
-                { TABLE_CLIENTS_USERNAME, TABLE_CLIENTS_JOINEDONDATE, TABLE_CLIENTS_JOINEDONDATE },
+                        { TABLE_CLIENTS_USERNAME, TABLE_CLIENTS_JOINEDONDATE, TABLE_CLIENTS_JOINEDONDATE },
                 TABLE_CLIENTS_ID + "=?", new String[]
                         { String.valueOf(id) }, null, null, null, null );
         if (cursor != null)
@@ -383,6 +383,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return true;
     }
 
+    public boolean updateNoteById(int noteId, Note note) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(TABLE_NOTES_NOTETEXT, note.getNoteText());
+        values.put(TABLE_NOTES_TITLE, note.getTitle());
+
+        int res = db.update(TABLE_NOTES, values,TABLE_NOTES_ID + " = ? ",
+                new String[]{String.valueOf(noteId),
+                });
+
+        db.close();
+        if (res == -1) {
+            return false;
+        }
+        return true;
+    }
+
     public boolean deleteNoteById(int noteId) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -430,9 +448,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                Note tempNote = getNoteById(Integer.parseInt(cursor.getString(0)));
-                if (tempNote.getTitle().equals(title))
-                    note = tempNote;
+                if (!cursor.getString(0).isEmpty()) {
+
+                    String noteIds[] = cursor.getString(0).split(" ");
+                    for (String id : noteIds) {
+                        Note tempNote = getNoteById(Integer.parseInt(id));
+                        if (tempNote != null) {
+                            if (tempNote.getTitle().equals(title))
+                                note = tempNote;
+                        }
+                    }
+                }
             } while(cursor.moveToNext());
         }
 
@@ -488,8 +514,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         Note note = getNoteById(Integer.parseInt(temp));
                         if (note != null)
                             noteList.add(note);
-                        else
-                            return noteList;
                     }
                 }
             } while(cursor.moveToNext());
@@ -618,14 +642,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return false;
         } else {
             // Adding entry in client_date
-                int calendarDateId = getCalendarDateId(date.getDay(), date.getMonth(), date.getYear());
-                int clientId = getClientIdByUsername(MainActivity.getGoogleUsername());
-                if (clientId != -1 && calendarDateId != -1) {
-                    addClient_Date(new ClientDate(calendarDateId, clientId));
-                } else {
-                    deleteCalendarDate(date.getDay(), date.getMonth(), date.getYear());
-                    return false;
-                }
+            int calendarDateId = getCalendarDateId(date.getDay(), date.getMonth(), date.getYear());
+            int clientId = getClientIdByUsername(MainActivity.getGoogleUsername());
+            if (clientId != -1 && calendarDateId != -1) {
+                addClient_Date(new ClientDate(calendarDateId, clientId));
+            } else {
+                deleteCalendarDate(date.getDay(), date.getMonth(), date.getYear());
+                return false;
+            }
             //
             db.close();
             return true;
@@ -757,12 +781,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
         int res = db.update(TABLE_CALENDARDATE, values,TABLE_CALENDARDATE_DAY + " = ? AND "
-                + TABLE_CALENDARDATE_MONTH + " = ? AND "
-                + TABLE_CALENDARDATE_YEAR + " = ? ",
+                        + TABLE_CALENDARDATE_MONTH + " = ? AND "
+                        + TABLE_CALENDARDATE_YEAR + " = ? ",
                 new String[]{String.valueOf(oldDate.getDay()),
                         String.valueOf(oldDate.getMonth()),
                         String.valueOf(oldDate.getYear())
-        });
+                });
 
         db.close();
         if (res == -1) {
@@ -862,7 +886,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             result =  Integer.parseInt(cursor.getString(0));
         else
             Log.d(TAG, "getCalendarDateId: ERROR while trying to get calendar date id for date:\n "
-                + day + "-" + month + "-" + year);
+                    + day + "-" + month + "-" + year);
 
         db.close();
         cursor.close();
@@ -929,7 +953,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = db.query(TABLE_CALENDARDATE, new String[]
                         { TABLE_CALENDARDATE_DAY, TABLE_CALENDARDATE_MONTH, TABLE_CALENDARDATE_YEAR,
                                 TABLE_CALENDARDATE_DAYOFWEEK, TABLE_CALENDARDATE_WEEKOFYEAR, TABLE_CALENDARDATE_EMOTIONID },
-                        TABLE_CALENDARDATE_MONTH + "=? AND "
+                TABLE_CALENDARDATE_MONTH + "=? AND "
                         +TABLE_CALENDARDATE_YEAR + "=?", new String[]
                         {  String.valueOf(month), String.valueOf(year) }, null, null, null, null );
 
@@ -957,7 +981,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = db.query(TABLE_CALENDARDATE, new String[]
                         { TABLE_CALENDARDATE_DAY, TABLE_CALENDARDATE_MONTH, TABLE_CALENDARDATE_YEAR,
                                 TABLE_CALENDARDATE_DAYOFWEEK, TABLE_CALENDARDATE_WEEKOFYEAR, TABLE_CALENDARDATE_EMOTIONID },
-                        TABLE_CALENDARDATE_YEAR + "=?", new String[]
+                TABLE_CALENDARDATE_YEAR + "=?", new String[]
                         {  String.valueOf(year) }, null, null, TABLE_CALENDARDATE_MONTH, null );
 
         if (cursor.moveToFirst()) {

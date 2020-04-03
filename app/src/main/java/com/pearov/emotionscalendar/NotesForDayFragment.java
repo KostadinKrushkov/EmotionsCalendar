@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,8 +28,11 @@ public class NotesForDayFragment extends Fragment {
     private ListView notesListView;
     private ArrayList<Note> notes;
     private ArrayList<String> noteTitles = new ArrayList<>();
+    private ArrayList<String> noteTexts = new ArrayList<>();
     private DatabaseHelper db;
     private ArrayList<Integer> tickedForDeletionList = new ArrayList<>();
+    private NotesListAdapter adapter;
+    // When hold clicking an item you enter tickMode - select any item to be deleted and use the bin button
     private static boolean tickMode = false;
 
 
@@ -55,9 +57,13 @@ public class NotesForDayFragment extends Fragment {
         }
     }
 
+    public void setupNotesListAdapter() {
+        adapter.setupNotes();
+    }
+
     private boolean checkIfElementInTickList(int element) {
         for (int i = 0; i < tickedForDeletionList.size(); i++) {
-            if (tickedForDeletionList.get(i) == element)
+            if (tickedForDeletionList.get(i) == notes.get(element).getId())
                 return true;
         }
         return false;
@@ -86,15 +92,16 @@ public class NotesForDayFragment extends Fragment {
         notes = (ArrayList<Note>) db.getAllNotesForDay(NotesForDayActivity.getRememberDay(),
                 NotesForDayActivity.getRememberMonth(),
                 NotesForDayActivity.getRememberYear());
+
         for (Note note : notes) {
             noteTitles.add(note.getTitle());
+            noteTexts.add(note.getNoteText());
         }
 
-            NotesListAdapter adapter = new NotesListAdapter(((NotesForDayActivity) getActivity()).getContext());
-            notesListView.setAdapter(adapter);
+        adapter = new NotesListAdapter(((NotesForDayActivity) getActivity()).getContext());
+        notesListView.setAdapter(adapter);
 
-
-        // onclicks and shit
+        // Moves to new Fragment to add a new note.
         addNoteTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -106,8 +113,10 @@ public class NotesForDayFragment extends Fragment {
                 }
 
                 ((NotesForDayActivity) getActivity()).setGoBackToFragment(true);
+                NotesForDayActivity.setNoteTitle("New note");
+                NotesForDayActivity.setNoteText("");
+                NotesForDayActivity.setCreateNewNoteFlag(true);
                 ((NotesForDayActivity)getActivity()).setViewPager(1);
-                NotesForDayActivity.setNoteTitle("");
             }
         });
 
@@ -119,8 +128,8 @@ public class NotesForDayFragment extends Fragment {
                 List<Note> list = db.getAllNotesForDay(NotesForDayActivity.getRememberDay(), NotesForDayActivity.getRememberMonth(), NotesForDayActivity.getRememberYear());
                 for(int i = 0; i < list.size(); i++) {
                     for (int j = 0; j < tickedForDeletionList.size(); j++) {
-                        if (tickedForDeletionList.get(j) == i) {
-                            db.deleteNoteById(i);
+                        if (tickedForDeletionList.get(j) == list.get(i).getId()) {
+                            db.deleteNoteById(list.get(i).getId());
                         }
                     }
                 }
@@ -137,20 +146,22 @@ public class NotesForDayFragment extends Fragment {
 
                 boolean shouldReturn = false;
                 ImageView tickImage = view.findViewById(R.id.tickImageView);
+                NotesForDayActivity.setNoteTitle(noteTitles.get(position));
+                NotesForDayActivity.setNoteText(noteTexts.get(position));
 
                 if (!tickMode) {
                     ((NotesForDayActivity) getActivity()).setGoBackToFragment(true);
                     ((NotesForDayActivity) getActivity()).setViewPager(1);
-                    NotesForDayActivity.setNoteTitle(noteTitles.get(position));
                 } else {
                     if (tickedForDeletionList.size() == 0) {
-                        tickedForDeletionList.add(position);
+//                        tickedForDeletionList.add(position);
+                        tickedForDeletionList.add(((NotesListAdapter) notesListView.getAdapter()).getNotes().get(position).getId());
                         tickImage.setVisibility(View.VISIBLE);
                         return;
                     }
                     for (int i = 0; i < tickedForDeletionList.size(); i++) {
                         if (checkIfElementInTickList(position)) {
-                            if (tickedForDeletionList.get(i) == position) {
+                            if (tickedForDeletionList.get(i) == ((NotesListAdapter) notesListView.getAdapter()).getNotes().get(position).getId()) {
                                 tickedForDeletionList.remove(i);
                                 if (tickImage != null) {
                                     tickImage.setVisibility(View.GONE);
@@ -165,7 +176,7 @@ public class NotesForDayFragment extends Fragment {
                         if (tickImage != null) {
                             tickImage.setVisibility(View.VISIBLE);
                         }
-                        tickedForDeletionList.add(position);
+                        tickedForDeletionList.add(((NotesListAdapter) notesListView.getAdapter()).getNotes().get(position).getId());
                     }
                     return;
                 }
@@ -182,18 +193,18 @@ public class NotesForDayFragment extends Fragment {
                 tickMode = true;
 
                 if (tickedForDeletionList.size() == 0) {
-                    tickedForDeletionList.add(position);
+                    tickedForDeletionList.add(((NotesListAdapter) notesListView.getAdapter()).getNotes().get(position).getId());
                     tickImage.setVisibility(View.VISIBLE);
                     return true;
                 } else {
                     if (tickedForDeletionList.size() == 0) {
-                        tickedForDeletionList.add(position);
+                        tickedForDeletionList.add(((NotesListAdapter) notesListView.getAdapter()).getNotes().get(position).getId());
                         tickImage.setVisibility(View.VISIBLE);
                         return true;
                     }
                     for (int i = 0; i < tickedForDeletionList.size(); i++) {
                         if (checkIfElementInTickList(position)) {
-                            if (tickedForDeletionList.get(i) == position) {
+                            if (tickedForDeletionList.get(i) == ((NotesListAdapter) notesListView.getAdapter()).getNotes().get(position).getId()) {
                                 tickedForDeletionList.remove(i);
                                 if (tickImage != null) {
                                     tickImage.setVisibility(View.GONE);
@@ -208,16 +219,16 @@ public class NotesForDayFragment extends Fragment {
                         if (tickImage != null) {
                             tickImage.setVisibility(View.VISIBLE);
                         }
-                        tickedForDeletionList.add(position);
+                        tickedForDeletionList.add(((NotesListAdapter) notesListView.getAdapter()).getNotes().get(position).getId());
                     }
                     return true;
                 }
             }
         });
 
-            fillBackGroundColours();
-            return view;
-        }
+        fillBackGroundColours();
+        return view;
+    }
 
 }
 

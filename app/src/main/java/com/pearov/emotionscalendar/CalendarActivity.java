@@ -2,8 +2,6 @@ package com.pearov.emotionscalendar;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -17,12 +15,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.*;
 import org.apache.commons.collections4.ListUtils;
 
-import java.time.LocalDate;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -52,7 +48,7 @@ public class CalendarActivity extends AppCompatActivity {
     public static int cameBackFromMonth = 0;
     public static int cameBackFromYear = 0;
 
-        // Variable used to restrict onClickListener for gridView
+    // Variable used to restrict onClickListener for gridView
     private static int fromIndexGetDays;
     private static int toIndexGetDays;
 
@@ -299,7 +295,7 @@ public class CalendarActivity extends AppCompatActivity {
         // Get number of days in particular month
         for (int i = 1; i <= yearMonthObject.lengthOfMonth(); i++) {
             listDates.add(new CalendarDate(i, month, year, "Default", 0, 0)); // Date object's month start at 0
-            }
+        }
 
         // Get db saved days and fill the rest of the days
         ArrayList<CalendarDate> savedDates = (ArrayList) db.getCalendarDatesByMonthAndYear(month, year);

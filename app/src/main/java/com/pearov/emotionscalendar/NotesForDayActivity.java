@@ -8,7 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.support.v4.app.Fragment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NotesForDayActivity extends AppCompatActivity {
@@ -26,9 +28,11 @@ public class NotesForDayActivity extends AppCompatActivity {
     private TextView textViewNotes;
     private TextView dailyEmotionText;
 
+    private static List<Fragment> fragments = new ArrayList<Fragment>();
     private NotesFragmentAdapter notesAdapter;
     private ViewPager viewPager;
     private static String noteTitle = "";
+    private static String noteText = "";
 
     // variable to be used to rember which emotion is picked
     private String lastEmotionThatWasHighlighted = "-1";
@@ -51,6 +55,14 @@ public class NotesForDayActivity extends AppCompatActivity {
 
     public static Context getContext() {
         return context;
+    }
+
+    public static String getNoteText() {
+        return noteText;
+    }
+
+    public static void setNoteText(String noteText) {
+        NotesForDayActivity.noteText = noteText;
     }
 
     public static String getNoteTitle() {
@@ -186,16 +198,30 @@ public class NotesForDayActivity extends AppCompatActivity {
         setViewPager(0);
     }
 
-    private void setupViewPager(ViewPager viewPager) {
+    public void refreshNoteListAdapter() {
+        ((NotesForDayFragment) fragments.get(0)).setupNotesListAdapter();
+    }
 
-        NotesFragmentAdapter adapter = new NotesFragmentAdapter(getSupportFragmentManager());
-        adapter.addFragment(new NotesForDayFragment());
-        adapter.addFragment(new NoteForEditFragment());
-        viewPager.setAdapter(adapter);
+    public void setupViewPager(ViewPager viewPager) {
+
+        notesAdapter = new NotesFragmentAdapter(getSupportFragmentManager());
+        fragments.clear();
+        fragments.add(new NotesForDayFragment());
+        fragments.add(new NoteForEditFragment());
+        notesAdapter.addFragment((NotesForDayFragment) fragments.get(0));
+        notesAdapter.addFragment((NoteForEditFragment) fragments.get(1));
+        viewPager.setAdapter(notesAdapter);
     }
 
     public void setViewPager(int fragmentNumber) {
+        if (fragmentNumber == 1) { // NoteForEditFragment
+            ((NoteForEditFragment) fragments.get(1)).fillData();
+        }
         viewPager.setCurrentItem(fragmentNumber);
+    }
+
+    public static void setCreateNewNoteFlag(boolean flag) {
+        ((NoteForEditFragment) fragments.get(1)).setCreateNewNote(flag);
     }
 
     // Make it have a default that goes to previous and a fragment one that goes back to the other fragment
@@ -206,7 +232,6 @@ public class NotesForDayActivity extends AppCompatActivity {
         } else {
             goBackToFragment = false;
             NotesForDayFragment.setTickMode(false);
-            setViewPager(0);
             refreshNotes();
         }
     }
