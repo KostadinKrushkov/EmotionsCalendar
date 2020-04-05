@@ -13,6 +13,7 @@ public class CalendarDate implements Comparable<CalendarDate> {
     private String dayOfWeek;
     private int weekOfYear;
     private int emotionId;
+    private float mixedValue = 0;
     private List<Integer> noteIdList;
 
     public CalendarDate( int day, int month, int year, String dayOfWeek, int weekOfYear, int emotionId) {
@@ -34,6 +35,14 @@ public class CalendarDate implements Comparable<CalendarDate> {
         this.weekOfYear = weekOfYear;
         this.emotionId = emotionId;
         this.noteIdList = noteIdList;
+    }
+
+    public float getMixedValue() {
+        return mixedValue;
+    }
+
+    public void setMixedValue(float mixedValue) {
+        this.mixedValue = mixedValue;
     }
 
     public void clearNotes() {

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MixedEmotionActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/chooseEmotionsHeader"
+        >
+
+    <TextView
+        android:id="@+id/titleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:gravity="center"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginTop="30dp"
+        android:textSize="24sp"
+        android:textAlignment="center"
+        android:fontFamily="@font/ukij_qolyazma"
+        android:text="Choose two emotions" />
+
+    <TextView
+        android:id="@+id/firstEmotionTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/titleTextView"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="30dp"
+        android:gravity="center"
+        android:text="First emotion"
+        android:padding="5dp"
+        android:textAlignment="center"
+        android:fontFamily="@font/ukij_qolyazma"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/secondEmotionTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginTop="30dp"
+        android:textSize="18sp"
+        android:layout_below="@id/titleTextView"
+        android:gravity="center"
+        android:padding="5dp"
+        android:textAlignment="center"
+        android:fontFamily="@font/ukij_qolyazma"
+        android:text="Second emotion" />
+
+        <Spinner
+            android:id="@+id/firstEmotionSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/firstEmotionTextView"
+            android:layout_alignStart="@+id/firstEmotionTextView"
+            android:layout_alignEnd="@+id/firstEmotionTextView"
+            android:layout_marginStart="-20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="-20dp"
+            android:fontFamily="@font/ukij_qolyazma" />
+
+        <Spinner
+            android:id="@+id/secondEmotionSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/secondEmotionTextView"
+            android:layout_alignStart="@+id/secondEmotionTextView"
+            android:layout_alignEnd="@+id/secondEmotionTextView"
+            android:layout_marginStart="-20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="-20dp"
+            android:fontFamily="@font/ukij_qolyazma" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/selectValuesRelativeView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/chooseEmotionsHeader"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/firstEmotionText"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="30dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="30dp"
+            android:layout_marginStart="30dp"
+            android:text="First"
+            android:padding="10dp"
+            android:textSize="24sp"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:fontFamily="@font/ukij_qolyazma"
+            />
+
+        <SeekBar
+            android:id="@+id/firstEmotionSeekBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/firstEmotionText"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="30dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="30dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/secondEmotionText"
+            android:layout_below="@id/firstEmotionSeekBar"
+            android:layout_marginTop="30dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="30dp"
+            android:layout_marginStart="30dp"
+            android:text="Second"
+            android:padding="10dp"
+            android:textSize="24sp"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:fontFamily="@font/ukij_qolyazma"
+            />
+
+        <SeekBar
+            android:id="@+id/secondEmotionSeekBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/secondEmotionText"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="30dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="30dp"
+            />
+
+        <ImageButton
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:id="@+id/acceptImageButton"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="30dp"
+            android:layout_marginEnd="30dp"
+            android:src="@drawable/ic_tick_light"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
+            />
+
+        <ImageButton
+            android:id="@+id/declineImageButton"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="30dp"
+            android:layout_toStartOf="@+id/acceptImageButton"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_exit_light" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

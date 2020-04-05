@@ -47,9 +47,8 @@ public class EmotionDayActivity extends AppCompatActivity {
     private static int rememberYear;
 
     // variable used to add emotion to date in the file
-    private boolean flagChosenEmotion = false;
-    private String existingDay;
     private String emotionToSave;
+    private boolean flagChosenEmotion = false;
 
     public String getChosenDate() {
         return chosenDate;
@@ -62,16 +61,6 @@ public class EmotionDayActivity extends AppCompatActivity {
     }
 
     private static void createEmotions() {
-//        Emotion none = new Emotion(0, "None", 1);
-//        Emotion excited = new Emotion(1, "Excited", 2);
-//        Emotion happy = new Emotion(2, "Happy", 2);
-//        Emotion positive = new Emotion(3, "Positive", 1.5);
-//        Emotion average = new Emotion(4, "Average", 1);
-//        Emotion mixed = new Emotion(5, "Mixed", 1);
-//        Emotion negative = new Emotion(6, "Negative", 0.5);
-//        Emotion sad = new Emotion(7, "Sad", 0);
-//
-//        Emotion[] emots = {none, excited, happy, positive, average, mixed, negative, sad};
         emotions = db.getAllEmotions();
     }
 
@@ -146,10 +135,6 @@ public class EmotionDayActivity extends AppCompatActivity {
         rememberMonth = Integer.parseInt(myIntent.getStringExtra("month"));
         rememberDay = Integer.parseInt(myIntent.getStringExtra("day"));
 
-//        if (day > 0 && month > 0) {
-//            rememberYear = year;
-//            rememberMonth = month;
-//        }
         CalendarActivity.cameBackFromYear = rememberYear;
         CalendarActivity.cameBackFromMonth = rememberMonth;
 
@@ -256,7 +241,6 @@ public class EmotionDayActivity extends AppCompatActivity {
                 }
                 emotionToSave = emotions.get(position).getName();
                 tempView = view;
-                existingDay = GridAdapter.getDayFromFile(rememberDay, rememberMonth, rememberYear);
             }
 
         });
@@ -284,7 +268,18 @@ public class EmotionDayActivity extends AppCompatActivity {
                     if (emotionToSave != null) {
                         emotionIdToSave = db.getEmotionIdByName(emotionToSave);
                     }
-                    if(flagChosenEmotion && existingDay.toCharArray().length > 2) {
+
+                    if (emotionToSave.equals("Mixed")) {
+                        Intent intent = new Intent(EmotionDayActivity.context, MixedEmotionActivity.class);
+                        intent.putExtra("year", rememberYear + "");
+                        intent.putExtra("month", rememberMonth+ "");
+                        intent.putExtra("day", rememberDay + "");
+                        startActivity(intent);
+                        finish();
+                        return;
+                    }
+
+                    if(flagChosenEmotion) {
 //                        GridAdapter.overWriteDayInFile(day + "-" + month + "-" + year + "-" + emotionToSave);
                         if (db.getCalendarDateByDate(rememberDay, rememberMonth, rememberYear) != null)
                             db.updateCalendarDateEmotionByDate(rememberDay, rememberMonth, rememberYear, emotionIdToSave);
@@ -294,16 +289,6 @@ public class EmotionDayActivity extends AppCompatActivity {
                             db.addCalendarDate(date);
                         }
 
-                        if (emotionToSave.equals("None"))
-                            Toast.makeText(getBaseContext(), "Emotion removed", Toast.LENGTH_SHORT).show();
-                        else
-                            Toast.makeText(getBaseContext(), "Emotion changed to: " + emotionToSave, Toast.LENGTH_SHORT).show();
-                        isFinished = true;
-                    } else if (flagChosenEmotion && existingDay.toCharArray().length < 2) {
-//                        GridAdapter.writeDayInFile(day + "-" + month + "-" + year + "-" + emotionToSave);
-                        CalendarDate date = new CalendarDate(rememberDay, rememberMonth, rememberYear, "Default", 0, emotionIdToSave);
-                        CalendarActivity.fillDate(date);
-                        db.addCalendarDate(date);
                         if (emotionToSave.equals("None"))
                             Toast.makeText(getBaseContext(), "Emotion removed", Toast.LENGTH_SHORT).show();
                         else

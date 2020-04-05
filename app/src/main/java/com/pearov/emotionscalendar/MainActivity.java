@@ -28,10 +28,14 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final String googleUsername = "Malazzar";
 
+    private static float screenWidth;
+    private static float screenHeight;
 
     public static String themeName = "";
     public static final String CALENDAR_THEME_FILE = "theme.txt";
     public static final String CALENDAR_FILE = "calendarOfEmotions.txt";
+
+    public static String swipeDirection = "Vertical";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +60,8 @@ public class MainActivity extends AppCompatActivity {
 //        createFile(getCalendarFile());
 
             screen = new Screen(this); // Setting Screen
-            float screenWidth = screen.getWidth();
-            float screenHeight = screen.getHeight();
+            screenWidth = screen.getWidth();
+            screenHeight = screen.getHeight();
 //        Toast.makeText(this, "Width: " + screenWidth + " /Height: " + screenHeight, Toast.LENGTH_SHORT).show();
 
 
@@ -72,6 +76,22 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, CalendarActivity.class);
             startActivity(intent);
         }
+    }
+
+    public static String getSwipeDirection() {
+        return swipeDirection;
+    }
+
+    public static void setSwipeDirection(String swipeDirection) {
+        MainActivity.swipeDirection = swipeDirection;
+    }
+
+    public static float getScreenWidth() {
+        return screenWidth;
+    }
+
+    public static float getScreenHeight() {
+        return screenHeight;
     }
 
     public static void writeThemeToFile(String fileName) {

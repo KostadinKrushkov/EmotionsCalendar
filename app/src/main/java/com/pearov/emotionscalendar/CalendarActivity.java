@@ -80,6 +80,7 @@ public class CalendarActivity extends AppCompatActivity {
 
     //.setTextColor(context.getResources().getColor(R.color.colorWhite));
     private void fillBackGroundColours() {
+
         if (MainActivity.themeName.equals("Light")) {
             relativeLayoutHeader.setBackground(context.getDrawable(R.color.colorMainLight));
             relativeLayoutTotal.setBackgroundColor(context.getResources().getColor(R.color.colorMainLight));
@@ -246,21 +247,22 @@ public class CalendarActivity extends AppCompatActivity {
         gridView.setOnTouchListener(new OnSwipeListener(this) {
 
             public void onSwipeTop() {
-//                Toast.makeText(CalendarActivity.this, "top", Toast.LENGTH_SHORT).show();
-                gridViewSwipeUp(gridView);
-
-            }
-            public void onSwipeRight() {
-//                Toast.makeText(CalendarActivity.this, "right", Toast.LENGTH_SHORT).show();
-            }
-            public void onSwipeLeft() {
-//                Toast.makeText(CalendarActivity.this, "left", Toast.LENGTH_SHORT).show();
+                if (MainActivity.getSwipeDirection().equals("Vertical"))
+                    gridViewSwipeUp(gridView);
             }
             public void onSwipeBottom() {
-//                Toast.makeText(CalendarActivity.this, "bottom", Toast.LENGTH_SHORT).show();
-                gridViewSwipeDown(gridView);
-
+                if (MainActivity.getSwipeDirection().equals("Vertical"))
+                    gridViewSwipeDown(gridView);
             }
+            public void onSwipeRight() {
+                if (MainActivity.getSwipeDirection().equals("Horizontal"))
+                    gridViewSwipeUp(gridView);
+            }
+            public void onSwipeLeft() {
+                if (MainActivity.getSwipeDirection().equals("Horizontal"))
+                    gridViewSwipeUp(gridView);
+            }
+
 
             public boolean onTouch(View v, MotionEvent event) {
                 v.performClick();  // If we create a custom gridview using public boolean performClick it is going to work. For now it doesnt.

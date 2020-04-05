@@ -20,25 +20,38 @@ public class ActivityExtendedSettings extends AppCompatActivity {
     private TextView importData;
     private TextView exportData;
     private TextView settingsTextView;
+    private TextView changeSwipeDir;
     private View separatorSettings;
 
     private void fillBackGroundColours() {
+
         if (MainActivity.themeName.equals("Light")) {
+
             scrollViewSettings.setBackgroundColor(context.getResources().getColor(R.color.colorMainLight));
             separatorSettings.setBackgroundColor(context.getResources().getColor(R.color.colorWhite));
             settingsTextView.setTextColor(context.getResources().getColor(R.color.colorWhite));
             changeTheme.setTextColor(context.getResources().getColor(R.color.colorWhite));
             importData.setTextColor(context.getResources().getColor(R.color.colorWhite));
             exportData.setTextColor(context.getResources().getColor(R.color.colorWhite));
+            changeSwipeDir.setTextColor(context.getResources().getColor(R.color.colorWhite));
+
         } else if (MainActivity.themeName.equals("Dark")) {
+
             scrollViewSettings.setBackgroundColor(context.getResources().getColor(R.color.colorDarkBackground));
             separatorSettings.setBackgroundColor(context.getResources().getColor(R.color.colorWhite));
             settingsTextView.setTextColor(context.getResources().getColor(R.color.colorWhite));
             changeTheme.setTextColor(context.getResources().getColor(R.color.colorWhite));
             importData.setTextColor(context.getResources().getColor(R.color.colorWhite));
             exportData.setTextColor(context.getResources().getColor(R.color.colorWhite));
+            changeSwipeDir.setTextColor(context.getResources().getColor(R.color.colorWhite));
 
         }
+    }
+
+    private void openDialog() {
+
+        SwipeDialog swipeDialog = new SwipeDialog();
+        swipeDialog.show(getSupportFragmentManager(), "Choose swipe type");
     }
 
     @Override
@@ -56,6 +69,7 @@ public class ActivityExtendedSettings extends AppCompatActivity {
         importData = (TextView) findViewById(R.id.importData);
         exportData = (TextView) findViewById(R.id.exportData);
         separatorSettings = findViewById(R.id.separatorSettings);
+        changeSwipeDir = findViewById(R.id.changeSwipeDir);
 
         changeTheme.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,6 +95,15 @@ public class ActivityExtendedSettings extends AppCompatActivity {
             public void onClick(View v) {
                 Toast.makeText(context, "General Kenobi", Toast.LENGTH_LONG).show();
 
+                // Popup view for export data to excel format ?
+            }
+        });
+
+        changeSwipeDir.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, "General Kenobi", Toast.LENGTH_LONG).show();
+                openDialog();
                 // Popup view for export data to excel format ?
             }
         });

@@ -16,4 +16,5 @@
         <item>December</item>
     </string-array>
     <string name="title_activity_statistics">StatisticsActivity</string>
+    <string name="title_activity_mixed_emotion">MixedEmotionActivity</string>
 </resources>

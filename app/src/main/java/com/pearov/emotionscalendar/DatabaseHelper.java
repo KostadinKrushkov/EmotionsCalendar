@@ -272,6 +272,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return true;
     }
 
+    public Emotion getEmotionByName(String name) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_EMOTIONS, new String[]
+                        { TABLE_EMOTIONS_ID, TABLE_EMOTIONS_NAME, TABLE_EMOTIONS_VALUE },
+                TABLE_EMOTIONS_NAME + "=?", new String[]
+                        { name }, null, null, null, null );
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        Emotion emotion = null;
+
+        try {
+            emotion = new Emotion(Integer.parseInt(cursor.getString(0)), cursor.getString(1), Double.parseDouble(cursor.getString(2)));
+        } catch (NullPointerException e) {
+            Log.d(TAG, "getEmotionById: NullPointerException while trying to get emotion by name: " + name);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        db.close();
+        cursor.close();
+        return emotion;    }
+
     public Emotion getEmotionById(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 

@@ -74,6 +74,20 @@
 
         />
 
+    <TextView
+        android:fontFamily="@font/ukij_qolyazma"
+        android:id="@+id/changeSwipeDir"
+        android:layout_below="@id/exportData"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Change swipe direction"
+        android:textSize="25sp"
+        android:gravity="center_vertical"
+        android:paddingStart="20dp"
+
+        />
+
     </RelativeLayout>
 
 </ScrollView>

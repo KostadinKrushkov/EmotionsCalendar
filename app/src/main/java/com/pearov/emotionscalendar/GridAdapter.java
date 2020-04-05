@@ -66,15 +66,20 @@ public final class GridAdapter extends BaseAdapter {
         View view = convertView;
 
         CalendarDate date = elems.get(position);
-        int currentDay = date.getDay();
-        String currentMonth = CalendarActivity.getMonthName(date.getMonth());
-        int currentMonthNum = date.getMonth();
-        int currentYear = date.getYear();
 
         if (view == null) {
             view = LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
         }
-        view.setLayoutParams(new GridView.LayoutParams(GridView.AUTO_FIT, 216)); // h: height of box
+
+        float height = MainActivity.getScreenHeight();
+        float width = MainActivity.getScreenWidth();
+        int scaledHeight = (int)(145 * (height / width));
+
+        final float scale = CalendarActivity.context.getResources().getDisplayMetrics().density;
+        int pixels = (int) (43.4 * (height/width) * scale + 0.5f);
+
+
+        view.setLayoutParams(new GridView.LayoutParams(GridView.AUTO_FIT, pixels)); // h: height of box
 
         TextView text = (TextView) view.findViewById(android.R.id.text1);
         text.setTextSize(10);
@@ -167,18 +172,6 @@ public final class GridAdapter extends BaseAdapter {
         if (elems.get(position).getDay() == Integer.parseInt(todaysDayParams[0]) &&
             elems.get(position).getMonth() == Integer.parseInt(todaysDayParams[1]) &&
             elems.get(position).getYear() == Integer.parseInt(todaysDayParams[2])) {
-//            These are used to set the color of the block and the text in the block to contrast
-//            view.setBackgroundColor(Color.parseColor("#1C1C1C"));
-//            text.setTextColor(Color.parseColor("#FFFFFF"));
-
-//            These also work for background
-//            text.setBackgroundColor(ContextCompat.getColor(CalendarActivity.class, R.color.currentDayBorder));
-//            text.setBackgroundColor(R.drawable.current_day_border);
-
-//            But this is used for border
-//            view.setBackgroundColor(CalendarActivity.context.getResources().getColor(R.color.colorPositive));
-//            view.setBackgroundResource(R.drawable.current_day_border);
-//            view.setBackgroundResource(Integer.parseInt((getThumb(0, 0).toString())));
         }
 
         int day = elems.get(position).getDay();
@@ -229,7 +222,6 @@ public final class GridAdapter extends BaseAdapter {
         int day = Integer.parseInt(params[0]);
         int month = Integer.parseInt(params[1]);
         int year = Integer.parseInt(params[2]);
-        String properties[] = getDayFromFile(day, month, year).split("-");
         CalendarDate date = database.getCalendarDateByDate(day, month, year);
         String emotionForToday = "";
         if (date == null)
